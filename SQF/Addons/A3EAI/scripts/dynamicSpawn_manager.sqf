@@ -91,7 +91,6 @@ while {true} do {
 						_trigger setVariable ["targetplayerUID",_playerUID];
 						//_trigActStatements = format ["0 = [150,thisTrigger,%1,%2,%3] call A3EAI_spawnUnits_dynamic;",_spawnParams select 0,_spawnParams select 1,_spawnParams select 2];
 						_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;","", "[thisTrigger] spawn A3EAI_despawn_dynamic;"];
-						0 = [150,_trigger,_spawnParams select 0,_spawnParams select 1,_spawnParams select 2] call A3EAI_spawnUnits_dynamic;
 						if (_debugMarkers) then {
 							_nul = _trigger spawn {
 								_marker = str(_this);
@@ -104,6 +103,7 @@ while {true} do {
 								_marker setMarkerAlpha 0;
 							};
 						};
+						0 = [150,_trigger,_spawnParams select 0,_spawnParams select 1,_spawnParams select 2] call A3EAI_spawnUnits_dynamic;
 						if (((count A3EAI_reinforcePlaces) < A3EAI_curHeliPatrols) && {A3EAI_heliReinforceChance call A3EAI_chance}) then {
 							A3EAI_reinforcePlaces pushBack _trigger;
 							if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Sending AI helicopter patrol to search for %1.",_playername];};

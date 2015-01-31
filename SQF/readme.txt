@@ -1,1 +1,1 @@
-Added for searching purposes.
+Added for searching purposes. To install A3EAI, use files in the Installation Package directory instead.

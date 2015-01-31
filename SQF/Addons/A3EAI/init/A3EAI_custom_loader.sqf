@@ -2,6 +2,6 @@
 
 waitUntil {uiSleep 3; !isNil "A3EAI_locations_ready"};
 
-call compile preprocessFileLineNumbers format ["%1\A3EAI_custom_defs.sqf",A3EAI_installedFolder];
+call compile preprocessFileLineNumbers "@EpochHive\A3EAI_custom_defs.sqf";
 
 A3EAI_customSpawnsReady = true;
