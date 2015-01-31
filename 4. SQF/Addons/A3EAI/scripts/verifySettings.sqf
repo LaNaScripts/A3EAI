@@ -28,7 +28,7 @@ _startTime = diag_tickTime;
 	["A3EAI_launchersPerGroup",1],
 	["A3EAI_radioMsgs",false],
 	["A3EAI_deathMessages",false],
-	["A3EAI_staticAI",true],
+	//["A3EAI_staticAI",true],
 	["A3EAI_loadCustomFile",true],
 	["A3EAI_autoGenerateStatic",true],
 	["A3EAI_minAI_capitalCity",2],
