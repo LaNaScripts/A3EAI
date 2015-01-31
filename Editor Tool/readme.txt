@@ -19,3 +19,6 @@
 8. Find and open the folder that contains the name you assigned in Step 6.
 
 9. Paste the init.sqf file inside this folder.
+
+
+For more details on using the Editor Tool, visit the A3EAI Wikia site here: http://a3eai.wikia.com/wiki/A3EAI_Editor_Tool
