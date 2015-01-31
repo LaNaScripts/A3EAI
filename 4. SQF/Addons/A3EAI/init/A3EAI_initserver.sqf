@@ -95,5 +95,5 @@ if (A3EAI_autoGenerateStatic) then {[] execVM format ["%1\scripts\setup_autoStat
 
 //Report A3EAI startup settings to RPT log
 diag_log format ["[A3EAI] A3EAI settings: Debug Level: %1. DebugMarkers: %2. WorldName: %3. VerifyClassnames: %4. VerifySettings: %5.",A3EAI_debugLevel,((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}),_worldname,A3EAI_verifyClassnames,A3EAI_verifySettings];
-diag_log format ["[A3EAI] AI spawn settings: Static: %1. Dynamic: %2. Random: %3. Air: %4. Land: %5.",A3EAI_staticAI,A3EAI_dynAISpawns,(A3EAI_maxRandomSpawns > 0),(A3EAI_maxHeliPatrols>0),(A3EAI_maxLandPatrols>0)];
+diag_log format ["[A3EAI] AI spawn settings: Static: %1. Dynamic: %2. Random: %3. Air: %4. Land: %5.",A3EAI_autoGenerateStatic,A3EAI_dynAISpawns,(A3EAI_maxRandomSpawns > 0),(A3EAI_maxHeliPatrols>0),(A3EAI_maxLandPatrols>0)];
 diag_log format ["[A3EAI] A3EAI loading completed in %1 seconds.",(diag_tickTime - _startTime)];

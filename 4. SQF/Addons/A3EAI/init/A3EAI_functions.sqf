@@ -52,7 +52,7 @@ A3EAI_customHeliDetect = compileFinal preprocessFileLineNumbers format ["%1\comp
 A3EAI_vehCrewRegroup = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_behavior\A3EAI_vehicle_crew_regroup.sqf",A3EAI_directory];
 
 //Static AI functions
-if (A3EAI_staticAI) then {
+if (A3EAI_autoGenerateStatic) then {
 	A3EAI_spawnUnits_static = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_spawning\A3EAI_spawn_static.sqf",A3EAI_directory];
 	A3EAI_staticSpawn_init = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_spawning\A3EAI_init_static.sqf",A3EAI_directory];
 	A3EAI_setupStaticSpawn = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_spawning\A3EAI_setup_staticspawn.sqf",A3EAI_directory];
