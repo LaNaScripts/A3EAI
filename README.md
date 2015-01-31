@@ -13,7 +13,7 @@ if you would like to support development of A3EAI, you can contribute to the A3E
 ---
 Installing A3EAI
 ---
-1. Download A3EAI from the A3EAI GitHub Page: https://github.com/dayzai/A3EAI/archive/master.zip
+1. Download the latest A3EAI release from the A3EAI Releases page: https://github.com/dayzai/A3EAI/releases
 2. Locate the file you downloaded (A3EAI-master.zip) and extract it to a folder.
 3. Open the extracted folder and open the Installation Package folder. Copy the contents of this folder (Addons, A3EAI_config.sqf, A3EAI_custom_defs)
 4. Navigate to your server's Arma 3 folder and open the @EpochHive folder.
