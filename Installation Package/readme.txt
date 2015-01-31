@@ -1,0 +1,1 @@
+Copy the contents of this folder inside your server's @EpochHive folder. If prompted to merge the Addons folder, click "Yes". Clicking "Yes" will not cause any Epoch files to be modified in any way.
