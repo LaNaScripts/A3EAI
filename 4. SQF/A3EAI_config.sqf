@@ -120,10 +120,8 @@ A3EAI_deathMessages = false;
 /*	Static AI Spawning Settings
 --------------------------------------------------------------------------------------------------------------------*/	
 
-//Enable or disable static AI spawns. If enabled, AI spawn points will be generated in cities, towns, and other predefined areas. Does not affect custom-defined spawns (Default: true).
-A3EAI_staticAI = true;
-
-//Enabled: A3EAI automatically generates static spawns at named locations on map. Disabled: Use installed static spawn map pack - does not support Altis/Stratis and certain maps. (Default: true)
+//Enable or disable static AI spawns. If enabled, AI spawn points will be generated in cities, towns, and other named areas.
+//Enabled: A3EAI automatically generates static spawns at named locations on map. Disabled: No static spawns will be generated. (Default: true)
 A3EAI_autoGenerateStatic = true;
 
 //Probability to increase unit level by 1 upon respawning an AI group.

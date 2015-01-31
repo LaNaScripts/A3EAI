@@ -1,1 +1,2 @@
-- [Fixed] Fixed bug related to custom spawn creation.
+A3EAI 0.1.2 Alpha
+[Fixed] Fixed bug related to custom spawn creation.

@@ -88,15 +88,7 @@ _worldname = (toLower worldName);
 _centerMarker setMarkerPos _centerPos;
 _centerMarker setMarkerSize [_markerSize,_markerSize];
 
-if (A3EAI_autoGenerateStatic) then {
-	if (A3EAI_staticAI) then {[] execVM format ["%1\scripts\setup_autoStaticSpawns.sqf",A3EAI_directory];};
-} else {
-	if (_worldname in ["chernarus","utes","zargabad","fallujah","takistan","tavi","lingor","namalsk","mbg_celle2","oring","panthera2","isladuala","sara","smd_sahrani_a2","trinity","napf","caribou","cmr_ovaron","sauerland","fdf_isle1_a","caribou"]) then {
-		[] execVM format ["%1\custom_spawn_config\world_%2.sqf",A3EAI_directory,_worldname];
-	} else {
-		diag_log format ["A3EAI Error: No spawn config file exists for map: %1. Recommend enabling A3EAI_autoGenerateStatic.",_worldname];
-	};
-};
+if (A3EAI_autoGenerateStatic) then {[] execVM format ["%1\scripts\setup_autoStaticSpawns.sqf",A3EAI_directory];};
 
 //Continue loading required A3EAI script files
 [] execVM format ['%1\scripts\A3EAI_post_init.sqf',A3EAI_directory];
