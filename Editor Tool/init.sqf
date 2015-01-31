@@ -1,11 +1,11 @@
-//A3EAI Editor Tool Version 1.0.0
+//A3EAI Editor Tool Version 1.0.1
 
 [] spawn {
 	waitUntil {!isNull player};
 	
 	player allowDamage false;
 	player setCaptive true;
-	["Teleport",  "onMapSingleClick" , {if (!(surfaceIsWater _pos) && {!_shimft}) then {vehicle player setPos _pos; openMap false;}; true}] call BIS_fnc_addStackedEventHandler; 
+	["Teleport",  "onMapSingleClick" , {if (!(surfaceIsWater _pos) && {!_shift}) then {vehicle player setPos _pos; openMap false;}; true}] call BIS_fnc_addStackedEventHandler; 
 	if !("ItemGPS" in assignedItems player) then {player addItem "ItemGPS"; player assignItem "ItemGPS";};
 	A3EAI_ruler50m = createMarker ["Ruler50m", getPosASL player];
 	A3EAI_ruler50m setMarkerShape "ELLIPSE";
