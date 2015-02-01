@@ -1,0 +1,7 @@
+A3EAI 0.1.5 Alpha
+
+[NEW] Auto-generated static spawns can be disabled by location category by setting spawn chance to 0 or by setting maximum and minimum amount of AI to 0 each.
+[FIXED] Fixed an issue caused by disabling dynamic uniform classnames.
+[CHANGED] Auto-generated static spawns now only use buildings of suitable size as potential spawn positions.
+[CHANGED] Improved player-to-AI line-of-sight checks for static/dynamic/random spawns.
+[CHANGED] AI loot-searching behavior now targets only Epoch animated loot objects.

@@ -26,8 +26,8 @@ _playerPos = [0,0,0];
 		if ((({if (_playerPos in _x) exitWith {1}} count ((nearestLocations [_playerPos,["Strategic"],1500]) - [_triggerLocation])) isEqualTo 0) && {!(surfaceIsWater _playerPos)}) then {
 			_trigger setPosASL _playerPos;
 			_triggerLocation setPosition _playerPos;
-			_baseDist = 175;
-			_extraDist = 125;
+			_baseDist = 200;
+			_extraDist = 100;
 			if (_debugMarkers) then {
 				(str (_trigger)) setMarkerPos _playerPos;
 			};
@@ -39,7 +39,7 @@ _triggerPos = getPosASL _trigger;
 
 while {_checkArea && {_nearAttempts < 4}} do {
 	_spawnPos = [_triggerPos,(_baseDist + (random _extraDist)),(random 360),0] call SHK_pos;
-	_checkArea = (({if ((isPlayer _x) && {[eyePos _x,_spawnPos,_x] call A3EAI_hasLOS}) exitWith {1}} count (_spawnPos nearEntities [["CAManBase","LandVehicle"], 175]) > 0) or {surfaceIsWater _spawnPos});
+	_checkArea = (({if ((isPlayer _x) && {[eyePos _x,_spawnPos,_x] call A3EAI_hasLOS}) exitWith {1}} count (_spawnPos nearEntities [["CAManBase","LandVehicle"], 200]) > 0) or {surfaceIsWater _spawnPos});
 	_nearAttempts = _nearAttempts + 1;
 };
 

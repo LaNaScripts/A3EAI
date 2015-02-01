@@ -57,12 +57,14 @@ _nul = [] spawn {
 if (A3EAI_verifyClassnames) then {
 	A3EAI_tableChecklist = ["A3EAI_pistolList","A3EAI_rifleList","A3EAI_machinegunList","A3EAI_sniperList","A3EAI_headgearTypes",
 				"A3EAI_backpackTypes0","A3EAI_backpackTypes1","A3EAI_backpackTypes2","A3EAI_backpackTypes3","A3EAI_foodLoot","A3EAI_MiscLoot1","A3EAI_MiscLoot2",
-				"A3EAI_useableUniforms","A3EAI_launcherTypes","A3EAI_vestTypes0","A3EAI_vestTypes1","A3EAI_vestTypes2","A3EAI_vestTypes3"];
+				"A3EAI_uniformTypes","A3EAI_launcherTypes","A3EAI_vestTypes0","A3EAI_vestTypes1","A3EAI_vestTypes2","A3EAI_vestTypes3"];
 };
 
 //Build skin classname tables
-_skinlist = [] execVM format ['%1\scripts\A3EAI_buildSkinList.sqf',A3EAI_directory];
-waitUntil {uiSleep 0.05; scriptDone _skinlist};
+if (A3EAI_dynamicUniformList) then {
+	_skinlist = [] execVM format ['%1\scripts\A3EAI_buildSkinList.sqf',A3EAI_directory];
+	waitUntil {uiSleep 0.05; scriptDone _skinlist};
+};
 
 //Build weapon classname tables
 if (A3EAI_dynamicWeaponList) then {

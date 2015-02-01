@@ -56,7 +56,7 @@ _isVehicle = (_unitType isEqualTo "landcustom");
 if (_max_dist < 75) then {_grp setSpeedMode "LIMITED"};
 //_grp setCombatMode "RED";
 
-_wpStatements = if ((_max_dist >= 100) && {_searchLoot}) then {"if ((random 3) > 2) then { group this setCurrentWaypoint [(group this), (floor (random (count (waypoints (group this)))))];} else {_nul = [(group this),100] spawn A3EAI_findLootPile;};"} else {"if ((random 3) > 2) then { group this setCurrentWaypoint [(group this), (floor (random (count (waypoints (group this)))))];};"};
+_wpStatements = if ((_max_dist >= 100) && {_searchLoot}) then {"if ((random 3) > 2) then { group this setCurrentWaypoint [(group this), (floor (random (count (waypoints (group this)))))];} else {_nul = [(group this),75] spawn A3EAI_lootSearching;};"} else {"if ((random 3) > 2) then { group this setCurrentWaypoint [(group this), (floor (random (count (waypoints (group this)))))];};"};
 _wpTimeouts = if (_max_dist >= 100) then {[0, 3, 5]} else {[3, 6, 9]};
 
 _center_x = (_pos) select 0;

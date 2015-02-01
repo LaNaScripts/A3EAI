@@ -23,13 +23,13 @@ _locationArray = [];
 if ((count _positionArray) isEqualTo 0) then {
 	private["_nearbldgs","_ignoredObj"];
 	_nearbldgs = _triggerPos nearObjects ["HouseBase",250];
-	_ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
+	//_ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
 	{
 		scopeName "bldgloop";
 		_pos = ASLtoATL getPosASL _x;
-		if (!((typeOf _x) in _ignoredObj) && {!(surfaceIsWater _pos)}) then {
+		if (!(surfaceIsWater _pos) && {(sizeOf (typeOf _x)) > 15}) then {
 			_locationArray pushBack _pos;
-			if (_locationCount >= 150) then {
+			if (_locationCount > 149) then {
 				breakOut "bldgloop";
 			};
 		};

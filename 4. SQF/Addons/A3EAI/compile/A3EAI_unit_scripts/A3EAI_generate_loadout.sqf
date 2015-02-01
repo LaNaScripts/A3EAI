@@ -13,7 +13,7 @@ if !(_unitLevel in A3EAI_unitLevelsAll) then {
 _unit call A3EAI_purgeUnitGear;	//Clear unwanted gear from unit first.
 
 _weapons = _unitLevel call A3EAI_getWeaponList;
-_uniform = A3EAI_useableUniforms call BIS_fnc_selectRandom2;
+_uniform = A3EAI_uniformTypes call BIS_fnc_selectRandom2;
 _weapon = _weapons call BIS_fnc_selectRandom2;
 _backpack = (missionNamespace getVariable ["A3EAI_backpackTypes"+str(_unitLevel),A3EAI_backpackTypes3]) call BIS_fnc_selectRandom2;
 _vest = (missionNamespace getVariable ["A3EAI_vestTypes"+str(_unitLevel),A3EAI_vestTypes3]) call BIS_fnc_selectRandom2;

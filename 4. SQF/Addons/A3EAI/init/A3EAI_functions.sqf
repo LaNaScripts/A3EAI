@@ -179,12 +179,12 @@ A3EAI_append = compileFinal '
 	(_this select 0)
 ';
 
-A3EAI_findLootPile = compileFinal '
+A3EAI_lootSearching = compileFinal '
 	private ["_lootPiles","_lootPos","_unitGroup","_searchRange"];
 	_unitGroup = _this select 0;
 	_searchRange = _this select 1;
 	
-	_lootPiles = (getPosASL (leader _unitGroup)) nearObjects ["ReammoBox",_searchRange];
+	_lootPiles = (getPosASL (leader _unitGroup)) nearObjects ["Animated_Loot",_searchRange];
 	if ((count _lootPiles) > 0) then {
 		_lootPos = ASLtoATL getPosASL (_lootPiles call BIS_fnc_selectRandom2);
 		if ((behaviour (leader _unitGroup)) != "AWARE") then {_unitGroup setBehaviour "AWARE"};

@@ -43,13 +43,13 @@ _triggerLocation = _trigger getVariable ["triggerLocation",locationNull];
 
 if (
 	(surfaceIsWater _spawnPos) or 
-	{({if ((isPlayer _x) && {[eyePos _x,_spawnPos,_x] call A3EAI_hasLOS}) exitWith {1}} count ((_spawnPos nearEntities [["CAManBase","LandVehicle"],150]) - [_targetPlayer])) > 0} or 
+	{({if ((isPlayer _x) && {[eyePos _x,_spawnPos,_x] call A3EAI_hasLOS}) exitWith {1}} count ((_spawnPos nearEntities [["CAManBase","LandVehicle"],200]) - [_targetPlayer])) > 0} or 
 	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1000]) - [_triggerLocation])) > 0}
 ) exitWith {
 	if (A3EAI_debugLevel > 1) then {
 		diag_log format ["A3EAI Extended Debug: Canceling dynamic spawn for target player %1. Possible reasons: Spawn position has water, player nearby, or is blacklisted.",name _targetPlayer];
 		diag_log format ["DEBUG: Position is water: %1",(surfaceIsWater _spawnPos)];
-		diag_log format ["DEBUG: Player nearby: %1",({isPlayer _x} count ((_spawnPos nearEntities [["CAManBase","LandVehicle"],175]) - [_targetPlayer])) > 0];
+		diag_log format ["DEBUG: Player nearby: %1",({isPlayer _x} count ((_spawnPos nearEntities [["CAManBase","LandVehicle"],200]) - [_targetPlayer])) > 0];
 		diag_log format ["DEBUG: Location is blacklisted: %1",({_spawnPos in _x} count ((nearestLocations [_spawnPos,["Strategic"],1000]) - [_triggerLocation])) > 0];
 	};
 	_nul = _trigger call A3EAI_cancelDynamicSpawn;

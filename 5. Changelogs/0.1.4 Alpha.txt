@@ -1,4 +1,4 @@
-0.1.4 Changelog
+A3EAI 0.1.4 Alpha
 [FIXED] A3EAI Editor Tool updated to version 1.0.2. Fixes issues with custom vehicle AI patrols.
 [FIXED] Test fix for AI air vehicle crew parachuting.
 [FIXED] Custom AI vehicle patrol spawning.

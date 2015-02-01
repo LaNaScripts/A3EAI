@@ -15,7 +15,7 @@ while {_continue && {(_attempts < _maxAttempts)}} do {
 	if (
 		((count _spawnPosSelected) > 1) && 
 		{_spawnPosSelected call A3EAI_posNotInBuilding} && 
-		{({if ((isPlayer _x) && {[eyePos _x,_spawnPosSelected,_x] call A3EAI_hasLOS}) exitWith {1}} count (_spawnPosSelected nearEntities [["CAManBase","LandVehicle"],125])) isEqualTo 0}
+		{({if ((isPlayer _x) && {[eyePos _x,_spawnPosSelected,_x] call A3EAI_hasLOS}) exitWith {1}} count (_spawnPosSelected nearEntities [["CAManBase","LandVehicle"],200])) isEqualTo 0}
 	) then {
 		_spawnPos = _spawnPosSelected;
 		_continue = false;

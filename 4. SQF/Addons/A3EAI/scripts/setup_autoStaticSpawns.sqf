@@ -6,7 +6,7 @@ if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: A3EAI is generati
 
 _spawnsCreated = 0;
 _startTime = diag_tickTime;
-_ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
+//_ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
 
 {
 	private ["_placeName","_placePos","_placeType"];
@@ -23,22 +23,16 @@ _ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
 			{
 				scopeName "bldgloop";
 				_pos = ASLtoATL getPosASL _x;
-				if (!((typeOf _x) in _ignoredObj) && {!(surfaceIsWater _pos)}) then {
-					//_spawnPositions set [(count _spawnPositions),_pos];
+				if (!(surfaceIsWater _pos) && {(sizeOf (typeOf _x)) > 15}) then {
 					_spawnPositions pushBack _pos;
 					_spawnPoints = _spawnPoints + 1;
 				};
-				if (_spawnPoints >= 150) then {
+				if (_spawnPoints > 149) then {
 					breakOut "bldgloop";
 				};
-			} forEach _nearbldgs;
-			if ((count _spawnPositions) > 20) then {
-				_trigger = createTrigger ["EmptyDetector", _placePos];
-				_trigger setTriggerArea [600, 600, 0, false];
-				_trigger setTriggerActivation ["ANY", "PRESENT", true];
-				_trigger setTriggerTimeout [5, 5, 5, true];
-				_trigger setTriggerText _placeName;
-				_aiCount = [0,1];
+			} count _nearbldgs;
+			if ((count _spawnPositions) > 15) then {
+				_aiCount = [1,0];
 				_unitLevel = 0;
 				_patrolRad = 100;
 				call {
@@ -63,15 +57,22 @@ _ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
 						_patrolRad = 150;
 					};
 				};
-				_statements = format ["0 = [%1,%2,%3,thisTrigger,[],%4] call A3EAI_createInfantryQueue;",_aiCount select 0,_aiCount select 1,_patrolRad,_unitLevel];
-				_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;", _statements, "0 = [thisTrigger] spawn A3EAI_despawn_static;"];
-				_trigger setVariable ["respawnLimit",(missionNamespace getVariable ["A3EAI_respawnLimit"+str(_unitLevel),5])];
-				0 = [0,_trigger,[],_patrolRad,_unitLevel,_spawnPositions,_aiCount] call A3EAI_initializeTrigger;
-				_spawnsCreated = _spawnsCreated + 1;
+				if (((missionNamespace getVariable ["A3EAI_spawnChance"+str(_unitLevel),0]) > 0) && {!(_aiCount isEqualTo [0,0])}) then {
+					_trigger = createTrigger ["EmptyDetector", _placePos];
+					_trigger setTriggerArea [600, 600, 0, false];
+					_trigger setTriggerActivation ["ANY", "PRESENT", true];
+					_trigger setTriggerTimeout [5, 5, 5, true];
+					_trigger setTriggerText _placeName;
+					_statements = format ["0 = [%1,%2,%3,thisTrigger,[],%4] call A3EAI_createInfantryQueue;",_aiCount select 0,_aiCount select 1,_patrolRad,_unitLevel];
+					_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;", _statements, "0 = [thisTrigger] spawn A3EAI_despawn_static;"];
+					_trigger setVariable ["respawnLimit",(missionNamespace getVariable ["A3EAI_respawnLimit"+str(_unitLevel),5])];
+					0 = [0,_trigger,[],_patrolRad,_unitLevel,_spawnPositions,_aiCount] call A3EAI_initializeTrigger;
+					_spawnsCreated = _spawnsCreated + 1;
+				};
 			};
 		};
 	};
-	uiSleep 0.1;
+	uiSleep 0.25;
 } forEach A3EAI_locations;
 
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: %1 has finished generating %2 static spawns in %3 seconds.",__FILE__,_spawnsCreated,(diag_tickTime - _startTime)];};
