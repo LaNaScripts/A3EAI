@@ -1,7 +1,7 @@
-//A3EAI Editor Tool Version 1.0.1
+//A3EAI Editor Tool Version 1.0.2
 
 [] spawn {
-	waitUntil {!isNull player};
+	waitUntil {player == player};
 	
 	player allowDamage false;
 	player setCaptive true;
@@ -98,7 +98,7 @@
 		_statement = "";
 			if !(_spawnName in A3EAI_spawnsIndex) then {
 			
-			playerMarker setMarkerPos _spawnPos;
+			//playerMarker setMarkerPos _spawnPos;
 		
 			call {
 				if (currentEditorMode == "Infantry") exitWith {
@@ -107,10 +107,10 @@
 					_unitLevel = if ((count _this) > 3) then {if ((typeName (_this select 3)) == "SCALAR") then {_this select 3} else {1}} else {1};
 					_respawn = if ((count _this) > 4) then {if ((typeName (_this select 4)) == "BOOL") then {_this select 4} else {true}} else {true};
 					_respawnTime = if ((count _this) > 5) then {if ((typeName (_this select 5)) == "SCALAR") then {_this select 5} else {0}} else {0};
-
-					playerMarker setMarkerSize [_patrolRadius,_patrolRadius];
 					
-					_statement = format ["[%1,%2,%3,%4,%5,%6,%7] call A3EAI_createCustomSpawn;",_spawnName,_spawnPos,_patrolRadius,_totalAI,_unitLevel,_respawn,_respawnTime];
+					if (_patrolRadius > 300) then {_patrolRadius = 300;};
+					
+					_statement = format ["[%1,%2,%3,%4,%5,%6,%7] call A3EAI_createCustomInfantryQueue;",_spawnName,_spawnPos,_patrolRadius,_totalAI,_unitLevel,_respawn,_respawnTime];
 				};
 				if (currentEditorMode == "Vehicles") exitWith {
 					_vehicleType = str(_this select 1);
@@ -120,16 +120,16 @@
 					_respawn = if ((count _this) > 5) then {if ((typeName (_this select 5)) == "BOOL") then {_this select 4} else {true}} else {true};
 					_respawnTime = if ((count _this) > 6) then {if ((typeName (_this select 6)) == "SCALAR") then {_this select 5} else {0}} else {0};
 					
-					playerMarker setMarkerSize [_patrolRadius,_patrolRadius];
+					//playerMarker setMarkerSize [_patrolRadius,_patrolRadius];
 					
-					_statement = format ["[%1,%2,%3,%4,%5,%6] call A3EAI_createCustomVehicleSpawn;",_spawnName,_spawnPos,_vehicleType,_patrolRadius,_maxUnits,_unitLevel,_respawn,_respawnTime];
+					_statement = format ["[%1,%2,%3,%4,%5,%6] call A3EAI_createCustomVehicleQueue;",_spawnName,_spawnPos,_vehicleType,_patrolRadius,_maxUnits,_unitLevel,_respawn,_respawnTime];
 				};
 				if (currentEditorMode == "Blacklists") exitWith {
 					_areaRadius = _this select 1;
 
-					playerMarker setMarkerSize [_areaRadius,_areaRadius];
+					if (_areaRadius > 1499) then {_areaRadius = 1499;};
 					
-					_statement = format ["[%1,%2,%3] call A3EAI_createBlacklistArea;",_spawnName,_spawnPos,_areaRadius];
+					_statement = format ["[%1,%2,%3] call A3EAI_createBlacklistAreaQueue;",_spawnName,_spawnPos,_areaRadius];
 				};
 			};
 			A3EAI_spawnsIndex pushBack _spawnName;
@@ -140,7 +140,7 @@
 			
 				Generated custom spawn with name %1
 				<br/>
-				<br/>To add your custom spawns to A3EAI, paste clipboard contents to A3EAI\init\world_spawn_configs\custom_spawn_defs.sqf
+				<br/>To add your custom spawns to A3EAI, paste clipboard contents to @EpochHive\custom_spawn_defs.sqf
 				
 			",_spawnName];
 			systemChat format ["Total custom spawns generated and saved: %1.",(count A3EAI_spawnsIndex)];

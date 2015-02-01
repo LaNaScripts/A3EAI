@@ -37,6 +37,7 @@ if ((_ammo != "")&&{!isNil "_durability"}) then {
 			if ((_partdamage >= 0.9) && {_unit getVariable ["tailRotorFunctional",true]}) then {
 				_unit setHitPointDamage ["tail_rotor_hit",1];	//Knock out helicopter tail rotor when sufficiently damaged
 				_unit setVariable ["tailRotorFunctional",false];
+				if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Air vehicle %1 (%2) tail rotor disabled at %3.",(typeOf _unit),(group _unit),(mapGridPosition _unit)];};
 			};
 		};
 		if (_hit isEqualTo "fuel_hit") exitWith {_damage = 0};

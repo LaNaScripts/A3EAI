@@ -134,6 +134,6 @@ while {true} do {
 		if (A3EAI_debugLevel > 1) then {diag_log "A3EAI Extended Debug: No players online. Dynamic spawn manager is entering waiting state.";};
 	};
 
-	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Dynamic spawn manager is sleeping for %1 seconds.",SLEEP_DELAY];};
+	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Dynamic spawn manager is sleeping for %1 seconds.",SLEEP_DELAY];};
 	uiSleep SLEEP_DELAY;
 };

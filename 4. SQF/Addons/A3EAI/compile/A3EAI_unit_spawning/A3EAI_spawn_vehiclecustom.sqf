@@ -1,40 +1,34 @@
-private ["_marker","_vehicleType","_unitLevel","_unitGroup","_driver","_vehicle","_gunnerSpots","_markerPos","_markerSize","_isAirVehicle","_unitType","_vehSpawnPos","_isArmed","_maxUnits","_maxCargoUnits","_maxGunnerUnits","_keepLooking"];
+private ["_marker","_vehicleType","_unitLevel","_unitGroup","_driver","_vehicle","_gunnerSpots","_spawnPos","_patrolDist","_isAirVehicle","_unitType","_vehiclePosition","_isArmed","_maxUnits","_maxCargoUnits","_maxGunnerUnits","_keepLooking"];
 
+_spawnName = _this select 0;
+_spawnPos = _this select 1;
+_vehicleType = _this select 2;
+_patrolDist = _this select 3;
+_maxUnits = _this select 4;
+_unitLevel = _this select 5;
 
-
-_marker = _this select 0;
-_vehicleType = _this select 1;
-_maxUnits = _this select 2;
-_unitLevel = _this select 3;
-//_respawnSelect = _this select 4; //Value not used in this script. Holds respawn settings.
-
-//Calculate needed values
-_markerPos = (getMarkerPos _marker);
-if ((markerAlpha _marker) > 0) then {_marker setMarkerAlpha 0};
-_markerSize = ((getMarkerSize _marker) select 0);
 _maxCargoUnits = _maxUnits select 0;
 _maxGunnerUnits = _maxUnits select 1;
-
 _isAirVehicle = (_vehicleType isKindOf "Air");
-_vehSpawnPos = [];
-_roadSearching = 1; //SHK_pos will search for roads, and return random position if none found.
-_waterPosAllowed = 0; //do not allow water position for land vehicles.
+_vehiclePosition = [];
+_roadSearching = 1; 	//SHK_pos will search for roads, and return random position if none found.
+_waterPosAllowed = 0; 	//do not allow water position for land vehicles.
 _spawnMode = "NONE";
 
 if (_isAirVehicle) then {
-	_roadSearching = 0;	//No need to search for road positions for air vehicles
-	_waterPosAllowed = 1; //Allow water position for air vehicles
-	_spawnMode = "FLY"; //set flying mode for air vehicles
-	_vehSpawnPos set [2,180]; //spawn air vehicles in air
-	_markerPos set [2,150]; //set marker height in air
-	if (_maxCargoUnits != 0) then {_maxCargoUnits = 0}; //disable cargo units for air vehicles
+	_roadSearching = 0;				//No need to search for road positions for air vehicles
+	_waterPosAllowed = 1; 			//Allow water position for air vehicles
+	_spawnMode = "FLY"; 			//set flying mode for air vehicles
+	_vehiclePosition set [2,180]; 	//spawn air vehicles in air
+	_spawnPos set [2,150]; 			//set marker height in air
+	if !(_maxCargoUnits isEqualTo 0) then {_maxCargoUnits = 0}; //disable cargo units for air vehicles
 };
 
 _keepLooking = true;
 _waitTime = 10;
 while {_keepLooking} do {
-	_vehSpawnPos = [_markerPos,random _markerSize,random(360),_waterPosAllowed,[_roadSearching,200]] call SHK_pos;
-	if (({if (isPlayer _x) exitWith {1}} count (_vehSpawnPos nearEntities [["CAManBase","AllVehicles"],300])) isEqualTo 0) then {
+	_vehiclePosition = [_spawnPos,random _patrolDist,random(360),_waterPosAllowed,[_roadSearching,200]] call SHK_pos;
+	if (({if (isPlayer _x) exitWith {1}} count (_vehiclePosition nearEntities [["CAManBase","AllVehicles"],300])) isEqualTo 0) then {
 		_keepLooking = false; //safe area found, continue to spawn the vehicle and crew
 	} else {
 		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Waiting %1 seconds for area at %2 to have no players nearby to spawn custom AI vehicle %3.",_waitTime,_marker,_vehicleType]};
@@ -46,8 +40,8 @@ while {_keepLooking} do {
 _unitGroup = [] call A3EAI_createGroup;
 _driver = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
 
-_vehicle = createVehicle [_vehicleType, _vehSpawnPos, [], 0, _spawnMode];
-_vehicle setPos _vehSpawnPos;
+_vehicle = createVehicle [_vehicleType, _vehiclePosition, [], 0, _spawnMode];
+_vehicle setPos _vehiclePosition;
 _driver moveInDriver _vehicle;
 
 _nul = _vehicle call A3EAI_protectObject;
@@ -64,9 +58,9 @@ _isArmed = ((({!(_x in ["CarHorn","BikeHorn","TruckHorn","TruckHorn2","SportCarH
 
 //Determine vehicle type and add needed eventhandlers
 if (_isAirVehicle) then {
-	_vehicle setVariable ["durability",[0,0,0]];	//[structural, engine, tail rotor]
+	_vehicle setVariable ["durability",[0,0,0]];											//[structural, engine, tail rotor]
 	_vehicle addEventHandler ["Killed",{_this call A3EAI_heliDestroyed;}];					//Begin despawn process when heli is destroyed.
-	_vehicle addEventHandler ["GetOut",{_this call A3EAI_heliLanded;}];	//Converts AI crew to ground AI units.
+	_vehicle addEventHandler ["GetOut",{_this call A3EAI_heliLanded;}];						//Converts AI crew to ground AI units.
 	_vehicle addEventHandler ["HandleDamage",{_this call A3EAI_handleDamageHeli}];
 } else {
 	_vehicle addEventHandler ["Killed",{_this call A3EAI_vehDestroyed;}];
@@ -120,11 +114,11 @@ _unitGroup setVariable ["unitLevel",_unitLevel];
 _unitGroup setVariable ["assignedVehicle",_vehicle];
 _unitGroup setVariable ["isArmed",_isArmed];
 _unitGroup setVariable ["spawnParams",_this];
-[_unitGroup,0] setWaypointPosition [_markerPos,0];		//Move group's initial waypoint position away from [0,0,0] (initial spawn position).
+[_unitGroup,0] setWaypointPosition [_spawnPos,0];		//Move group's initial waypoint position away from [0,0,0] (initial spawn position).
 (units _unitGroup) allowGetIn true;
 
 0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;
-0 = [_unitGroup,_markerPos,_markerSize,false] spawn A3EAI_BIN_taskPatrol;
+0 = [_unitGroup,_spawnPos,_patrolDist,false] spawn A3EAI_BIN_taskPatrol;
 
 if (_isAirVehicle) then {
 	_awareness = [_vehicle,_unitGroup] spawn A3EAI_customHeliDetect;
@@ -144,6 +138,6 @@ if (_isAirVehicle) then {
 	};
 };
 
-if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created custom vehicle spawn at %1 with vehicle type %2 with %3 crew units.",_marker,_vehicleType,(count (units _unitGroup))]};
+if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created custom vehicle spawn at %1 with vehicle type %2 with %3 crew units.",_spawnName,_vehicleType,(count (units _unitGroup))]};
 
 true

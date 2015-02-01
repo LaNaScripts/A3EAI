@@ -37,7 +37,7 @@ if ((_totalAI isEqualTo 0) or {((count _spawnPos) isEqualTo 0)}) exitWith {
 
 //Respawn the group
 _aiGroup = [_totalAI,_unitGroup,_spawnPos,_trigger,_unitLevelEffective] call A3EAI_spawnGroup;
-if (isNull _unitGroup) then {diag_log format ["A3EAI Error :: Respawned group at %1 was null group. New group reassigned: %2.",triggerText _trigger,_aiGroup]; _unitGroup = _aiGroup};
+if (isNull _unitGroup) then {diag_log format ["A3EAI Error: Respawned group at %1 was null group. New group reassigned: %2.",triggerText _trigger,_aiGroup]; _unitGroup = _aiGroup};
 if (isNil {_unitGroup getVariable "unitType"}) then {_unitGroup setVariable ["unitType",_trigger getVariable ["spawnType","unknown"]]};
 if (_unitLevel != _unitLevelEffective) then {_trigger setVariable ["unitLevelEffective",_unitLevel]}; //Reset unitLevel after respawning promoted group
 if (_patrolDist > 1) then {

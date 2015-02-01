@@ -12,16 +12,16 @@ private ["_startTime","_directoryAsArray","_worldname","_allUnits"];
 _directoryAsArray = toArray __FILE__;
 _directoryAsArray resize ((count _directoryAsArray) - 26);
 A3EAI_directory = toString _directoryAsArray;
-if (isNil "_this") then {_this = []};
-if ((count _this) > 0) then {
-	//diag_log "DEBUG :: Startup parameters found!";
-	if ("readoverridefile" in _this) then {A3EAI_overrideEnabled = true} else {A3EAI_overrideEnabled = nil};
-	if ("enabledebugmarkers" in _this) then {A3EAI_debugMarkersEnabled = true} else {A3EAI_debugMarkersEnabled = nil};
-	if ("enableHC" in _this) then {A3EAI_enableHC = true} else {A3EAI_enableHC = nil};
+
+if !(isNil "A3EAI_devOptions") then {
+	if ("readoverridefile" in A3EAI_devOptions) then {A3EAI_overrideEnabled = true} else {A3EAI_overrideEnabled = nil};
+	if ("enabledebugmarkers" in A3EAI_devOptions) then {A3EAI_debugMarkersEnabled = true} else {A3EAI_debugMarkersEnabled = nil};
+	if ("enableHC" in A3EAI_devOptions) then {A3EAI_enableHC = true} else {A3EAI_enableHC = nil};
+	A3EAI_devOptions = nil;
 } else {
-	//diag_log "DEBUG :: Startup parameters not found!";
 	A3EAI_overrideEnabled = nil;
 	A3EAI_debugMarkersEnabled = nil;
+	A3EAI_enableHC = nil;
 };
 
 //Report A3EAI version to RPT log
@@ -29,6 +29,9 @@ diag_log format ["[A3EAI] Initializing A3EAI version %1 using base path %2.",[co
 
 //Load A3EAI main configuration file
 call compile preprocessFileLineNumbers "@EpochHive\A3EAI_config.sqf";
+
+if ((isNil "A3EAI_verifySettings") or {(typeName A3EAI_verifySettings) != "BOOL"}) then {A3EAI_verifySettings = true}; //Yo dawg, heard you like verifying, so...
+if (A3EAI_verifySettings) then {call compile preprocessFileLineNumbers format ["%1\scripts\verifySettings.sqf",A3EAI_directory];};
 
 //Load custom A3EAI settings file.
 if ((!isNil "A3EAI_overrideEnabled") && {A3EAI_overrideEnabled}) then {call compile preprocessFileLineNumbers "@EpochHive\A3EAI_settings_override.sqf"};

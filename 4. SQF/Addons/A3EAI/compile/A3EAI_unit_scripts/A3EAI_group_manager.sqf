@@ -79,7 +79,15 @@ _lootGenerate = _unitGroup spawn {
 	};
 	//diag_log format ["DEBUG :: Added %1 items to group %2 loot pool in %3 seconds.",(count _lootPool),_this,diag_tickTime - _startTime];
 };
-	
+//Air units only: Replace backpack with parachute
+if (_unitType in ["air","aircustom"]) then {
+	{
+		removeBackpack _x;
+		_x addBackpack "B_Parachute";
+	} forEach (units _unitGroup);
+	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Backpack replaced with B_Parachute for %1 group %2.",_unitType,_unitGroup]};
+};
+
 //Set up individual group units
 {
 	_loadout = _x getVariable "loadout";
@@ -184,7 +192,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 				if (!alive _this) exitWith {};
 				_unit = _this;
 				_loadout = _unit getVariable ["loadout",[[],[]]];
-				if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Unpacked unit manager for unit %1. Loadout found: %2.",_unit,_loadout];};
+				if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended  Debug: Unpacked unit manager for unit %1. Loadout found: %2.",_unit,_loadout];};
 				if (!isNil "_loadout") then {
 					while {(alive _unit) && {(vehicle _unit) isEqualTo _unit}} do {
 						_currentMagazines = (magazines _unit);
@@ -203,7 +211,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 				};
 				if (alive _unit) then {
 					_unit setVariable ["canCheckUnit",true];
-					if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Repacking unit manager for unit %1.",_unit];};
+					if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Repacking unit manager for unit %1.",_unit];};
 				};
 			};
 		};

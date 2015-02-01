@@ -6,4 +6,3 @@
 		A3EAI_loadCustomFile = true;
 
 //----------------------------Add your custom spawn and dynamic area blacklist definitions below this line ----------------------------*/
-

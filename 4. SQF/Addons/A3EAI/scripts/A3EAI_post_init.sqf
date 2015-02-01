@@ -36,12 +36,6 @@ A3EAI_weaponTypeIndices2 = [];
 A3EAI_weaponTypeIndices3 = [];
 A3EAI_failedDynamicSpawns = [];
 
-if ((isNil "A3EAI_verifySettings") or {(typeName A3EAI_verifySettings) != "BOOL"}) then {A3EAI_verifySettings = true}; //Yo dawg, heard you like verifying, so...
-if (A3EAI_verifySettings) then {
-	_verifySettings = [] execVM format ["%1\scripts\verifySettings.sqf",A3EAI_directory];
-	waitUntil {uiSleep 0.05; scriptDone _verifySettings};
-};
-
 //Create default trigger object if AI is spawned without trigger object specified (ie: for custom vehicle AI groups)
 _nul = [] spawn {
 	A3EAI_defaultTrigger = createTrigger ["EmptyDetector",[configFile >> "CfgWorlds" >> worldName,"centerPosition",[0,0,0]] call BIS_fnc_returnConfigEntry];
