@@ -1,0 +1,14 @@
+A3EAI 0.2.0 Alpha
+
+Files changed:
+A3EAI.pbo
+A3EAI_config.sqf
+
+[NEW] Custom spawns are now queued similar to static and random spawns to even out server load during spawning.
+[FIXED] Fixed issue related internal reference marker for unrecognized maps.
+[CHANGED] Added LOS/distance checks to custom spawns/respawns. If LOS/distance checks fail due to player presence, spawn is sent to respawn queue with halved respawn timings.
+[CHANGED] Re-added distance checks in addition to LOS checks to prevent cases of AI spawning too close to players.
+[CHANGED] Modified LOS checks to account for z-axis of destination position.
+[CHANGED] All modular building items now act as a small area blacklist against dynamic and random spawns.
+[CHANGED] Improved checking of weapon classnames.
+[CHANGED] Adjusted default Krypto loot amounts.

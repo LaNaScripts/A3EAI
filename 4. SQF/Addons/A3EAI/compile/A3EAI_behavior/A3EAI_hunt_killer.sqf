@@ -136,7 +136,7 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 					private ["_nearbyUnits","_radioSpeech","_radioText"];
 					_radioText = if (alive _targetPlayer) then {"%1 (Bandit Leader): Lost contact with target. Breaking off pursuit."} else {"%1 (Bandit Leader): Target has been eliminated."};
 					_radioSpeech = format [_radioText,(name (leader _unitGroup))];
-					_nearbyUnits = (getPosASL _targetPlayer) nearEntities [["LandVehicle","CAManBase"],TRANSMIT_RANGE];
+					_nearbyUnits = (getPosASL _targetPlayer) nearEntities [["Car","Epoch_Male_F","Epoch_Female_F"],TRANSMIT_RANGE];
 					{
 						if ((isPlayer _x) && {({if (_radioType in (assignedItems _x)) exitWith {1}} count (crew (vehicle _x))) > 0}) then {
 							[_x,_radioSpeech] call A3EAI_radioSend;

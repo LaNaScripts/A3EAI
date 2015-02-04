@@ -76,7 +76,7 @@ while {true} do {
 						//{({(_playerPos distance _x) < 1200} count A3EAI_dynTriggerArray) > 0} &&		
 						{(!(surfaceIsWater _playerPos))} && 											//Player must not be on water position
 						{((_playerPos distance getMarkerpos "respawn_west") > 2000)} &&					//Player must not be in debug area
-						{((_playerPos nearObjects ["PlotPole_EPOCH",125]) isEqualTo [])}					//Player must not be near Epoch buildables
+						{((_playerPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}					//Player must not be near Epoch buildables
 					) then {
 						_lastSpawned_DB set [_index,diag_tickTime];
 						_trigger = createTrigger ["EmptyDetector",_playerPos];

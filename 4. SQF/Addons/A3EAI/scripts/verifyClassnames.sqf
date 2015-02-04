@@ -29,7 +29,6 @@ while {(typeName (missionNamespace getVariable ("A3EAI_Rifles"+str(_index)))) is
 						_array set [_forEachIndex,""];
 						if (!_errorFound) then {_errorFound = true};
 					} else {
-						//_verified set [count _verified,_x];
 						_verified pushBack _x;
 					};
 				};
@@ -39,7 +38,6 @@ while {(typeName (missionNamespace getVariable ("A3EAI_Rifles"+str(_index)))) is
 						_array set [_forEachIndex,""];
 						if (!_errorFound) then {_errorFound = true};
 					} else {
-						//_verified set [count _verified,_x];
 						_verified pushBack _x;
 					};
 				};
@@ -49,7 +47,6 @@ while {(typeName (missionNamespace getVariable ("A3EAI_Rifles"+str(_index)))) is
 						_array set [_forEachIndex,""];
 						if (!_errorFound) then {_errorFound = true};
 					} else {
-						//_verified set [count _verified,_x];
 						_verified pushBack _x;
 					};
 				};
@@ -74,15 +71,47 @@ while {(typeName (missionNamespace getVariable ("A3EAI_Rifles"+str(_index)))) is
 		A3EAI_heliList set [_forEachIndex,""];
 	};
 } forEach A3EAI_heliList;
-A3EAI_heliList = A3EAI_heliList - [""];
+if ("" in A3EAI_heliList) then {A3EAI_heliList = A3EAI_heliList - [""];};
 
 {
-	if !((_x select 0) isKindOf "LandVehicle") then {
+	if !((_x select 0) isKindOf "Car") then {
 		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_vehList array: %1.",(_x select 0)];
 		A3EAI_vehList set [_forEachIndex,""];
 	};
 } forEach A3EAI_vehList;
-A3EAI_vehList = A3EAI_vehList - [""];
+if ("" in A3EAI_vehList) then {A3EAI_vehList = A3EAI_vehList - [""];};
+
+{
+	if !(([configFile >> "CfgWeapons" >> _x,"type",-1] call BIS_fnc_returnConfigEntry) isEqualTo 2) then {
+		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_pistolList array: %1.",_x];
+		A3EAI_pistolList set [_forEachIndex,""];
+	};
+} forEach A3EAI_pistolList;
+if ("" in A3EAI_pistolList) then {A3EAI_pistolList = A3EAI_pistolList - [""];};
+
+{
+	if !(([configFile >> "CfgWeapons" >> _x,"type",-1] call BIS_fnc_returnConfigEntry) isEqualTo 1) then {
+		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_rifleList array: %1.",_x];
+		A3EAI_rifleList set [_forEachIndex,""];
+	};
+} forEach A3EAI_rifleList;
+if ("" in A3EAI_rifleList) then {A3EAI_rifleList = A3EAI_rifleList - [""];};
+
+{
+	if !(([configFile >> "CfgWeapons" >> _x,"type",-1] call BIS_fnc_returnConfigEntry) isEqualTo 1) then {
+		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_machinegunList array: %1.",_x];
+		A3EAI_machinegunList set [_forEachIndex,""];
+	};
+} forEach A3EAI_machinegunList;
+if ("" in A3EAI_machinegunList) then {A3EAI_machinegunList = A3EAI_machinegunList - [""];};
+
+{
+	if !(([configFile >> "CfgWeapons" >> _x,"type",-1] call BIS_fnc_returnConfigEntry) isEqualTo 1) then {
+		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_sniperList array: %1.",_x];
+		A3EAI_sniperList set [_forEachIndex,""];
+	};
+} forEach A3EAI_sniperList;
+if ("" in A3EAI_sniperList) then {A3EAI_sniperList = A3EAI_sniperList - [""];};
 
 //Anticipate cases where all elements of an array are invalid
 if (A3EAI_pistolList isEqualTo []) then {A3EAI_pistolList = ["hgun_ACPC2_F", "hgun_ACPC2_F", "hgun_Rook40_F", "hgun_Rook40_F", "hgun_Rook40_F", "hgun_P07_F", "hgun_P07_F", "hgun_Pistol_heavy_01_F", "hgun_Pistol_heavy_02_F", "ruger_pistol_epoch", "ruger_pistol_epoch", "1911_pistol_epoch", "1911_pistol_epoch"]};

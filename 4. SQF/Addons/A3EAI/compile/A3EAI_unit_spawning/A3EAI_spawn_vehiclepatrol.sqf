@@ -22,14 +22,14 @@ call {
 		_vehSpawnPos set [2,150];
 		_spawnMode = "FLY";
 	};
-	if (_vehicleType isKindOf "LandVehicle") exitWith {
+	if (_vehicleType isKindOf "Car") exitWith {
 		_maxGunnerUnits = A3EAI_vehGunnerUnits;
 		_maxCargoUnits = A3EAI_vehCargoUnits;
 		_unitLevel = "landvehicle" call A3EAI_getUnitLevel;
 		while {_keepLooking} do {
 			_vehSpawnPos = [(getMarkerPos "A3EAI_centerMarker"),300 + random((getMarkerSize "A3EAI_centerMarker") select 0),random(360),0,[2,750]] call SHK_pos;
 			if ((count _vehSpawnPos) > 1) then {
-				_playerNear = ({isPlayer _x} count (_vehSpawnPos nearEntities [["CAManBase","AllVehicles"], 300]) > 0);
+				_playerNear = ({isPlayer _x} count (_vehSpawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","AllVehicles"], 300]) > 0);
 				if(!_playerNear) then {
 					_keepLooking = false;	//Found road position, stop searching
 				};

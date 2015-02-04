@@ -28,7 +28,7 @@ _keepLooking = true;
 _waitTime = 10;
 while {_keepLooking} do {
 	_vehiclePosition = [_spawnPos,random _patrolDist,random(360),_waterPosAllowed,[_roadSearching,200]] call SHK_pos;
-	if (({if (isPlayer _x) exitWith {1}} count (_vehiclePosition nearEntities [["CAManBase","AllVehicles"],300])) isEqualTo 0) then {
+	if (({if (isPlayer _x) exitWith {1}} count (_vehiclePosition nearEntities [["Epoch_Male_F","Epoch_Female_F","AllVehicles"],300])) isEqualTo 0) then {
 		_keepLooking = false; //safe area found, continue to spawn the vehicle and crew
 	} else {
 		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Waiting %1 seconds for area at %2 to have no players nearby to spawn custom AI vehicle %3.",_waitTime,_marker,_vehicleType]};

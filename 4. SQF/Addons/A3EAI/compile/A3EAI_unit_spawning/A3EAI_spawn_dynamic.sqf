@@ -39,18 +39,21 @@ _playerPos = ASLtoATL getPosASL _targetPlayer;
 _playerDir = getDir _targetPlayer;
 _spawnDist = (_baseDist + random (_distVariance));
 _spawnPos = [_playerPos,_spawnDist,[(_playerDir-_dirVariance),(_playerDir+_dirVariance)],0] call SHK_pos;
+if ((count _spawnPosSelected) isEqualTo 2) then {_spawnPosSelected set [2,0];};
 _triggerLocation = _trigger getVariable ["triggerLocation",locationNull];
 
 if (
 	(surfaceIsWater _spawnPos) or 
-	{({if ((isPlayer _x) && {[eyePos _x,_spawnPos,_x] call A3EAI_hasLOS}) exitWith {1}} count ((_spawnPos nearEntities [["CAManBase","LandVehicle"],200]) - [_targetPlayer])) > 0} or 
-	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1000]) - [_triggerLocation])) > 0}
+	{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPos select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count ((_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200]) - [_targetPlayer])) > 0} or 
+	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1500]) - [_triggerLocation])) > 0} &&
+	{!((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
 ) exitWith {
 	if (A3EAI_debugLevel > 1) then {
 		diag_log format ["A3EAI Extended Debug: Canceling dynamic spawn for target player %1. Possible reasons: Spawn position has water, player nearby, or is blacklisted.",name _targetPlayer];
 		diag_log format ["DEBUG: Position is water: %1",(surfaceIsWater _spawnPos)];
-		diag_log format ["DEBUG: Player nearby: %1",({isPlayer _x} count ((_spawnPos nearEntities [["CAManBase","LandVehicle"],200]) - [_targetPlayer])) > 0];
+		diag_log format ["DEBUG: Player nearby: %1",({isPlayer _x} count ((_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200]) - [_targetPlayer])) > 0];
 		diag_log format ["DEBUG: Location is blacklisted: %1",({_spawnPos in _x} count ((nearestLocations [_spawnPos,["Strategic"],1000]) - [_triggerLocation])) > 0];
+		diag_log format ["DEBUG: No buildables nearby: %1.",((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])];
 	};
 	_nul = _trigger call A3EAI_cancelDynamicSpawn;
 	

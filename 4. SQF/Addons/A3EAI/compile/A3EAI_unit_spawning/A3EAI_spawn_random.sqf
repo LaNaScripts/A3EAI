@@ -23,7 +23,11 @@ _playerPos = [0,0,0];
 	if (isPlayer _x) exitWith {
 		_playerPos = getPosASL _x;
 		_triggerLocation = _trigger getVariable ["triggerLocation",locationNull];
-		if ((({if (_playerPos in _x) exitWith {1}} count ((nearestLocations [_playerPos,["Strategic"],1500]) - [_triggerLocation])) isEqualTo 0) && {!(surfaceIsWater _playerPos)}) then {
+		if (
+				(({if (_playerPos in _x) exitWith {1}} count ((nearestLocations [_playerPos,["Strategic"],1500]) - [_triggerLocation])) isEqualTo 0) && 
+				{!(surfaceIsWater _playerPos)} &&
+				{((_playerPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
+			) then {
 			_trigger setPosASL _playerPos;
 			_triggerLocation setPosition _playerPos;
 			_baseDist = 200;
@@ -39,7 +43,8 @@ _triggerPos = getPosASL _trigger;
 
 while {_checkArea && {_nearAttempts < 4}} do {
 	_spawnPos = [_triggerPos,(_baseDist + (random _extraDist)),(random 360),0] call SHK_pos;
-	_checkArea = (({if ((isPlayer _x) && {[eyePos _x,_spawnPos,_x] call A3EAI_hasLOS}) exitWith {1}} count (_spawnPos nearEntities [["CAManBase","LandVehicle"], 200]) > 0) or {surfaceIsWater _spawnPos});
+	if ((count _spawnPosSelected) isEqualTo 2) then {_spawnPosSelected set [2,0];};
+	_checkArea = (({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPos select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count (_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"], 200]) > 0) or {surfaceIsWater _spawnPos} or {!((_playerPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])});
 	_nearAttempts = _nearAttempts + 1;
 };
 

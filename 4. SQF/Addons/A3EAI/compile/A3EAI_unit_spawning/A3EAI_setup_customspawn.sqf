@@ -8,7 +8,7 @@ _unitLevel = _this select 4;
 _respawn = _this select 5;
 _respawnTime = _this select 6;
 
-_trigStatements = format ["0 = [%1,0,%2,thisTrigger,%3,%4] call A3EAI_spawnBandits_custom;",_totalAI,_patrolRadius,_unitLevel,_respawnTime];
+_trigStatements = format ["0 = [%1,0,%2,thisTrigger,%3,%4] call A3EAI_createCustomInfantrySpawnQueue;",_totalAI,_patrolRadius,_unitLevel,_respawnTime];
 _trigger = createTrigger ["EmptyDetector", _spawnPos];
 _trigger setTriggerArea [600, 600, 0, false];
 _trigger setTriggerActivation ["ANY", "PRESENT", true];

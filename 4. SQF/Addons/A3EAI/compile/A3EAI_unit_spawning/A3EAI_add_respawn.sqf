@@ -15,7 +15,6 @@ call {
 		_respawnSleep = _trigger getVariable ["respawnTime",(A3EAI_respawnTimeMin + (random A3EAI_respawnTimeVariance))];	//Calculate wait time for respawn. Respawn time may be individually defined for custom spawns.
 		if (_fastMode) then {_respawnSleep = (_respawnSleep/2) max 60};
 		_nextRespawnTime = (diag_tickTime + _respawnSleep);	//Determine time of next respawn
-		//A3EAI_respawnQueue set [(count A3EAI_respawnQueue),[diag_tickTime + _respawnSleep,_mode,_trigger,_unitGroup]];
 		A3EAI_respawnQueue pushBack [diag_tickTime + _respawnSleep,_mode,_trigger,_unitGroup];
 		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Added group %1 to respawn queue. Queue position %2. Wait Time %3 (respawnHandler)",_unitGroup,(count A3EAI_respawnQueue),_respawnSleep];};
 	};

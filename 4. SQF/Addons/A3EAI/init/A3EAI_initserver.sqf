@@ -51,12 +51,8 @@ if ((west getFriend resistance) > 0) then {west setFriend [resistance, 0]};
 
 //Create reference marker to act as boundary for spawning AI air/land vehicles. These values will be later modified on a per-map basis.
 _centerPos = getArray(configFile >> "CfgWorlds" >> worldName >> "centerPosition");
-_markerSize = [7000, 7000];
+_markerSize = 7000;
 _centerMarker = createMarkerLocal ["A3EAI_centerMarker", _centerPos];
-_centerMarker setMarkerShapeLocal "ELLIPSE";
-_centerMarker setMarkerTypeLocal "Empty";
-_centerMarker setMarkerBrushLocal "Solid";
-_centerMarker setMarkerAlphaLocal 0;
 
 _worldname = (toLower worldName);
 {
@@ -88,8 +84,8 @@ _worldname = (toLower worldName);
 	["utes",[3519.8037, 3703.0649],1000],
 	["zargabad",[3917.6201, 3800.0376],2000]
 ];
-_centerMarker setMarkerPos _centerPos;
-_centerMarker setMarkerSize [_markerSize,_markerSize];
+_centerMarker setMarkerPosLocal _centerPos;
+_centerMarker setMarkerSizeLocal [_markerSize,_markerSize];
 
 if (A3EAI_autoGenerateStatic) then {[] execVM format ["%1\scripts\setup_autoStaticSpawns.sqf",A3EAI_directory];};
 

@@ -358,7 +358,7 @@ A3EAI_muzzleChance3 = 0.75;
 A3EAI_kryptoAmount0 = 25; 	//Default for level 0 AI: 25
 A3EAI_kryptoAmount1 = 50; 	//Default for level 1 AI: 50
 A3EAI_kryptoAmount2 = 100; 	//Default for level 2 AI: 100
-A3EAI_kryptoAmount3 = 250; 	//Default for level 3 AI: 250
+A3EAI_kryptoAmount3 = 200; 	//Default for level 3 AI: 200
 
 //Maximum number of food loot items found on AI. (Default: 1)								
 A3EAI_foodLootCount = 1;

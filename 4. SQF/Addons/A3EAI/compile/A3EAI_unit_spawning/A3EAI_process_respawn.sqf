@@ -77,7 +77,7 @@ while {(count A3EAI_respawnQueue) > 0} do {
 							if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Respawning AI air vehicle type patrol %1.",_vehicleTypeNew]};
 						};
 					} else {
-						if (_vehicleTypeOld isKindOf "LandVehicle") then {
+						if (_vehicleTypeOld isKindOf "Car") then {
 							//Land-type vehicle AI patrol respawn
 							if ((count A3EAI_heliTypesUsable) isEqualTo 0) then {
 								_nul = _vehicleTypeOld spawn A3EAI_spawnVehiclePatrol;

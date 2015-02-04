@@ -1,3 +1,4 @@
+if !((typeName _this) isEqualTo "ARRAY") exitWith {diag_log format ["Error: Wrong arguments sent to %1.",__FILE__]};
 if (isNil "A3EAI_customInfantrySpawnQueue") then {
 	A3EAI_customInfantrySpawnQueue = [_this];
 	_infantryQueue = [] spawn {
@@ -6,7 +7,7 @@ if (isNil "A3EAI_customInfantrySpawnQueue") then {
 		while {_continue} do {
 			(A3EAI_customInfantrySpawnQueue select 0) call A3EAI_createCustomSpawn;
 			A3EAI_customInfantrySpawnQueue deleteAt 0;
-			uiSleep 3;
+			uiSleep 1;
 			_continue = !(A3EAI_customInfantrySpawnQueue isEqualTo []);
 		};
 		A3EAI_customInfantrySpawnQueue = nil;

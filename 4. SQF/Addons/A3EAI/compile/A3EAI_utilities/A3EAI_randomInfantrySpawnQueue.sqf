@@ -1,4 +1,5 @@
 private ["_trigger", "_infantryQueue", "_continue","_triggerStatements"];
+if !((typeName _this) isEqualTo "ARRAY") exitWith {diag_log format ["Error: Wrong arguments sent to %1.",__FILE__]};
 
 _trigger = _this select 1;
 //diag_log format ["DEBUG: Started random spawn queue with args %1",_this];

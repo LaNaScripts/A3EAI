@@ -52,14 +52,14 @@ while {true} do {
 			/*
 			if (!isNil "_deathTime") then {
 				diag_log format ["A3EAI Cleanup Debug: Checking unit %1 (%2). diag_tickTime: %3. deathTime: %4.",_x,typeOf _x,diag_tickTime,_deathTime];
-				diag_log format ["A3EAI Cleanup Debug: is CAManBase: %1. Timer complete: %2. No players: %3.",(_x isKindOf "CAManBase"),((diag_tickTime - _deathTime) > A3EAI_cleanupDelay),(({isPlayer _x} count (_x nearEntities [["CAManBase","AllVehicles"],30])) isEqualTo 0)];
+				diag_log format ["A3EAI Cleanup Debug: is CAManBase: %1. Timer complete: %2. No players: %3.",(_x isKindOf "CAManBase"),((diag_tickTime - _deathTime) > A3EAI_cleanupDelay),(({isPlayer _x} count (_x nearEntities [["Epoch_Male_F","Epoch_Female_F","Air","Car"],30])) isEqualTo 0)];
 			};*/
 			if (!isNil "_deathTime") then {
 				if (_x isKindOf "CAManBase") then {
 					//diag_log "A3EAI Cleanup Debug: Unit type is CAManBase";
 					if ((_currentTime - _deathTime) > A3EAI_cleanupDelay) then {
 						//diag_log "A3EAI Cleanup Debug: Timer complete, checking for nearby players";
-						if (({isPlayer _x} count (_x nearEntities [["CAManBase","AllVehicles"],30])) isEqualTo 0) then {
+						if (({isPlayer _x} count (_x nearEntities [["Epoch_Male_F","Epoch_Female_F","Air","Car"],30])) isEqualTo 0) then {
 							//diag_log "A3EAI Cleanup Debug: No nearby players. Deleting unit";
 							_kryptoDevice = _x getVariable ["KryptoDevice",objNull];
 							if (!isNull _kryptoDevice) then {deleteVehicle _kryptoDevice};	//Delete Krypto item if not already removed
@@ -72,7 +72,7 @@ while {true} do {
 				} else {
 					if (_x isKindOf "AllVehicles") then {
 						if ((_currentTime - _deathTime) > VEHICLE_CLEANUP_FREQ) then {
-							if (({isPlayer _x} count (_x nearEntities [["CAManBase","AllVehicles"],60])) isEqualTo 0) then {
+							if (({isPlayer _x} count (_x nearEntities [["Epoch_Male_F","Epoch_Female_F","Air","Car"],60])) isEqualTo 0) then {
 								if (_x in A3EAI_monitoredObjects) then {
 									{
 										if (!(alive _x)) then {

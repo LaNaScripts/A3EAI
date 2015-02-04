@@ -6,7 +6,7 @@ _groupIsEmpty = _this select 2;
 
 _vehicle = _unitGroup getVariable ["assignedVehicle",objNull];
 if (_groupIsEmpty) then {
-	if (_vehicle isKindOf "LandVehicle") then {
+	if (_vehicle isKindOf "Car") then {
 		{_vehicle removeAllEventHandlers _x} count ["HandleDamage","Killed"];
 		[_unitGroup,_vehicle] call A3EAI_respawnAIVehicle;
 		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI vehicle patrol destroyed, adding vehicle %1 to cleanup queue.",(typeOf _vehicle)];};

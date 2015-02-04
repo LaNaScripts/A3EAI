@@ -31,7 +31,7 @@ _radioType = "EpochRadio0";
 if (A3EAI_radioMsgs) then {
 	_leader = (leader _unitGroup);
 	if ((_unitGroup getVariable ["GroupSize",0]) > 1) then {
-		_nearbyUnits = (getPosASL _targetPlayer) nearEntities [["LandVehicle","CAManBase"],TRANSMIT_RANGE];
+		_nearbyUnits = (getPosASL _targetPlayer) nearEntities [["Car","Epoch_Male_F","Epoch_Female_F"],TRANSMIT_RANGE];
 		{
 			if (isPlayer _x) then {
 				if (({if (_radioType in (assignedItems _x)) exitWith {1}} count (crew (vehicle _x))) > 0) then {
@@ -72,7 +72,7 @@ while {
 		if ((A3EAI_radioMsgs) && {0.6 call A3EAI_chance}) then {
 			//Warn player of AI bandit presence if they have a radio.
 			if (((_unitGroup getVariable ["GroupSize",0]) > 1) && {(_leader distance _targetPlayer) < 250}) then {
-				_nearbyUnits = (ASLtoATL getPosASL _targetPlayer) nearEntities [["LandVehicle","CAManBase"],TRANSMIT_RANGE];
+				_nearbyUnits = (ASLtoATL getPosASL _targetPlayer) nearEntities [["Car","Epoch_Male_F","Epoch_Female_F"],TRANSMIT_RANGE];
 				
 				{
 					if ((isPlayer _x) && {({if (_radioType in (assignedItems _x)) exitWith {1}} count (crew (vehicle _x))) > 0}) then {
@@ -121,7 +121,7 @@ uiSleep 5;
 if (A3EAI_radioMsgs) then {
 	_leader = (leader _unitGroup);
 	if (((_unitGroup getVariable ["GroupSize",0]) > 1) && {!(isNull _targetPlayer)}) then {
-		_nearbyUnits = (getPosASL _targetPlayer) nearEntities [["LandVehicle","CAManBase"],TRANSMIT_RANGE];
+		_nearbyUnits = (getPosASL _targetPlayer) nearEntities [["Car","Epoch_Male_F","Epoch_Female_F"],TRANSMIT_RANGE];
 		{
 			if ((isPlayer _x) && {({if (_radioType in (assignedItems _x)) exitWith {1}} count (crew (vehicle _x))) > 0}) then {
 				_radioText = if (alive _targetPlayer) then {"%1 (Bandit Leader): We've lost contact with the target. Let's move out."} else {"%1 (Bandit Leader): The target has been killed."};

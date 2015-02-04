@@ -85,7 +85,7 @@ if (_unitType in ["air","aircustom"]) then {
 		removeBackpack _x;
 		_x addBackpack "B_Parachute";
 	} forEach (units _unitGroup);
-	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Backpack replaced with B_Parachute for %1 group %2.",_unitType,_unitGroup]};
+	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Unit backpacks replaced with B_Parachute for %1 group %2.",_unitType,_unitGroup]};
 };
 
 //Set up individual group units
@@ -192,7 +192,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 				if (!alive _this) exitWith {};
 				_unit = _this;
 				_loadout = _unit getVariable ["loadout",[[],[]]];
-				if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended  Debug: Unpacked unit manager for unit %1. Loadout found: %2.",_unit,_loadout];};
+				if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Unpacked unit manager for unit %1. Loadout found: %2.",_unit,_loadout];};
 				if (!isNil "_loadout") then {
 					while {(alive _unit) && {(vehicle _unit) isEqualTo _unit}} do {
 						_currentMagazines = (magazines _unit);

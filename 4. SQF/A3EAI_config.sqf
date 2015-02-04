@@ -136,16 +136,16 @@ A3EAI_respawnTimeMax = 600;
 A3EAI_despawnWait = 120;										
 
 //Spawn probabilities
-A3EAI_spawnChance0 = 0.40;	//Spawn chance for level 0 locations (villages) (Default: 0.40)
-A3EAI_spawnChance1 = 0.60;	//Spawn chance for level 1 locations (cities and capital cities) (Default: 0.60)
-A3EAI_spawnChance2 = 0.80;	//Spawn chance for level 2 locations (remote areas, ie: factories, military bases) (Default: 0.80)
-A3EAI_spawnChance3 = 0.90;	//Spawn chance for level 3 locations (Default: 0.90)
+A3EAI_spawnChance0 = 0.40;	//Spawn chance for level 0 units - typically spawn in villages (Default: 0.40)
+A3EAI_spawnChance1 = 0.60;	//Spawn chance for level 1 units - typically spawn in cities and capital cities (Default: 0.60)
+A3EAI_spawnChance2 = 0.80;	//Spawn chance for level 2 units - typically spawn in remote areas (ie: factories, military bases) (Default: 0.80)
+A3EAI_spawnChance3 = 0.90;	//Spawn chance for level 3 units (Default: 0.90)
 
 //Respawn limits. Set to -1 for unlimited respawns. (Default: -1 for each).
-A3EAI_respawnLimit0 = -1; 	//Respawn limit for level 0 locations (villages) (Default: -1)
-A3EAI_respawnLimit1 = -1; 	//Respawn limit for level 1 locations (cities and capital cities) (Default: -1)
-A3EAI_respawnLimit2 = -1; 	//Respawn limit for level 2 locations (remote areas, ie: factories, military bases) (Default: -1)
-A3EAI_respawnLimit3 = -1;	//Respawn limit for level 3 locations (Default: -1)
+A3EAI_respawnLimit0 = -1; 	//Respawn limit for level 0 units - AI found in villages (Default: -1)
+A3EAI_respawnLimit1 = -1; 	//Respawn limit for level 1 units - AI found in cities and capital cities (Default: -1)
+A3EAI_respawnLimit2 = -1; 	//Respawn limit for level 2 units - AI found in remote areas (ie: factories, military bases) (Default: -1)
+A3EAI_respawnLimit3 = -1;	//Respawn limit for level 3 units (Default: -1)
 
 
 /*	Dynamic AI Spawning Settings. Probabilities should add up to 1.00	
@@ -358,7 +358,7 @@ A3EAI_muzzleChance3 = 0.75;
 A3EAI_kryptoAmount0 = 25; 	//Default for level 0 AI: 25
 A3EAI_kryptoAmount1 = 50; 	//Default for level 1 AI: 50
 A3EAI_kryptoAmount2 = 100; 	//Default for level 2 AI: 100
-A3EAI_kryptoAmount3 = 250; 	//Default for level 3 AI: 250
+A3EAI_kryptoAmount3 = 200; 	//Default for level 3 AI: 200
 
 //Maximum number of food loot items found on AI. (Default: 1)								
 A3EAI_foodLootCount = 1;
