@@ -1,0 +1,6 @@
+A3EAI 0.2.1 Alpha
+
+Files changed:
+A3EAI.pbo
+
+[FIXED] Fixed an undefined variable.

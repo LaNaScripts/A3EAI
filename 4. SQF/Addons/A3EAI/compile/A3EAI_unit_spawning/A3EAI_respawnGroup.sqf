@@ -1,7 +1,6 @@
 
 private ["_unitGroup","_trigger","_grpArray","_patrolDist","_spawnPositions","_spawnPos","_unit","_pos","_startTime","_maxUnits","_totalAI","_aiGroup","_unitLevel","_unitLevelEffective"];
 
-
 _startTime = diag_tickTime;
 
 _unitGroup = _this select 0;

@@ -39,7 +39,7 @@ _playerPos = ASLtoATL getPosASL _targetPlayer;
 _playerDir = getDir _targetPlayer;
 _spawnDist = (_baseDist + random (_distVariance));
 _spawnPos = [_playerPos,_spawnDist,[(_playerDir-_dirVariance),(_playerDir+_dirVariance)],0] call SHK_pos;
-if ((count _spawnPosSelected) isEqualTo 2) then {_spawnPosSelected set [2,0];};
+if ((count _spawnPos) isEqualTo 2) then {_spawnPos set [2,0];};
 _triggerLocation = _trigger getVariable ["triggerLocation",locationNull];
 
 if (

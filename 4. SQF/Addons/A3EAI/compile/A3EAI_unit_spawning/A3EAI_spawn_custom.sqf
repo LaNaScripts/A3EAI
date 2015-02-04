@@ -1,5 +1,5 @@
-diag_log "TEST MESSAGE";
-private ["_startTime", "_totalAI", "_patrolDist", "_trigger", "_unitLevel", "_grpArray", "_triggerPos", "_maxUnits", "_totalAINew", "_attempts", "_continue", "_spawnPos", "_spawnPosSelected", "_unitGroup", "_triggerStatements"];
+
+private ["_startTime", "_totalAI", "_patrolDist", "_trigger", "_unitLevel", "_grpArray", "_triggerPos", "_maxUnits", "_totalAINew", "_attempts", "_continue", "_spawnPos", "_spawnPosSelected", "_unitGroup", "_triggerStatements","_addDist"];
 
 _startTime = diag_tickTime;
 
