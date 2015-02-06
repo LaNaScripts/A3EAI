@@ -6,6 +6,7 @@ A3EAI.pbo
 [FIXED] Fixed issue with dynamic AI player-hunting and AI killer-hunting scripts becoming permanently stuck in certain situations.
 [FIXED] Fixed issue related to custom spawns not working in certain situations.
 [FIXED] Fixed "spawning too close" issue for random spawns.
+[FIXED] Fixed error related to dynamic AI spawning.
 [CHANGED] If AI killer target has logged out, AI will search last known position for any other possible targets.
 [CHANGED] Unarmed helicopters will no longer be summoned as reinforcements for dynamic AI (for the time being).
 [CHANGED] Failed custom spawns due to player proximity have respawn timings set to 25% of normal value instead of 50%.
