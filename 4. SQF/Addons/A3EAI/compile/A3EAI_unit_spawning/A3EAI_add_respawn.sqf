@@ -13,7 +13,8 @@ call {
 		_unitGroup = _this select 2; //infantry group to respawn
 		_fastMode = if ((count _this) > 3) then {_this select 3} else {false}; //shorter wait time if retrying a spawn
 		_respawnSleep = _trigger getVariable ["respawnTime",(A3EAI_respawnTimeMin + (random A3EAI_respawnTimeVariance))];	//Calculate wait time for respawn. Respawn time may be individually defined for custom spawns.
-		if (_fastMode) then {_respawnSleep = (_respawnSleep/2) max 60};
+		if (_fastMode) then {_respawnSleep = (_respawnSleep/4) max 30};
+		//_respawnSleep = if !(_fastMode) then {_trigger getVariable ["respawnTime",(A3EAI_respawnTimeMin + (random A3EAI_respawnTimeVariance))]} else {30};
 		_nextRespawnTime = (diag_tickTime + _respawnSleep);	//Determine time of next respawn
 		A3EAI_respawnQueue pushBack [diag_tickTime + _respawnSleep,_mode,_trigger,_unitGroup];
 		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Added group %1 to respawn queue. Queue position %2. Wait Time %3 (respawnHandler)",_unitGroup,(count A3EAI_respawnQueue),_respawnSleep];};
@@ -35,7 +36,7 @@ call {
 			_respawnSleep = (A3EAI_respawnTMinA + random A3EAI_respawnTimeVarAir);
 		} else {
 			_respawnSleep = (A3EAI_respawnTMinL + random A3EAI_respawnTimeVarLand);
-			if (_fastMode) then {_respawnSleep = (_respawnSleep/2) max 180};
+			if (_fastMode) then {_respawnSleep = (_respawnSleep/4) max 180};
 		};
 		_nextRespawnTime = (diag_tickTime + _respawnSleep);	//Determine time of next respawn
 		//A3EAI_respawnQueue set [(count A3EAI_respawnQueue),[diag_tickTime + _respawnSleep,_mode,_vehicleType]];

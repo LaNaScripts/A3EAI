@@ -66,20 +66,9 @@ for "_j" from 1 to (_numGroups - _groupsActive) do {
 	_grpArray pushBack _unitGroup;
 };
 
-if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Trigger %1 group array updated to: %2.",triggerText _trigger,_trigger getVariable "GroupArray"]};
-//_trigger setVariable ["isCleaning",false];
-//_triggerStatements = (triggerStatements _trigger);
-//_triggerStatements set [1,""];
-//_trigger setTriggerStatements _triggerStatements;
-//[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
-
-if (A3EAI_debugLevel > 0) then {diag_log format["A3EAI Debug: Spawned %1 new AI groups (%2 units total) in %3 seconds at %4.",_numGroups,_totalSpawned,(diag_tickTime - _startTime),(triggerText _trigger)];};
-
-/*
-if (_debugMarkers) then {
-	_nul = _trigger call A3EAI_addMapMarker;
+if (A3EAI_debugLevel > 0) then {
+	diag_log format["A3EAI Debug: Spawned %1 new AI groups (%2 units total) in %3 seconds at %4.",_numGroups,_totalSpawned,(diag_tickTime - _startTime),(triggerText _trigger)];
+	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Trigger %1 group array updated to: %2.",triggerText _trigger,_trigger getVariable "GroupArray"]};
 };
-*/
-//diag_log format ["DEBUG :: Activated trigger %1 has statements %2.",triggerText _trigger,triggerStatements _trigger];
 
 true

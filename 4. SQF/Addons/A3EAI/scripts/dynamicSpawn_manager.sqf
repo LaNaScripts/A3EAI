@@ -73,9 +73,8 @@ while {true} do {
 					if (
 						!((vehicle _player) isKindOf "Air") &&												//Player must not be in air vehicle
 						{({if (_playerPos in _x) exitWith {1}} count (nearestLocations [_playerPos,["Strategic"],1500])) isEqualTo 0} && //Player must not be in blacklisted areas
-						//{({(_playerPos distance _x) < 1200} count A3EAI_dynTriggerArray) > 0} &&		
 						{(!(surfaceIsWater _playerPos))} && 											//Player must not be on water position
-						{((_playerPos distance getMarkerpos "respawn_west") > 2000)} &&					//Player must not be in debug area
+						{((_playerPos distance getMarkerPos "respawn_west") > 2000)} &&					//Player must not be in debug area
 						{((_playerPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}					//Player must not be near Epoch buildables
 					) then {
 						_lastSpawned_DB set [_index,diag_tickTime];
@@ -116,7 +115,7 @@ while {true} do {
 							diag_log format ["DEBUG: Player not in blacklisted area: %1",(({_playerPos in _x} count (nearestLocations [_playerPos,["Strategic"],1000])) isEqualTo 0)];
 							diag_log format ["DEBUG: Player not in water: %1",!(surfaceIsWater _playerPos)];
 							diag_log format ["DEBUG: Player not in debug area: %1",((_playerPos distance getMarkerpos "respawn_west") > 2000)];
-							diag_log format ["DEBUG: Player not near plot pole/jammer: %1",((_playerPos nearObjects ["PlotPole_EPOCH",125]) isEqualTo [])];
+							diag_log format ["DEBUG: Player not near modular buildables: %1",((_playerPos nearObjects ["PlotPole_EPOCH",125]) isEqualTo [])];
 						};
 					};
 				} else {

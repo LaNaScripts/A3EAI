@@ -31,7 +31,7 @@ if (_unitsAlive > 0) then {
 	_trigger setTriggerArea [600, 600, 0, false];
 	_trigger setTriggerActivation ["ANY", "PRESENT", true];
 	_trigger setTriggerTimeout [5, 5, 5, true];
-	_trigger setTriggerText (format ["Abandoned AI Vehicle %1",mapGridPosition _vehicle]);
+	_trigger setTriggerText (format ["Abandoned AI %1 at %2",typeOf _vehicle,mapGridPosition _vehicle]);
 	_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;","","0 = [thisTrigger] spawn A3EAI_despawn_static;"];
 
 	//Set required trigger variables and begin despawn

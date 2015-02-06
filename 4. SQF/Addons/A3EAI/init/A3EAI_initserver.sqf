@@ -49,43 +49,41 @@ if ((resistance getFriend east) > 0) then {resistance setFriend [east, 0]};
 if ((east getFriend resistance) > 0) then {east setFriend [resistance, 0]};
 if ((west getFriend resistance) > 0) then {west setFriend [resistance, 0]};
 
-//Create reference marker to act as boundary for spawning AI air/land vehicles. These values will be later modified on a per-map basis.
-_centerPos = getArray(configFile >> "CfgWorlds" >> worldName >> "centerPosition");
-_markerSize = 7000;
-_centerMarker = createMarkerLocal ["A3EAI_centerMarker", _centerPos];
-
+//Create reference marker to act as boundary for spawning AI air/land vehicles.
 _worldname = (toLower worldName);
-{
-	if (_worldname isEqualTo (_x select 0)) exitWith {
-		_centerPos = (_x select 1);
-		_markerSize = (_x select 2);
-	};
-} forEach [
-	//worldName, center position, landmass radius
-	["altis",[15834.2,15787.8,0],12000],
-	["stratis",[3937.6,4774.51,0],3000],
-	["caribou",[3938.9722, 4195.7417],3500],
-	["chernarus",[7652.9634, 7870.8076],5500],
-	["fallujah",[5139.8008, 4092.6797],4000],
-	["fdf_isle1_a",[10771.362, 8389.2568],2750],
-	["isladuala",[4945.3438, 4919.6616],4000],
-	["lingor",[5166.5581, 5108.8301],4500],
-	["mbg_celle2",[6163.52, 6220.3984],6000],
-	["namalsk",[5880.1313, 8889.1045],3000],
-	["napf",[10725.096, 9339.918],8500],
-	["oring",[5191.1069, 5409.1938],4750],
-	["panthera2",[5343.6953, 4366.2534],3500],
-	["sara",[12693.104, 11544.386],6250],
-	["smd_sahrani_a2",[12693.104, 11544.386],6250],
-	["sauerland",[12270.443, 13632.132],17500],
-	["takistan",[6368.2764, 6624.2744],6000],
-	["tavi",[10887.825, 11084.657],8500],
-	["trinity",[7183.8403, 7067.4727],5300],
-	["utes",[3519.8037, 3703.0649],1000],
-	["zargabad",[3917.6201, 3800.0376],2000]
-];
-_centerMarker setMarkerPosLocal _centerPos;
-_centerMarker setMarkerSizeLocal [_markerSize,_markerSize];
+_markerInfo = call {
+	{
+		if (_worldname isEqualTo (_x select 0)) exitWith {
+			[_x select 1,_x select 2]
+		};
+	} forEach [
+		//worldName, center position, landmass radius
+		["altis",[15834.2,15787.8,0],12000],
+		["stratis",[3937.6,4774.51,0],3000],
+		["caribou",[3938.9722, 4195.7417],3500],
+		["chernarus",[7652.9634, 7870.8076],5500],
+		["fallujah",[5139.8008, 4092.6797],4000],
+		["fdf_isle1_a",[10771.362, 8389.2568],2750],
+		["isladuala",[4945.3438, 4919.6616],4000],
+		["lingor",[5166.5581, 5108.8301],4500],
+		["mbg_celle2",[6163.52, 6220.3984],6000],
+		["namalsk",[5880.1313, 8889.1045],3000],
+		["napf",[10725.096, 9339.918],8500],
+		["oring",[5191.1069, 5409.1938],4750],
+		["panthera2",[5343.6953, 4366.2534],3500],
+		["sara",[12693.104, 11544.386],6250],
+		["smd_sahrani_a2",[12693.104, 11544.386],6250],
+		["sauerland",[12270.443, 13632.132],17500],
+		["takistan",[6368.2764, 6624.2744],6000],
+		["tavi",[10887.825, 11084.657],8500],
+		["trinity",[7183.8403, 7067.4727],5300],
+		["utes",[3519.8037, 3703.0649],1000],
+		["zargabad",[3917.6201, 3800.0376],2000],
+		[_worldname,getArray(configFile >> "CfgWorlds" >> worldName >> "centerPosition"),7000]
+	];
+};
+_centerMarker = createMarkerLocal ["A3EAI_centerMarker",_markerInfo select 0];
+_centerMarker setMarkerSizeLocal [_markerInfo select 1,_markerInfo select 1];
 
 if (A3EAI_autoGenerateStatic) then {[] execVM format ["%1\scripts\setup_autoStaticSpawns.sqf",A3EAI_directory];};
 

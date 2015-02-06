@@ -1,10 +1,4 @@
-/*
-	fn_findKiller
-	
-	Description: If an AI unit is killed, surviving members of their group will aggressively pursue the killer for a set amount of time. After this amount of time has passed, the group will return to their patrol state.
-	
-	Last updated: 2:00 AM 7/1/2014
-*/
+
 private ["_unitGroup","_targetPlayer","_startPos","_chaseDistance","_radioType"];
 
 _targetPlayer = _this select 0;
@@ -53,7 +47,8 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 	_ableToChase = true;
 	while { 
 		_ableToChase &&
-		{alive _targetPlayer} && 
+		{!((owner _targetPlayer) isEqualTo 0)} && 
+		{alive _targetPlayer} &&
 		{((_startPos distance _targetPlayer) < _chaseDistance)} &&
 		{(!((vehicle _targetPlayer) isKindOf "Air"))}
 	} do {
@@ -108,11 +103,13 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 		};
 		uiSleep 19.5;
 		_ableToChase = ((!isNull _unitGroup) && {diag_tickTime < (_unitGroup getVariable ["pursuitTime",0])} && {(_unitGroup getVariable ["GroupSize",0]) > 0});
-		if (_ableToChase && {isNull _targetPlayer}) then {
-			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Group %1 is attempting to re-establish contact with target %2.",_unitGroup,_unitGroup getVariable "targetKiller"];};
+		if (_ableToChase && {((owner _targetPlayer) isEqualTo 0)}) then {
+			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Group %1 is attempting to find another target.",_unitGroup];};
 			_nearUnits = _targetPlayerPos nearEntities [["Epoch_Male_F","Epoch_Female_F"],100];
 			{
-				if ((isPlayer _x) && {((name _x) isEqualTo _unitGroup getVariable "targetKiller")}) exitWith {_targetPlayer = _x};
+				if (isPlayer _x) exitWith {
+					_targetPlayer = _x;
+				};
 			} forEach _nearUnits;
 		};
 		uiSleep 0.5;

@@ -43,7 +43,7 @@ if ((count _grpArray) < _numGroups) then {
 	if ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}) then {
 		_nul = _trigger call A3EAI_addMapMarker;
 	};
-	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Maximum number of groups already spawned at %1. Exiting spawn script (spawnBandits)",(triggerText _trigger)];};
+	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Maximum number of groups already spawned at %1. Exiting spawn script.",(triggerText _trigger)];};
 };
 
 true

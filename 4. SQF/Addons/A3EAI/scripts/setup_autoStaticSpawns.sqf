@@ -31,7 +31,7 @@ _startTime = diag_tickTime;
 					breakOut "bldgloop";
 				};
 			} count _nearbldgs;
-			if ((count _spawnPositions) > 15) then {
+			if ((count _spawnPositions) > 9) then {
 				_aiCount = [1,0];
 				_unitLevel = 0;
 				_patrolRad = 100;

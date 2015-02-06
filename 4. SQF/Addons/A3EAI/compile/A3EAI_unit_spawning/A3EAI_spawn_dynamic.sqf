@@ -1,12 +1,3 @@
-/*
-	spawnBandits_dynamic
-
-	Usage: Called by an activated dynamic trigger when a player unit enters the trigger area.
-	
-	Description: Spawns a group of AI units some distance from a dynamically-spawned trigger. These units do not respawn after death.
-	
-	Last updated: 10:58 PM 6/6/2014
-*/
 
 private ["_patrolDist","_trigger","_totalAI","_unitGroup","_targetPlayer","_playerPos","_playerDir","_spawnPos","_startTime","_baseDist","_distVariance","_dirVariance","_behavior","_triggerStatements","_spawnDist","_triggerLocation"];
 
@@ -45,7 +36,7 @@ _triggerLocation = _trigger getVariable ["triggerLocation",locationNull];
 if (
 	(surfaceIsWater _spawnPos) or 
 	{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPos select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count ((_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200]) - [_targetPlayer])) > 0} or 
-	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1500]) - [_triggerLocation])) > 0} &&
+	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1500]) - [_triggerLocation])) > 0} or
 	{!((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
 ) exitWith {
 	if (A3EAI_debugLevel > 1) then {
@@ -53,7 +44,7 @@ if (
 		diag_log format ["DEBUG: Position is water: %1",(surfaceIsWater _spawnPos)];
 		diag_log format ["DEBUG: Player nearby: %1",({isPlayer _x} count ((_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200]) - [_targetPlayer])) > 0];
 		diag_log format ["DEBUG: Location is blacklisted: %1",({_spawnPos in _x} count ((nearestLocations [_spawnPos,["Strategic"],1000]) - [_triggerLocation])) > 0];
-		diag_log format ["DEBUG: No buildables nearby: %1.",((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])];
+		diag_log format ["DEBUG: No modular buildables nearby: %1.",((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])];
 	};
 	_nul = _trigger call A3EAI_cancelDynamicSpawn;
 	
@@ -71,7 +62,7 @@ _unitGroup setSpeedMode "FULL";
 //Begin hunting player or patrolling area
 _behavior = if (A3EAI_huntingChance call A3EAI_chance) then {
 	_unitGroup reveal [_targetPlayer,4];
-	0 = [_unitGroup,_spawnPos,_patrolDist,_targetPlayer,ASLtoATL getPosASL _trigger] spawn A3EAI_dynamicHunting; //seek mode
+	0 = [_unitGroup,_patrolDist,_targetPlayer,ASLtoATL getPosASL _trigger] spawn A3EAI_dynamicHunting; //seek mode
 	"HUNT PLAYER"
 } else {
 	[_unitGroup,_playerPos] call A3EAI_setFirstWPPos;

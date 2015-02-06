@@ -1,5 +1,5 @@
 
-private ["_patrolDist","_waypoint","_trigger","_totalAI","_minAI","_addAI","_unitLevel","_unitGroup","_targetPlayer","_playerPos","_playerDir","_spawnPos","_startTime","_baseDist","_extraDist","_distVariance","_dirVariance","_behavior","_triggerStatements","_spawnDist","_thisList","_debugMarkers"];
+private ["_patrolDist","_waypoint","_trigger","_totalAI","_minAI","_addAI","_unitLevel","_unitGroup","_targetPlayer","_playerPos","_playerDir","_spawnPos","_startTime","_baseDist","_extraDist","_distVariance","_dirVariance","_behavior","_triggerStatements","_spawnDist","_thisList","_debugMarkers" ,"_spawnPosSelected"];
 
 
 _startTime = diag_tickTime;
@@ -11,9 +11,6 @@ _minAI = _this select 3;
 _addAI = _this select 4;
 _unitLevel = _this select 5;
 
-_checkArea = true;
-_nearAttempts = 1;
-_spawnPos = [0,0,0];
 _debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
 _baseDist = 0;
 _extraDist = 300;
@@ -41,43 +38,57 @@ _playerPos = [0,0,0];
 
 _triggerPos = getPosASL _trigger;
 
-while {_checkArea && {_nearAttempts < 4}} do {
-	_spawnPos = [_triggerPos,(_baseDist + (random _extraDist)),(random 360),0] call SHK_pos;
-	if ((count _spawnPos) isEqualTo 2) then {_spawnPos set [2,0];};
-	_checkArea = (({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPos select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count (_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"], 200]) > 0) or {surfaceIsWater _spawnPos} or {!((_playerPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])});
+_nearAttempts = 0;
+_spawnPos = [];
+while {(_spawnPos isEqualTo []) && {_nearAttempts < 4}} do {
+	_spawnPosSelected = [_triggerPos,(_baseDist + (random _extraDist)),(random 360),0] call SHK_pos;
+	if ((count _spawnPosSelected) isEqualTo 2) then {_spawnPosSelected set [2,0];};
+	if (
+		({if ((isPlayer _x) && {([eyePos _x,[(_spawnPosSelected select 0),(_spawnPosSelected select 1),(_spawnPosSelected select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPosSelected) < 150)}) exitWith {1}} count (_spawnPosSelected nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"], 200]) isEqualTo 0) && 
+		{!(surfaceIsWater _spawnPosSelected)} && 
+		{((_spawnPosSelected nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
+	) then {
+		_spawnPos = _spawnPosSelected;
+	};
 	_nearAttempts = _nearAttempts + 1;
 };
 
-if (_nearAttempts > 3) exitWith {_nul = _trigger call A3EAI_cancelRandomSpawn};
-_totalAI = (_minAI + round(random _addAI));
-_unitGroup = [_totalAI,grpNull,_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
+//diag_log format ["DEBUG: Nearby units: %1",_spawnPos nearEntities [["CAManBase"],200]];
 
-//Set group variables
-_unitGroup setVariable ["unitType","random"];
-_unitGroup setBehaviour "AWARE";
-_unitGroup setSpeedMode "FULL";
+if !(_spawnPos isEqualTo []) then {
+	_totalAI = (_minAI + round(random _addAI));
+	_unitGroup = [_totalAI,grpNull,_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
 
-[_unitGroup,_playerPos] call A3EAI_setFirstWPPos;
-0 = [_unitGroup,_triggerPos,_patrolDist] spawn A3EAI_BIN_taskPatrol;
+	//Set group variables
+	_unitGroup setVariable ["unitType","random"];
+	_unitGroup setBehaviour "AWARE";
+	_unitGroup setSpeedMode "FULL";
 
-if (A3EAI_debugLevel > 0) then {
-	diag_log format["A3EAI Debug: Spawned 1 new AI groups of %1 units each in %2 seconds at %3 (Random Spawn).",_totalAI,(diag_tickTime - _startTime),(mapGridPosition _trigger)];
-};
+	[_unitGroup,_playerPos] call A3EAI_setFirstWPPos;
+	0 = [_unitGroup,_triggerPos,_patrolDist] spawn A3EAI_BIN_taskPatrol;
 
-_triggerStatements = (triggerStatements _trigger);
-if (!(_trigger getVariable ["initialized",false])) then {
-	0 = [2,_trigger,[_unitGroup]] call A3EAI_initializeTrigger;
-	_trigger setVariable ["triggerStatements",+_triggerStatements];
-};
-_triggerStatements set [1,""];
-_trigger setTriggerStatements _triggerStatements;
-
-if (_debugMarkers) then {
-	_nul = _trigger spawn {
-		_marker = str(_this);
-		_marker setMarkerColor "ColorOrange";
-		_marker setMarkerAlpha 0.9;				//Dark orange: Activated trigger
+	if (A3EAI_debugLevel > 0) then {
+		diag_log format["A3EAI Debug: Spawned 1 new AI groups of %1 units each in %2 seconds at %3 using %4 attempts (Random Spawn).",_totalAI,(diag_tickTime - _startTime),(mapGridPosition _trigger),_nearAttempts];
 	};
-};
 
-true
+	_triggerStatements = (triggerStatements _trigger);
+	if (!(_trigger getVariable ["initialized",false])) then {
+		0 = [2,_trigger,[_unitGroup]] call A3EAI_initializeTrigger;
+		_trigger setVariable ["triggerStatements",+_triggerStatements];
+	};
+	_triggerStatements set [1,""];
+	_trigger setTriggerStatements _triggerStatements;
+
+	if (_debugMarkers) then {
+		_nul = _trigger spawn {
+			_marker = str(_this);
+			_marker setMarkerColor "ColorOrange";
+			_marker setMarkerAlpha 0.9;				//Dark orange: Activated trigger
+		};
+	};
+
+	true
+} else {
+	_nul = _trigger call A3EAI_cancelRandomSpawn;
+	false
+};

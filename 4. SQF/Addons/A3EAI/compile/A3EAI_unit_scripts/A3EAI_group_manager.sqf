@@ -174,7 +174,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 				};
 			};
 		};
-		if (_unitType isEqualTo "air") exitWith {
+		if ((_unitType isEqualTo "air") && {_isArmed}) exitWith {
 			if ((alive _vehicle) && {!(_vehicle getVariable ["heli_disabled",false])}) then {
 				if (((diag_tickTime - _lastReinforceTime) > 900) && {((count A3EAI_reinforcePlaces) > 0)}) then {
 					[_unitGroup,_vehicle] call A3EAI_heliReinforce;

@@ -1,0 +1,14 @@
+A3EAI 0.2.2 Alpha
+
+Files changed:
+A3EAI.pbo
+
+[FIXED] Fixed issue with dynamic AI player-hunting and AI killer-hunting scripts becoming permanently stuck in certain situations.
+[FIXED] Fixed issue related to custom spawns not working in certain situations.
+[FIXED] Fixed "spawning too close" issue for random spawns.
+[CHANGED] If AI killer target has logged out, AI will search last known position for any other possible targets.
+[CHANGED] Unarmed helicopters will no longer be summoned as reinforcements for dynamic AI (for the time being).
+[CHANGED] Failed custom spawns due to player proximity have respawn timings set to 25% of normal value instead of 50%.
+[CHANGED] Failed custom respawns due to player proximity now re-attempt spawning with gradually increasing spawn radius.
+[CHANGED] Reduced distance for player proximity check for custom spawns. LOS check distance remains unchanged.
+[CHANGED] Auto static spawn generator should now consider more areas "acceptable" for creating static spawns.

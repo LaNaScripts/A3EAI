@@ -25,9 +25,6 @@ if (_unitGroup getVariable ["SAD_Ready",true]) then {
 	//[_unitGroup,1] setWaypointType "MOVE";
 	[_unitGroup,1] setWaypointTimeout [3,6,9];
 };
-//[_unitGroup,0] setWaypointCompletionRadius 150;
-//_unitGroup setCurrentWaypoint [_unitGroup,0];
-//(vehicle (leader _unitGroup)) flyInHeight (100 + (random 40));
 
 _unitGroup setCurrentWaypoint [_unitGroup,0];
 (vehicle (leader _unitGroup)) flyInHeight (100 + (random 25));

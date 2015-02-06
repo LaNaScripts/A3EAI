@@ -1,13 +1,5 @@
-/*
-		fnc_banditAIKilled
-		
-		Description: Adds loot to AI corpse if killed by a player. Script is shared between all infantry-type AI units.
-		
-        Usage: [_victim,_killer,_unitGroup,_unitType] call A3EAI_A3EAI_handleDeath_generic.sqf;
 
-*/
-
-private["_victim","_killer","_unitGroup","_unitType","_groupSize","_unitsAlive"];
+private["_victim","_killer","_unitGroup","_unitType","_unitsAlive"];
 _victim = _this select 0;
 _killer = _this select 1;
 _unitGroup = _this select 2;
@@ -20,6 +12,7 @@ if (isPlayer _killer) then {
 		0 = [_victim,_unitLevel] spawn A3EAI_generateLoot;
 	} else {
 		_victim call A3EAI_purgeUnitGear;
+		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: %1 AI unit %2 was killed by collision damage caused by %3. Unit gear cleared.",_unitType,_victim,_killer]};
 	};
 	if (_unitsAlive > 0) then {
 		_unitGroup reveal [vehicle _killer,4];
@@ -32,6 +25,6 @@ if (isPlayer _killer) then {
 	};
 };
 
-if (A3EAI_debugLevel > 0) then {diag_log format["A3EAI Debug: AI unit %1 killed by %2, %3 units left alive in group.",_victim,_killer,_unitsAlive];};
+if (A3EAI_debugLevel > 0) then {diag_log format["A3EAI Debug: %1 AI unit %2 killed by %3, %4 units left alive in group.",_unitType,_victim,_killer,_unitsAlive];};
 
 true

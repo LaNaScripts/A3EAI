@@ -32,6 +32,17 @@ if (_grpArray isEqualTo []) then {
 	} else {
 		A3EAI_customInfantrySpawnQueue pushBack _this;
 	};
+} else {
+	private ["_triggerStatements"];
+	_triggerStatements = (triggerStatements _trigger);
+	_triggerStatements set [1,""];
+	_trigger setTriggerStatements _triggerStatements;
+	_trigger setTriggerArea [750,750,0,false];
+	[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
+	if ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}) then {
+		_nul = _trigger call A3EAI_addMapMarker;
+	};
+	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Maximum number of groups already spawned at custom %1. Exiting spawn script.",(triggerText _trigger)];};
 };
 
 true
