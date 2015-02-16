@@ -69,7 +69,7 @@ _angle = (360 / (_wp_count -1));
 _newangle = 0;
 _wp_array = [];
 _slack = _max_dist / 5.5;
-_completionRadius = if (_isVehicle) then {(5 + _slack) max 75} else {(5 + _slack)};
+_completionRadius = if (_isVehicle) then {(25 + _slack)} else {(10 + _slack)};
 if ( _slack < 20 ) then { _slack = 20 };
 
 _angle_offset = random 180;

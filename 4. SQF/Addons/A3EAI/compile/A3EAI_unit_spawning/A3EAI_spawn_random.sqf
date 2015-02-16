@@ -36,17 +36,18 @@ _playerPos = [0,0,0];
 	};
 } forEach _thisList;
 
-_triggerPos = getPosASL _trigger;
+_triggerPos = getPosATL _trigger;
 
 _nearAttempts = 0;
 _spawnPos = [];
 while {(_spawnPos isEqualTo []) && {_nearAttempts < 4}} do {
 	_spawnPosSelected = [_triggerPos,(_baseDist + (random _extraDist)),(random 360),0] call SHK_pos;
+	_spawnPosSelASL = ATLToASL _spawnPosSelected;
 	if ((count _spawnPosSelected) isEqualTo 2) then {_spawnPosSelected set [2,0];};
 	if (
-		({if ((isPlayer _x) && {([eyePos _x,[(_spawnPosSelected select 0),(_spawnPosSelected select 1),(_spawnPosSelected select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPosSelected) < 150)}) exitWith {1}} count (_spawnPosSelected nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"], 200]) isEqualTo 0) && 
+		({if ((isPlayer _x) && {([eyePos _x,[(_spawnPosSelected select 0),(_spawnPosSelected select 1),(_spawnPosSelASL select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPosSelected) < 150)}) exitWith {1}} count (_spawnPosSelected nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"], 200]) isEqualTo 0) && 
 		{!(surfaceIsWater _spawnPosSelected)} &&
-		{!(_spawnPosSelected call A3EAI_posInBuilding)} &&
+		{!((_spawnPosSelASL) call A3EAI_posInBuilding)} &&
 		{((_spawnPosSelected nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
 	) then {
 		_spawnPos = _spawnPosSelected;

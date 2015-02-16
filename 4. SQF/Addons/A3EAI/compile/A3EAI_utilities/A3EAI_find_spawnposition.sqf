@@ -18,6 +18,7 @@ while {_continue && {(_attempts < _maxAttempts)}} do {
 		{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPosSelected select 0),(_spawnPosSelected select 1),(_spawnPosSelected select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPosSelected) < 125)}) exitWith {1}} count (_spawnPosSelected nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200])) isEqualTo 0}
 	) then {
 		_spawnPos = _spawnPosSelected;
+		_spawnPos set [2,0];
 		_continue = false;
 	} else {
 		_spawnpool deleteAt _index;

@@ -1,5 +1,5 @@
 
-private ["_patrolDist","_trigger","_totalAI","_unitGroup","_targetPlayer","_playerPos","_playerDir","_spawnPos","_startTime","_baseDist","_distVariance","_dirVariance","_behavior","_triggerStatements","_spawnDist","_triggerLocation"];
+private ["_patrolDist","_trigger","_totalAI","_unitGroup","_targetPlayer","_playerPos","_playerDir","_spawnPos","_spawnPosASL","_startTime","_baseDist","_distVariance","_dirVariance","_behavior","_triggerStatements","_spawnDist","_triggerLocation"];
 
 
 _startTime = diag_tickTime;
@@ -22,18 +22,19 @@ _baseDist = 200;		//On foot distance: 200-250
 _distVariance = 50;
 _dirVariance = 90;
 
-_playerPos = ASLtoATL getPosASL _targetPlayer;
+_playerPos = getPosATL _targetPlayer;
 _playerDir = getDir _targetPlayer;
 _spawnDist = (_baseDist + random (_distVariance));
 _spawnPos = [_playerPos,_spawnDist,[(_playerDir-_dirVariance),(_playerDir+_dirVariance)],0] call SHK_pos;
+_spawnPosASL = ATLToASL _spawnPos;
 if ((count _spawnPos) isEqualTo 2) then {_spawnPos set [2,0];};
 _triggerLocation = _trigger getVariable ["triggerLocation",locationNull];
 
 if (
 	(surfaceIsWater _spawnPos) or 
-	{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPos select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count (_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200])) > 0} or 
+	{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPosASL select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count (_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200])) > 0} or 
 	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1500]) - [_triggerLocation])) > 0} or
-	{_spawnPos call A3EAI_posInBuilding} or
+	{_spawnPosASL call A3EAI_posInBuilding} or
 	{!((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
 ) exitWith {
 	if (A3EAI_debugLevel > 1) then {
