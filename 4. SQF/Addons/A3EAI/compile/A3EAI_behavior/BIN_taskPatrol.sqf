@@ -45,7 +45,6 @@ Edited version for A3EAI (https://github.com/dayzai/A3EAI)
 _grp = _this select 0;
 _pos = _this select 1;
 _max_dist = _this select 2;
-//_debug = if ((count _this) > 3) then {_this select 3} else {((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled})};
 _unitType = _grp getVariable ["unitType",""];
 _allowWater = (_unitType isEqualTo "aircustom");
 //_allowWaterNumeric = if (_allowWater) then {1} else {0};

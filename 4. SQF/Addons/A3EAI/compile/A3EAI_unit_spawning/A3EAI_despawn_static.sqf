@@ -8,7 +8,7 @@
 	Last updated: 10:16 PM 5/26/2014
 	
 */
-private ["_trigger","_grpArray","_isCleaning","_grpCount","_debugMarkers","_triggerStatements","_deactStatements","_permDelete"];
+private ["_trigger","_grpArray","_isCleaning","_grpCount","_triggerStatements","_deactStatements","_permDelete"];
 
 _trigger = _this select 0;							//Get the trigger object
 
@@ -24,11 +24,11 @@ _trigger setVariable["isCleaning",true];		//Mark the trigger as being in a clean
 _deactStatements = _triggerStatements select 2;
 _triggerStatements set [2,""];
 _trigger setTriggerStatements _triggerStatements;
-_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
+
 
 if (A3EAI_debugLevel > 1) then {diag_log format["A3EAI Extended Debug: No players remain in trigger area at %3. Deleting %1 AI groups in %2 seconds.",_grpCount, A3EAI_despawnWait,(triggerText _trigger)];};
 
-if (_debugMarkers) then {
+if (A3EAI_debugMarkersEnabled) then {
 	_nul = _trigger spawn {
 		_tMarker = str (_this);
 		_tMarker setMarkerText "STATIC TRIGGER (DESPAWNING)";
@@ -45,7 +45,7 @@ if ((triggerActivated _trigger) && {({isNull _x} count _grpArray) < _grpCount}) 
 	_triggerStatements set [2,_deactStatements];
 	_trigger setTriggerStatements _triggerStatements;
 	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: A player has entered the trigger area at %1. Cancelling despawn script.",(triggerText _trigger)];};
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		_nul = _trigger spawn {
 			_tMarker = str (_this);
 			_tMarker setMarkerText "STATIC TRIGGER (ACTIVE)";
@@ -63,7 +63,7 @@ _permDelete = _trigger getVariable ["permadelete",false];
 			//(A3EAI_numAIUnits - _groupSize) call A3EAI_updateUnitCount;
 			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Despawning group %1 with %2 active units.",_x,(_x getVariable ["groupSize",0])];};
 			//_x call A3EAI_deleteGroup;
-			_x setVariable ["GroupSize",-1];
+			_x setVariable ["GroupSize",-1,A3EAI_HCIsConnected];
 			_grpArray set [_forEachIndex,grpNull];
 		};
 	};
@@ -77,7 +77,7 @@ if !(_permDelete) then {
 	_trigger setVariable ["unitLevelEffective",(_trigger getVariable ["unitLevel",1])];
 	_trigger setTriggerArea [600,600,0,false];
 	_trigger setTriggerStatements (_trigger getVariable "triggerStatements"); //restore original trigger statements
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 			_nul = _trigger spawn {
 			_tMarker = str (_this);
 			_tMarker setMarkerText "STATIC TRIGGER (INACTIVE)";
@@ -87,7 +87,7 @@ if !(_permDelete) then {
 	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Despawned AI units at %1. Reset trigger's group array to: %2.",(triggerText _trigger),_trigger getVariable "GroupArray"];};
 	//diag_log format ["DEBUG :: Despawned trigger %1 has statements %2.",triggerText _trigger,triggerStatements _trigger];
 } else {
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		deleteMarker (str (_trigger));
 	};
 	deleteMarker (_trigger getVariable ["spawnmarker",""]);

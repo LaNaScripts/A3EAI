@@ -5,7 +5,7 @@
 	
 */
 
-private ["_trigger","_triggerLocation","_isForceDespawn","_grpArray","_canDespawn","_triggerExists","_debugMarkers","_triggerStatements","_deactStatements"];
+private ["_trigger","_triggerLocation","_isForceDespawn","_grpArray","_canDespawn","_triggerExists","_triggerStatements","_deactStatements"];
 
 _trigger = _this select 0;										//Get the trigger object
 _isForceDespawn = if ((count _this) > 1) then {_this select 1} else {false};
@@ -20,7 +20,7 @@ _deactStatements = _triggerStatements select 2;
 _trigger setTriggerStatements (_triggerStatements set [2,""]);
 _canDespawn = true;
 _triggerExists = true;
-_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
+
 
 if (_isForceDespawn) then {
 	_trigger setTriggerStatements ["this","",""];
@@ -28,7 +28,7 @@ if (_isForceDespawn) then {
 	uiSleep 30;
 } else {
 	if (A3EAI_debugLevel > 1) then {diag_log format["A3EAI Extended Debug: No players remain in %1. Deleting spawned AI in %2 seconds.",triggerText _trigger,A3EAI_dynDespawnWait];};
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		_nul = _trigger spawn {
 			_marker = str(_this);
 			_marker setMarkerColor "ColorGreen";
@@ -53,12 +53,12 @@ if (_canDespawn) then {
 		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Deleting group %1 with %2 active units.",_x,(_x getVariable ["groupSize",0])];};
 		//(A3EAI_numAIUnits - (_x getVariable ["groupSize",0])) call A3EAI_updateUnitCount;
 		//_x call A3EAI_deleteGroup;
-		_x setVariable ["GroupSize",-1];
+		_x setVariable ["GroupSize",-1,A3EAI_HCIsConnected];
 	} forEach _grpArray;
 	
 	//Remove dynamic trigger from global dyn trigger array and clean up trigger
 	[_trigger,"A3EAI_dynTriggerArray"] call A3EAI_updateSpawnCount;
-	if (_debugMarkers) then {deleteMarker str(_trigger)};
+	if (A3EAI_debugMarkersEnabled) then {deleteMarker str(_trigger)};
 
 	//Begin deletion timer for temporary blacklist area and add it to global dyn location array to allow deletion
 	_triggerLocation = _trigger getVariable "triggerLocation";
@@ -76,7 +76,7 @@ if (_canDespawn) then {
 	_trigger setVariable ["isCleaning",false];	//Allow next despawn request.
 	_triggerStatements set [2,_deactStatements];
 	_trigger setTriggerStatements _triggerStatements;
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		_nul = _trigger spawn {
 			_marker = str(_this);
 			_marker setMarkerColor "ColorOrange";

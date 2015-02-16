@@ -1,5 +1,6 @@
 _startTime = diag_tickTime;
 
+//Check value types
 {
 	_value = missionNamespace getVariable (_x select 0);
 	if ((isNil "_value") or {(typeName _value) != (typeName (_x select 1))}) then {
@@ -11,7 +12,6 @@ _startTime = diag_tickTime;
 	["A3EAI_monitorRate",300],
 	["A3EAI_verifyClassnames",true],
 	["A3EAI_cleanupDelay",900],
-	//["A3EAI_allowDamagePatch",true],
 	["A3EAI_dynamicUniformList",true],
 	["A3EAI_dynamicWeaponList",true],
 	["A3EAI_dynamicBackpackList",true],
@@ -26,9 +26,9 @@ _startTime = diag_tickTime;
 	["A3EAI_launcherTypes",[]],
 	["A3EAI_launcherLevels",[]],
 	["A3EAI_launchersPerGroup",1],
+	["A3EAI_enableHealing",true],
 	["A3EAI_radioMsgs",false],
 	["A3EAI_deathMessages",false],
-	//["A3EAI_staticAI",true],
 	["A3EAI_loadCustomFile",true],
 	["A3EAI_autoGenerateStatic",true],
 	["A3EAI_minAI_capitalCity",2],
@@ -77,6 +77,10 @@ _startTime = diag_tickTime;
 	]],
 	["A3EAI_heliGunnerUnits",3],
 	["A3EAI_removeMissileWeapons",true],
+	["A3EAI_detectChance",0.70],
+	["A3EAI_paraDropChance",0.50],
+	["A3EAI_paraDropCooldown",1800],
+	["A3EAI_paraDropAmount",3],
 	["A3EAI_maxLandPatrols",0],
 	["A3EAI_levelChancesLand",[0.00,0.50,0.35,0.15]],
 	["A3EAI_respawnTMinL",600],
@@ -191,5 +195,26 @@ _startTime = diag_tickTime;
 	["A3EAI_gadgets0",[["binocular",0.40],["NVG_EPOCH",0.10]]],
 	["A3EAI_gadgets1",[["binocular",0.70],["NVG_EPOCH",0.25]]]
 ];
+
+//Check value ranges
+if !(A3EAI_minAI_capitalCity in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_minAI_capitalCity, resetting to default value."]; A3EAI_minAI_capitalCity = 2};
+if !(A3EAI_addAI_capitalCity in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_addAI_capitalCity, resetting to default value."]; A3EAI_addAI_capitalCity = 1};
+if !(A3EAI_unitLevel_capitalCity in [0,1,2,3]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_unitLevel_capitalCity, resetting to default value."]; A3EAI_unitLevel_capitalCity = 1};
+if !(A3EAI_minAI_city in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_minAI_city, resetting to default value."]; A3EAI_minAI_city = 1};
+if !(A3EAI_addAI_city in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_addAI_city, resetting to default value."]; A3EAI_addAI_city = 2};
+if !(A3EAI_unitLevel_city in [0,1,2,3]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_unitLevel_city, resetting to default value."]; A3EAI_unitLevel_city = 1};
+if !(A3EAI_minAI_village in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_minAI_village, resetting to default value."]; A3EAI_minAI_village = 1};
+if !(A3EAI_addAI_village in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_addAI_village, resetting to default value."]; A3EAI_addAI_village = 1};
+if !(A3EAI_unitLevel_village in [0,1,2,3]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_unitLevel_village, resetting to default value."]; A3EAI_unitLevel_village = 0};
+if !(A3EAI_minAI_remoteArea in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_minAI_remoteArea, resetting to default value."]; A3EAI_minAI_remoteArea = 1};
+if !(A3EAI_addAI_remoteArea in [0,1,2,3,4,5]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_unitLevel_remoteArea, resetting to default value."]; A3EAI_addAI_remoteArea = 1};
+if !(A3EAI_unitLevel_remoteArea in [0,1,2,3]) then {diag_log format ["[A3EAI] Error found in variable A3EAI_unitLevel_remoteArea, resetting to default value."]; A3EAI_unitLevel_remoteArea = 2};
+if !((count A3EAI_promoteChances) isEqualTo 3) then {diag_log format ["[A3EAI] Error found in variable A3EAI_promoteChances, resetting to default value."]; A3EAI_promoteChances = [0.20,0.10,0.10]};
+if !((count A3EAI_levelChancesAir) isEqualTo 4) then {diag_log format ["[A3EAI] Error found in variable A3EAI_levelChancesAir, resetting to default value."]; A3EAI_levelChancesAir = [0.00,0.50,0.35,0.15]};
+if !((count A3EAI_levelChancesLand) isEqualTo 4) then {diag_log format ["[A3EAI] Error found in variable A3EAI_levelChancesLand, resetting to default value."]; A3EAI_levelChancesAir = [0.00,0.50,0.35,0.15]};
+if !((count A3EAI_useWeaponChance0) isEqualTo 4) then {diag_log format ["[A3EAI] Error found in variable A3EAI_useWeaponChance0, resetting to default value."]; A3EAI_useWeaponChance0 = [0.20,0.80,0.00,0.00]};
+if !((count A3EAI_useWeaponChance1) isEqualTo 4) then {diag_log format ["[A3EAI] Error found in variable A3EAI_useWeaponChance1, resetting to default value."]; A3EAI_useWeaponChance1 = [0.00,0.90,0.05,0.05]};
+if !((count A3EAI_useWeaponChance2) isEqualTo 4) then {diag_log format ["[A3EAI] Error found in variable A3EAI_useWeaponChance2, resetting to default value."]; A3EAI_useWeaponChance2 = [0.00,0.80,0.10,0.10]};
+if !((count A3EAI_useWeaponChance3) isEqualTo 4) then {diag_log format ["[A3EAI] Error found in variable A3EAI_useWeaponChance3, resetting to default value."]; A3EAI_useWeaponChance3 = [0.00,0.70,0.15,0.15]};
 
 diag_log format ["[A3EAI] Verified all A3EAI settings in %1 seconds.",(diag_tickTime - _startTime)];

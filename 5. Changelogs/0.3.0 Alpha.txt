@@ -1,0 +1,21 @@
+A3EAI 0.3.0 Alpha
+
+Files changed:
+A3EAI.pbo
+A3EAI_config.sqf
+
+[NEW] A3EAI Wikia: Added guide on A3EAI config settings, currently a work in progress (http://a3eai.wikia.com/wiki/Configuring_A3EAI_Settings)
+[NEW] Added ability for AI to heal themselves when injured. Note: Level 0 AI will not self-heal.
+[NEW] Added ability for AI helicopters (both armed and unarmed) to deploy a paradrop group. Configurable settings: Probability for paradrop group deployments, paradrop group size, paradrop cooldown.
+[NEW] AI helicopter reinforcements will now always deploy a paradrop group if a player is near the reinforcement location.
+[NEW] Added setting to configure player helicopter detection chance for AI air vehicles (A3EAI_detectChance).
+[FIXED] Respawn limits for static AI spawns now reset properly on area despawn.
+[FIXED] Dynamic spawn manager will now ignore headless clients.
+[CHANGED] Dynamic spawns: Target player is no longer exempt from distance check for AI spawning. Should prevent cases of AI spawning too close to target player.
+[CHANGED] Moved AI helicopter reinforcement probability setting from Dynamic AI settings to AI Air Vehicle settings.
+[CHANGED] Dynamic and Random AI can no longer spawn inside buildings.
+[CHANGED] Reduced distance check and spawn position variance for custom AI spawns and respawns.
+[CHANGED] Both armed and unarmed AI air vehicles may now be called for Dynamic AI reinforcement.
+[CHANGED] Classname verification now rejects any vehicles that contain "init" statements as they will cause players to be kicked by BattlEye. Users who have manually added BE filter exceptions can allow these vehicles to be spawned by A3EAI by disabling classname verification by setting A3EAI_verifyClassnames = false.
+[CHANGED] Settings verification now also checks if certain settings are properly defined and within allowable ranges.
+[CHANGED] Removed B_Heli_Attack_01_F from A3EAI_heliList due to its HE (High-Explosive) ammunition.

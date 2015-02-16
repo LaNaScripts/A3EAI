@@ -8,14 +8,14 @@
 if (A3EAI_debugLevel > 0) then {diag_log "A3EAI Debug: A3EAI Startup is running required script files..."};
 
 //Set internal-use variables
-A3EAI_unitLevels = [0,1,2,3];							//All possible weapon grades (does not include custom weapon grades). A "weapon grade" is a tiered classification of gear. 0: Civilian, 1: Military, 2: MilitarySpecial, 3: Heli Crash. Weapon grade also influences the general skill level of the AI unit.
-A3EAI_unitLevelsAll = [0,1,2,3,4,5,6,7,8,9];			//All possible weapon grades (including custom weapon grades).
+A3EAI_unitLevels = [0,1,2,3];								//All possible weapon grades (does not include custom weapon grades). A "weapon grade" is a tiered classification of gear. 0: Civilian, 1: Military, 2: MilitarySpecial, 3: Heli Crash. Weapon grade also influences the general skill level of the AI unit.
+A3EAI_unitLevelsAll = [0,1,2,3,4,5,6,7,8,9];				//All possible weapon grades (including custom weapon grades).
 A3EAI_curHeliPatrols = 0;									//Current number of active air patrols
 A3EAI_curLandPatrols = 0;									//Current number of active land patrols
 A3EAI_dynTriggerArray = [];									//List of all generated dynamic triggers.
 A3EAI_staticTriggerArray = [];								//List of all static triggers
-A3EAI_respawnQueue = [];										//Queue of AI groups that require respawning. Group ID is removed from queue after it is respawned.
-A3EAI_areaBlacklists = [];										//Queue of temporary dynamic spawn area blacklists for deletion
+A3EAI_respawnQueue = [];									//Queue of AI groups that require respawning. Group ID is removed from queue after it is respawned.
+A3EAI_areaBlacklists = [];									//Queue of temporary dynamic spawn area blacklists for deletion
 A3EAI_reinforcePlaces = [];									//AI helicopter patrols will periodically check this array for dynamic trigger objects to use as reinforcement positions.
 A3EAI_checkedClassnames = [[],[],[]];						//Classnames verified - Weapons/Magazines/Vehicles
 A3EAI_invalidClassnames = [[],[],[]];						//Classnames known as invalid - Weapons/Magazines/Vehicles
@@ -35,6 +35,55 @@ A3EAI_weaponTypeIndices1 = [];
 A3EAI_weaponTypeIndices2 = [];
 A3EAI_weaponTypeIndices3 = [];
 A3EAI_failedDynamicSpawns = [];
+A3EAI_HCObject = objNull;
+A3EAI_HCIsConnected = false;
+
+if (A3EAI_enableHC) then {
+	"A3EAI_HCLogin" addPublicVariableEventHandler {
+		private ["_HCObject","_versionHC"];
+		_HCObject = (_this select 1) select 0;
+		_versionHC = (_this select 1) select 1;
+		if ((owner A3EAI_HCObject) isEqualTo 0) then {
+			if ((!isNull _HCObject) && {_versionHC isEqualTo "0.2.3"}) then {
+				A3EAI_HCObject = _HCObject;
+				A3EAI_HCObject addEventHandler ["Local",{
+					if (_this select 1) then {
+						private["_unit"];
+						A3EAI_HCIsConnected = false;
+						A3EAI_HCObjectOwnerID = 0;
+						A3EAI_HCObject = objNull;
+						_unit = _this select 0;
+						_unit removeAllEventHandlers "Local";
+						diag_log format ["Debug: Deleting disconnected headless client unit %1.",typeOf _unit];
+						deleteVehicle _unit;
+						deleteGroup (group _unit);
+					};
+				}];
+				A3EAI_HCObjectOwnerID = (owner A3EAI_HCObject);
+				A3EAI_HCIsConnected = true;
+				A3EAI_HC_serverResponse = true;
+				A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_HC_serverResponse";
+				diag_log format ["Debug: Headless client %1 (owner: %2, pUID: %3) logged in successfully.",A3EAI_HCObject,A3EAI_HCObjectOwnerID,getPlayerUID A3EAI_HCObject];
+			} else {
+				diag_log format ["Debug: Headless client %1 (owner: %2) is null object or sent wrong password %2.",_HCObject,owner _HCObject,_versionHC];
+			};
+		} else {
+			A3EAI_HC_serverResponse = false;
+			(owner _HCObject) publicVariableClient "A3EAI_HC_serverResponse";
+			diag_log format ["Debug: Rejected connection from HC %1. A headless client (owner: %2) is already connected.",(_this select 1),A3EAI_HCObjectOwnerID];
+		};
+	};
+	"A3EAI_HCLogin2" addPublicVariableEventHandler {
+		private ["_HCPlayerObject","_versionHC"];
+		_HCPlayerObject = (_this select 1) select 0;
+		_versionHC = (_this select 1) select 1;
+		if ((!isNull _HCPlayerObject) && {_versionHC isEqualTo "0.2.3"}) then {
+			_HCPlayerObject hideObjectGlobal true;
+			diag_log format ["Debug: Set hideObjectGlobal true on %1",(_this select 1)];
+		};
+	};
+	diag_log "Debug: Listening for headless client connection...";
+};
 
 //Create default trigger object if AI is spawned without trigger object specified (ie: for custom vehicle AI groups)
 _nul = [] spawn {

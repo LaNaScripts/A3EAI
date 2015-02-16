@@ -21,7 +21,7 @@ _radioType = "EpochRadio0";
 #define RECEIVE_DIST 200 //distance requirement to receive message from AI group leader
 
 if ((_startPos distance _targetPlayer) < _chaseDistance) then {
-	private ["_targetPlayerPos","_leader","_ableToChase","_debugMarkers","_marker"];
+	private ["_targetPlayerPos","_leader","_ableToChase","_marker"];
 	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Group %1 has entered pursuit state for 180 seconds. Target: %2. (fn_findKiller)",_unitGroup,_targetPlayer];};
 	
 	//Temporarily cancel patrol state.
@@ -32,8 +32,8 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 	_unitGroup setVariable ["pursuitTime",diag_tickTime+180];
 	_unitGroup setVariable ["targetKiller",name _targetPlayer];
 	
-	_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
-	if (_debugMarkers) then {
+	
+	if (A3EAI_debugMarkersEnabled) then {
 		_markername = format ["%1 Target",_unitGroup];
 		if ((getMarkerColor _markername) != "") then {deleteMarker _markername; uiSleep 0.5;};
 		_marker = createMarker [_markername,getPosASL _targetPlayer];
@@ -66,7 +66,7 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 		
 		if ((A3EAI_radioMsgs) && {0.6 call A3EAI_chance}) then {
 			_leader = (leader _unitGroup);
-			if (((_targetPlayer distance _leader) <= RECEIVE_DIST) && {!(_leader getVariable ["unconscious",false])}) then {
+			if ((_targetPlayer distance _leader) <= RECEIVE_DIST) then {
 				private ["_nearbyUnits","_radioSpeech"];
 				_nearbyUnits = _targetPlayerPos nearEntities [["Epoch_Male_F","Epoch_Female_F"],TRANSMIT_RANGE];
 				if ((_unitGroup getVariable ["GroupSize",0]) > 1) then {
@@ -98,7 +98,7 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 				};
 			};
 		};
-		if (_debugMarkers) then {
+		if (A3EAI_debugMarkersEnabled) then {
 			_marker setMarkerPos (getPosASL _targetPlayer);
 		};
 		uiSleep 19.5;
@@ -129,7 +129,7 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 			
 			if (A3EAI_radioMsgs) then {
 				_leader = (leader _unitGroup);
-				if (((_targetPlayer distance _leader) <= RECEIVE_DIST) && {((_unitGroup getVariable ["GroupSize",0]) > 1)} && {!(_leader getVariable ["unconscious",false])} && {!(isNull _targetPlayer)}) then {
+				if (((_targetPlayer distance _leader) <= RECEIVE_DIST) && {((_unitGroup getVariable ["GroupSize",0]) > 1)} && {!((owner _targetPlayer) isEqualTo 0)}) then {
 					private ["_nearbyUnits","_radioSpeech","_radioText"];
 					_radioText = if (alive _targetPlayer) then {"%1 (Bandit Leader): Lost contact with target. Breaking off pursuit."} else {"%1 (Bandit Leader): Target has been eliminated."};
 					_radioSpeech = format [_radioText,(name (leader _unitGroup))];
@@ -143,7 +143,7 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 			};
 		};
 	};
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		deleteMarker _marker;
 	};
 };

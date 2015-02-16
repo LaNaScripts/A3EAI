@@ -6,14 +6,14 @@
 		Last updated: 12:11 AM 6/17/2014
 */
 
-private ["_helicopter","_trigger","_heliPos","_unitsAlive","_unitGroup","_waypointCount"];
-_helicopter = _this select 0;
+private ["_vehicle","_trigger","_heliPos","_unitsAlive","_unitGroup","_waypointCount"];
+_vehicle = _this select 0;
 
-if (_helicopter getVariable ["heli_disabled",false]) exitWith {};
-_helicopter setVariable ["heli_disabled",true];
-{_helicopter removeAllEventHandlers _x} count ["HandleDamage","GetOut","Killed"];
-_unitGroup = _helicopter getVariable ["unitGroup",(group (_this select 2))];
-[_unitGroup,_helicopter] call A3EAI_respawnAIVehicle;
+if (_vehicle getVariable ["heli_disabled",false]) exitWith {};
+_vehicle setVariable ["heli_disabled",true];
+{_vehicle removeAllEventHandlers _x} count ["HandleDamage","GetOut","Killed"];
+_unitGroup = _vehicle getVariable ["unitGroup",(group (_this select 2))];
+[_vehicle,(_vehicle getVariable "RespawnInfo")] call A3EAI_respawnAIVehicle;
 
 _unitsAlive = {alive _x} count (units _unitGroup);
 if (_unitsAlive > 0) then {
@@ -28,7 +28,7 @@ if (_unitsAlive > 0) then {
 		deleteWaypoint [_unitGroup,_i];
 	};
 
-	_heliPos = ASLtoATL getPosASL _helicopter;
+	_heliPos = ASLtoATL getPosASL _vehicle;
 	0 = [_unitGroup,_heliPos,75] spawn A3EAI_BIN_taskPatrol;
 	//(A3EAI_numAIUnits + _unitsAlive) call A3EAI_updateUnitCount;
 
@@ -37,7 +37,7 @@ if (_unitsAlive > 0) then {
 	_trigger setTriggerArea [600, 600, 0, false];
 	_trigger setTriggerActivation ["ANY", "PRESENT", true];
 	_trigger setTriggerTimeout [5, 5, 5, true];
-	_trigger setTriggerText (format ["HeliLandingArea_%1",mapGridPosition _helicopter]);
+	_trigger setTriggerText (format ["HeliLandingArea_%1",mapGridPosition _vehicle]);
 	_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;","","0 = [thisTrigger] spawn A3EAI_despawn_static;"];
 
 	//Set required trigger variables and begin despawn
@@ -47,14 +47,15 @@ if (_unitsAlive > 0) then {
 	_trigger setVariable ["maxUnits",[_unitsAlive,0]];
 	_trigger setVariable ["respawn",false]; //landed AI units should never respawn
 	_trigger setVariable ["permadelete",true]; //units should be permanently despawned
+	_trigger setVariable ["spawnType","static"];
 	[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
 	0 = [_trigger] spawn A3EAI_despawn_static;
 
-	_unitGroup setVariable ["unitType","static"]; //convert units to static type
-	_unitGroup setVariable ["trigger",_trigger]; //attach trigger object reference to group
-	_unitGroup setVariable ["GroupSize",_unitsAlive]; //set group size
+	_unitGroup setVariable ["unitType","static",A3EAI_enableHC]; //convert units to static type
+	_unitGroup setVariable ["trigger",_trigger,A3EAI_enableHC]; //attach trigger object reference to group
+	_unitGroup setVariable ["GroupSize",_unitsAlive,A3EAI_enableHC]; //set group size
 	_unitGroup setBehaviour "AWARE";
 	if (_unitGroup getVariable ["EnemiesIgnored",false]) then {[_unitGroup,"IgnoreEnemies_Undo"] call A3EAI_forceBehavior};
 
-	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI helicopter %1 landed at %2.",typeOf _helicopter,mapGridPosition _helicopter];};
+	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI helicopter %1 landed at %2.",typeOf _vehicle,mapGridPosition _vehicle];};
 };

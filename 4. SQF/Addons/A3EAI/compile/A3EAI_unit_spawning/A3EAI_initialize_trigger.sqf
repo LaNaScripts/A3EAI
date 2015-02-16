@@ -9,8 +9,8 @@ _trigger setVariable ["GroupArray",(_this select 2)];
 call {
 	if (_mode isEqualTo 0) exitWith {
 		//Static spawns
-		_trigger setVariable ["patrolDist",(_this select 3)];
-		_trigger setVariable ["unitLevel",(_this select 4)];
+		_trigger setVariable ["patrolDist",(_this select 3),A3EAI_enableHC];
+		_trigger setVariable ["unitLevel",(_this select 4),A3EAI_enableHC];
 		_trigger setVariable ["unitLevelEffective",(_this select 4)];
 		_trigger setVariable ["locationArray",(_this select 5)];
 		_trigger setVariable ["maxUnits",(_this select 6)];
@@ -30,8 +30,8 @@ call {
 	};
 	if (_mode isEqualTo 3) exitWith {
 		//Static spawns (custom)
-		_trigger setVariable ["patrolDist",(_this select 3)];
-		_trigger setVariable ["unitLevel",(_this select 4)];
+		_trigger setVariable ["patrolDist",(_this select 3),A3EAI_enableHC];
+		_trigger setVariable ["unitLevel",(_this select 4),A3EAI_enableHC];
 		_trigger setVariable ["unitLevelEffective",(_this select 4)];
 		_trigger setVariable ["locationArray",(_this select 5)];
 		_trigger setVariable ["maxUnits",(_this select 6)];

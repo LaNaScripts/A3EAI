@@ -1,11 +1,3 @@
-/*
-		A3EAI_vehDestroyed
-		
-		Description: Called when AI land vehicle is destroyed
-		
-		Last updated: 12:11 AM 6/17/2014
-		
-*/
 
 private ["_vehicle","_unitGroup","_unitsAlive"];
 _vehicle = _this select 0;
@@ -14,7 +6,7 @@ if (_vehicle getVariable ["veh_disabled",false]) exitWith {};
 _vehicle setVariable ["veh_disabled",true];
 _unitGroup = _vehicle getVariable "unitGroup";
 {_vehicle removeAllEventHandlers _x} count ["HandleDamage","Killed"];
-[_unitGroup,_vehicle] call A3EAI_respawnAIVehicle;
+[_vehicle,(_vehicle getVariable "RespawnInfo")] call A3EAI_respawnAIVehicle;
 _unitsAlive = {alive _x} count (units _unitGroup);
 
 if (_unitsAlive > 0) then {
@@ -46,9 +38,9 @@ if (_unitsAlive > 0) then {
 	//(A3EAI_numAIUnits + _unitsAlive) call A3EAI_updateUnitCount;
 	0 = [_trigger] spawn A3EAI_despawn_static;
 
-	_unitGroup setVariable ["unitType","static"];
-	_unitGroup setVariable ["trigger",_trigger];
-	_unitGroup setVariable ["groupSize",_unitsAlive];
+	_unitGroup setVariable ["unitType","static",A3EAI_enableHC];
+	_unitGroup setVariable ["trigger",_trigger,A3EAI_enableHC];
+	_unitGroup setVariable ["groupSize",_unitsAlive,A3EAI_enableHC];
 
 	_unitGroup setBehaviour "AWARE";
 	
@@ -57,7 +49,7 @@ if (_unitsAlive > 0) then {
 	} forEach (units _unitGroup);
 	(units _unitGroup) allowGetIn false;
 } else {
-	_unitGroup setVariable ["GroupSize",-1];
+	_unitGroup setVariable ["GroupSize",-1,A3EAI_enableHC];
 };
 
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI land vehicle patrol destroyed at %1",mapGridPosition _vehicle];};

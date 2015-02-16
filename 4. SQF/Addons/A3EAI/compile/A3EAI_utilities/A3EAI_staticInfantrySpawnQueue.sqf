@@ -22,7 +22,7 @@ if ((count _grpArray) < _numGroups) then {
 					_trigger setTriggerStatements _triggerStatements;
 					[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
 					0 = _args call A3EAI_spawnUnits_static;
-					if ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}) then {_nul = _trigger call A3EAI_addMapMarker;};
+					if (A3EAI_debugMarkersEnabled) then {_nul = _trigger call A3EAI_addMapMarker;};
 					uiSleep 3;
 				};
 				A3EAI_staticInfantrySpawnQueue deleteAt 0;
@@ -40,7 +40,7 @@ if ((count _grpArray) < _numGroups) then {
 	_trigger setTriggerStatements _triggerStatements;
 	_trigger setTriggerArea [750,750,0,false];
 	[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
-	if ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		_nul = _trigger call A3EAI_addMapMarker;
 	};
 	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Maximum number of groups already spawned at %1. Exiting spawn script.",(triggerText _trigger)];};

@@ -60,24 +60,8 @@ if ((missionNamespace getVariable [("A3EAI_muzzleChance"+str(_unitLevel)),3]) ca
 	};
 };
 
-_gadgetsArray = if (_unitLevel > 1) then {A3EAI_gadgets1} else {A3EAI_gadgets0};
-for "_i" from 0 to ((count _gadgetsArray) - 1) do {
-	if (((_gadgetsArray select _i) select 1) call A3EAI_chance) then {
-		_gadget = ((_gadgetsArray select _i) select 0);
-		_unit addWeapon _gadget;
-	};
-};
-
-//If unit was not given NVGs, give the unit temporary NVGs which will be removed at death.
-if (A3EAI_tempNVGs) then {
-	if (!(_unit hasWeapon "NVG_EPOCH") && {(daytime < 6 || daytime > 20)}) then {
-		_nvg = _unit call A3EAI_addTempNVG;
-		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Generated temporary NVGs for AI %1.",_unit];};
-	};
-};
-
 _unit setVariable ["loadoutDone",true];
-_unit setVariable ["loadout",[[_weapon],[_magazine]]];
+_unit setVariable ["loadout",[[_weapon],[_magazine]],A3EAI_enableHC];
 _unit setVariable ["CanGivePistol",_isRifle];
 if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Created loadout for unit %1 (unitLevel: %2): %3.",_unit,_unitLevel,[_uniform,_weapon,_magazine,_backpack,_vest,_headgear]];};
 

@@ -6,11 +6,10 @@
         Usage: [_unit,_killer] call A3EAI_handleDeathEvent;
 */
 
-private["_victim","_killer","_unitGroup","_unitType","_launchWeapon","_launchAmmo","_deathType","_groupIsEmpty","_unitsAlive","_vehicle","_groupSize"];
+private["_victim","_killer","_unitGroup","_unitType","_launchWeapon","_launchAmmo","_groupIsEmpty","_unitsAlive","_vehicle","_groupSize"];
 
 _victim = _this select 0;
 _killer = _this select 1;
-_deathType = if ((count _this) > 2) then {_this select 2} else {"bled"};
 
 if (_victim getVariable ["deathhandled",false]) exitWith {};
 _victim setVariable ["deathhandled",true];
@@ -29,7 +28,7 @@ _groupIsEmpty = if (_unitsAlive isEqualTo 0) then {_unitGroup call A3EAI_protect
 
 //Update group size counter
 _groupSize = (_unitGroup getVariable ["GroupSize",0]);
-if (_groupSize > 0) then {_unitGroup setVariable ["GroupSize",(_groupSize - 1)]};
+if (_groupSize > 0) then {_unitGroup setVariable ["GroupSize",(_groupSize - 1),A3EAI_enableHC]};
 
 //Retrieve group type
 _unitType = _unitGroup getVariable ["unitType",""];
@@ -56,7 +55,7 @@ call {
 	};
 	if (_unitType isEqualTo "aircrashed") exitWith {};
 	if (_groupIsEmpty) then {
-		_unitGroup setVariable ["GroupSize",-1];
+		_unitGroup setVariable ["GroupSize",-1,A3EAI_enableHC];
 	};
 };
 
@@ -67,12 +66,13 @@ if !(isNull _victim) then {
 		_victim removeWeapon _launchWeapon;
 		_victim removeMagazines _launchAmmo;
 	};
-
+	_victim removeItems "FirstAidKit";
 	if (_victim getVariable ["Remove_NVG",true]) then {_victim removeWeapon "NVG_EPOCH"};
 
-	_bodyName = _victim getVariable ["bodyName","An unknown bandit"];
-	_victim setVariable ["A3EAI_deathTime",diag_tickTime];
+	_victim setVariable ["A3EAI_deathTime",diag_tickTime,A3EAI_enableHC];
 	_victim setVariable ["canCheckUnit",false];
+	_bodyName = _victim getVariable ["bodyName","An unknown bandit"];
+
 	if (_vehicle isEqualTo (_unitGroup getVariable ["assignedVehicle",objNull])) then {
 		_victim setPosASL (getPosASL _victim);
 	};

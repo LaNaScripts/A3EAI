@@ -1,10 +1,10 @@
 #define MAX_RSPAWN_ATTEMPTS 2
 
-private ["_maxRandomSpawns","_debugMarkers","_triggerArea","_attempts","_trigPos","_trigger","_markername","_marker"];
+private ["_maxRandomSpawns","_triggerArea","_attempts","_trigPos","_trigger","_markername","_marker"];
 
 _maxRandomSpawns = _this;
 
-_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
+
 _triggerArea = 600;
 
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Attempting to place %1 random spawns on the map...",_maxRandomSpawns];};
@@ -43,7 +43,7 @@ for "_i" from 1 to _maxRandomSpawns do {
 		_trigger setTriggerActivation ["ANY", "PRESENT", true];
 		_trigger setTriggerTimeout [3, 3, 3, true];
 		_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;",_onActStatements,"[thisTrigger] spawn A3EAI_despawn_random;"];
-		if (_debugMarkers) then {
+		if (A3EAI_debugMarkersEnabled) then {
 			_markername = str(_trigger);
 			_marker = createMarker[_markername,_trigPos];
 			_marker setMarkerShape "ELLIPSE";

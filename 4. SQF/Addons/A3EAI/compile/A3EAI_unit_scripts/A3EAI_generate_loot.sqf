@@ -21,7 +21,7 @@ if (_unit getVariable ["CanGivePistol",true]) then {
 };
 
 //Generate Krypto
-_kryptoAmountMax = missionNamespace getVariable ["A3EAI_kryptoAmount"+str(_unitLevel),500];
+_kryptoAmountMax = missionNamespace getVariable ["A3EAI_kryptoAmount"+str(_unitLevel),200];
 _kryptoAmount = floor (random (_kryptoAmountMax + 1));
 if(_kryptoAmount > 0) then {
 	_kryptoPos = getPosATL _unit;

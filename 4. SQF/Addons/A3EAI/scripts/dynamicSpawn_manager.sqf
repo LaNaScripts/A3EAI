@@ -18,39 +18,41 @@ _playerUID_DB = [];			//Database of all collected playerUIDs
 _lastSpawned_DB = [];		//Database of timestamps for each corresponding playerUID
 _lastOnline_DB = [];		//Database of last online checks
 
-_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
+
 
 while {true} do {
 	if (({isPlayer _x} count playableUnits) > 0) then {
 		_allPlayers = [];		//Do not edit
 		_currentTime = diag_tickTime;
 		{
-			if (isPlayer _x) then {
+			if ((isPlayer _x) && {((typeOf _x) in ["Epoch_Male_F","Epoch_Female_F"])}) then {
 				_playerUID = getPlayerUID _x;
-				_playerIndex = _playerUID_DB find _playerUID;
-				if (_playerIndex > -1) then {
-					_lastSpawned = _lastSpawned_DB select _playerIndex;
-					_timePassed = (_currentTime - _lastSpawned);
-					if (_timePassed > A3EAI_dynCooldownTime) then {
-						if ((_currentTime - (_lastOnline_DB select _playerIndex)) < A3EAI_dynResetLastSpawn) then {
-							_allPlayers pushBack _x;
-							//diag_log format ["DEBUG: Player %1 added to current cycle dynamic spawn list.",_x];
+				if !((_playerUID select [0,2]) isEqualTo "HC") then {
+					_playerIndex = _playerUID_DB find _playerUID;
+					if (_playerIndex > -1) then {
+						_lastSpawned = _lastSpawned_DB select _playerIndex;
+						_timePassed = (_currentTime - _lastSpawned);
+						if (_timePassed > A3EAI_dynCooldownTime) then {
+							if ((_currentTime - (_lastOnline_DB select _playerIndex)) < A3EAI_dynResetLastSpawn) then {
+								_allPlayers pushBack _x;
+								//diag_log format ["DEBUG: Player %1 added to current cycle dynamic spawn list.",_x];
+							};
+							_lastOnline_DB set [_playerIndex,_currentTime];
+						} else {
+							if (_playerUID in A3EAI_failedDynamicSpawns) then {
+								_allPlayers pushBack _x;
+								//diag_log format ["DEBUG: Player %1 added to current cycle dynamic spawn list.",_x];
+								A3EAI_failedDynamicSpawns = A3EAI_failedDynamicSpawns - [_playerUID];
+							};
 						};
-						_lastOnline_DB set [_playerIndex,_currentTime];
 					} else {
-						if (_playerUID in A3EAI_failedDynamicSpawns) then {
-							_allPlayers pushBack _x;
-							//diag_log format ["DEBUG: Player %1 added to current cycle dynamic spawn list.",_x];
-							A3EAI_failedDynamicSpawns = A3EAI_failedDynamicSpawns - [_playerUID];
-						};
+						_playerUID_DB pushBack _playerUID;
+						_lastSpawned_DB pushBack _currentTime - SLEEP_DELAY;
+						_lastOnline_DB pushBack _currentTime;
+						//diag_log format ["DEBUG: Player %1 added to dynamic spawn playerUID database.",_x];
 					};
-				} else {
-					_playerUID_DB pushBack _playerUID;
-					_lastSpawned_DB pushBack _currentTime - SLEEP_DELAY;
-					_lastOnline_DB pushBack _currentTime;
-					//diag_log format ["DEBUG: Player %1 added to dynamic spawn playerUID database.",_x];
+					//diag_log format ["DEBUG: Found a player at %1 (%2).",mapGridPosition _x,name _x];
 				};
-				//diag_log format ["DEBUG: Found a player at %1 (%2).",mapGridPosition _x,name _x];
 			};
 			uiSleep 0.05;
 		} forEach playableUnits;
@@ -65,7 +67,7 @@ while {true} do {
 			_time = diag_tickTime;
 			_player = _allPlayers call BIS_fnc_selectRandom2;
 			_playerUID = (getPlayerUID _player);
-			if ((alive _player) && {!(_player isKindOf "VirtualMan_EPOCH")}) then {
+			if (alive _player) then {
 				_playername = name _player;
 				_index = _playerUID_DB find _playerUID;
 				if (A3EAI_dynSpawnChance call A3EAI_chance) then {
@@ -90,7 +92,7 @@ while {true} do {
 						_trigger setVariable ["targetplayerUID",_playerUID];
 						//_trigActStatements = format ["0 = [150,thisTrigger,%1,%2,%3] call A3EAI_spawnUnits_dynamic;",_spawnParams select 0,_spawnParams select 1,_spawnParams select 2];
 						_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;","", "[thisTrigger] spawn A3EAI_despawn_dynamic;"];
-						if (_debugMarkers) then {
+						if (A3EAI_debugMarkersEnabled) then {
 							_nul = _trigger spawn {
 								_marker = str(_this);
 								if ((getMarkerColor _marker) != "") then {deleteMarker _marker};

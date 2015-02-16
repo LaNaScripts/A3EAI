@@ -58,7 +58,6 @@ _triggerStatements = [
 	format ["_nul = [%1,%2,%3,thisTrigger,%4,%5,%6] call A3EAI_spawnUnits_static;",_minAI,_addAI,_patrolDist,_positionArray,_unitLevel,_numGroups], //Activation statement
 	"_nul = [thisTrigger] spawn A3EAI_despawn_static;" //Deactivation statement
 ]; 
-_newTrigger setVariable ["respawnLimit",(missionNamespace getVariable ["A3EAI_respawnLimit"+str(_unitLevel),5])];
 _newTrigger setTriggerStatements _triggerStatements;
 0 = [0,_newTrigger,[],_patrolDist,_unitLevel,_locationArray,[_minAI,_addAI]] call A3EAI_initializeTrigger;
 //diag_log format ["DEBUG :: Created trigger %1 has statements %2.",triggerText _newTrigger,triggerStatements _newTrigger];

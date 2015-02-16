@@ -4,8 +4,8 @@ _unitLevel = _this select 1;
 _spawnPos = _this select 2;
 
 _unit = _unitGroup createUnit ["i_survivor_F",_spawnPos,[],0,"FORM"];
-[_unit] joinSilent _unitGroup;
 _unit setVariable ["bodyName",(name _unit)];
+[_unit] joinSilent _unitGroup;
 0 = _unit call A3EAI_addEH;
 0 = [_unit, _unitLevel] call A3EAI_generateLoadout;									// Assign unit loadout
 0 = [_unit, _unitLevel] call A3EAI_setSkills;										// Set AI skill

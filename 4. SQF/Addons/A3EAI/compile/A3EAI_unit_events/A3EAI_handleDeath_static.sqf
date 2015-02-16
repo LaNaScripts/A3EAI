@@ -22,21 +22,21 @@ if (_groupIsEmpty) then {
 		if (_respawnCount != 0) then {
 			[0,_trigger,_unitGroup] call A3EAI_addRespawnQueue; //If there are still respawns possible... respawn the group
 			if (_respawnCount > -1) then {
-				_trigger setVariable ["respawnLimit",(_respawnCount - 1)]; //If respawns are limited, decrease respawn counter
+				_trigger setVariable ["respawnLimit",(_respawnCount - 1),A3EAI_enableHC]; //If respawns are limited, decrease respawn counter
 				if (A3EAI_debugLevel > 0) then {diag_log format["A3EAI Debug: Respawns remaining for group %1: %2.",_unitGroup,(_unitGroup getVariable ["respawnLimit",-1])];};
 			};
 		} else {
-			_trigger setVariable ["permadelete",true];	//deny respawn and delete trigger on next despawn.
+			_trigger setVariable ["permadelete",true,A3EAI_enableHC];	//deny respawn and delete trigger on next despawn.
 		};
 	} else {
-		if ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}) then {deleteMarker str(_trigger)};
+		if (A3EAI_debugMarkersEnabled) then {deleteMarker str(_trigger)};
 		_nul = _trigger spawn {
 			_trigger = _this;
 			_trigger setTriggerStatements ["this","true","false"]; //Disable trigger from activating or deactivating while cleanup is performed
 			if (A3EAI_debugLevel > 0) then {diag_log format["A3EAI Debug: Deleting custom-defined AI spawn %1 at %2 in 30 seconds.",triggerText _trigger, mapGridPosition _trigger];};
 			uiSleep 30;
 			{
-				_x setVariable ["GroupSize",-1];
+				_x setVariable ["GroupSize",-1,A3EAI_enableHC];
 			} forEach (_trigger getVariable ["GroupArray",[]]);
 			deleteMarker (_trigger getVariable ["spawnmarker",""]);
 			[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
@@ -55,7 +55,7 @@ _unitLevelEffective = (_trigger getVariable ["unitLevelEffective",3]);
 if (_unitLevelEffective < 3) then {
 	_promoteChance = (missionNamespace getVariable ["A3EAI_promoteChances",[0.40,0.20,0.10]]) select (_unitLevelEffective);
 	if (_promoteChance call A3EAI_chance) then {
-		_trigger setVariable ["unitLevelEffective",(_unitLevelEffective+1)];
+		_trigger setVariable ["unitLevelEffective",(_unitLevelEffective+1),A3EAI_enableHC];
 		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Promoted unitLevel for %1 spawn to %2.",(triggerText _trigger),(_unitLevelEffective+1)];};
 	};
 };

@@ -21,10 +21,6 @@ if (isNull _targetPlayer) exitWith {
 _baseDist = 200;		//On foot distance: 200-250
 _distVariance = 50;
 _dirVariance = 90;
-if (!((vehicle _targetPlayer) isKindOf "Man")) then {
-	_baseDist = _baseDist - 50;	//In vehicle distance: 150-225m
-	_dirVariance = 67.5;
-};
 
 _playerPos = ASLtoATL getPosASL _targetPlayer;
 _playerDir = getDir _targetPlayer;
@@ -35,8 +31,9 @@ _triggerLocation = _trigger getVariable ["triggerLocation",locationNull];
 
 if (
 	(surfaceIsWater _spawnPos) or 
-	{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPos select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count ((_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200]) - [_targetPlayer])) > 0} or 
+	{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPos select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count (_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200])) > 0} or 
 	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1500]) - [_triggerLocation])) > 0} or
+	{_spawnPos call A3EAI_posInBuilding} or
 	{!((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
 ) exitWith {
 	if (A3EAI_debugLevel > 1) then {
@@ -52,10 +49,9 @@ if (
 
 };
 _totalAI = (_minAI + round(random _addAI));
-_unitGroup = [_totalAI,grpNull,_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
+_unitGroup = [_totalAI,grpNull,"dynamic",_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
 
 //Set group variables
-_unitGroup setVariable ["unitType","dynamic"];
 _unitGroup setBehaviour "AWARE";
 _unitGroup setSpeedMode "FULL";
 
@@ -82,7 +78,7 @@ if (!(_trigger getVariable ["initialized",false])) then {
 _trigger setTriggerStatements _triggerStatements;
 [_trigger,"A3EAI_dynTriggerArray"] call A3EAI_updateSpawnCount;
 
-if ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}) then {
+if (A3EAI_debugMarkersEnabled) then {
 	_nul = _trigger spawn {
 		_marker = str(_this);
 		_marker setMarkerColor "ColorOrange";

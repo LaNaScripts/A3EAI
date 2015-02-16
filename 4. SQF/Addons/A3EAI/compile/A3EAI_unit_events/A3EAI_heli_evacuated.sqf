@@ -6,15 +6,15 @@
 		Last updated: 12:11 AM 6/17/2014
 */
 
-private ["_helicopter","_vehPos","_unitGroup"];
-_helicopter = _this select 0;
+private ["_vehicle","_vehPos","_unitGroup"];
+_vehicle = _this select 0;
 
-if (_helicopter getVariable ["heli_disabled",false]) exitWith {false};
-_helicopter setVariable ["heli_disabled",true];
-{_helicopter removeAllEventHandlers _x} count ["HandleDamage","GetOut","Killed"];
-_unitGroup = _helicopter getVariable "unitGroup";
-[_unitGroup,_helicopter] call A3EAI_respawnAIVehicle;
-_vehPos = ASLtoATL getPosASL _helicopter;
+if (_vehicle getVariable ["heli_disabled",false]) exitWith {false};
+_vehicle setVariable ["heli_disabled",true];
+{_vehicle removeAllEventHandlers _x} count ["HandleDamage","GetOut","Killed"];
+_unitGroup = _vehicle getVariable "unitGroup";
+[_vehicle,(_vehicle getVariable "RespawnInfo")] call A3EAI_respawnAIVehicle;
+_vehPos = ASLtoATL getPosASL _vehicle;
 
 if (!surfaceIsWater _vehPos) then {
 	private ["_unitsAlive","_trigger","_unitLevel","_units","_waypointCount"];
@@ -24,12 +24,13 @@ if (!surfaceIsWater _vehPos) then {
 		{
 			if (alive _x) then {
 				if !(canMove _x) then {_x setHit["legs",0]};
-				_x action ["eject",_helicopter];
 				unassignVehicle _x;
+				_x action ["eject",_vehicle];
 			} else {
 				0 = [_x,_unitLevel] spawn A3EAI_generateLoot;
 			};
 		} forEach _units;
+		_unitGroup leaveVehicle _vehicle;
 		
 		_unitsAlive = {alive _x} count _units;
 		//(A3EAI_numAIUnits + _unitsAlive) call A3EAI_updateUnitCount;
@@ -45,7 +46,7 @@ if (!surfaceIsWater _vehPos) then {
 			_trigger setTriggerArea [600, 600, 0, false];
 			_trigger setTriggerActivation ["ANY", "PRESENT", true];
 			_trigger setTriggerTimeout [5, 5, 5, true];
-			_trigger setTriggerText (format ["Heli AI Parachute %1",mapGridPosition _helicopter]);
+			_trigger setTriggerText (format ["Heli AI Parachute %1",mapGridPosition _vehicle]);
 			_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;","","0 = [thisTrigger] spawn A3EAI_despawn_static;"];
 
 			//Set required trigger variables and begin despawn
@@ -55,29 +56,30 @@ if (!surfaceIsWater _vehPos) then {
 			_trigger setVariable ["maxUnits",[_unitsAlive,0]];
 			_trigger setVariable ["respawn",false]; //landed AI units should never respawn
 			_trigger setVariable ["permadelete",true]; //units should be permanently despawned
+			_trigger setVariable ["spawnType","static"];
 			[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
 			0 = [_trigger] spawn A3EAI_despawn_static;
 
 			_unitGroup setVariable ["unitType","static"];
 			_unitGroup setVariable ["trigger",_trigger];
-			_unitGroup setVariable ["groupSize",_unitsAlive];
+			_unitGroup setVariable ["groupSize",_unitsAlive,A3EAI_enableHC];
 			
 			if (_unitGroup getVariable ["EnemiesIgnored",false]) then {[_unitGroup,"IgnoreEnemies_Undo"] call A3EAI_forceBehavior};
 		};
 	} else {
 		_unitGroup setVariable ["unitType","aircrashed"];
 		{
-			_x action ["eject",_helicopter];
+			_x action ["eject",_vehicle];
 			_nul = [_x,_x] call A3EAI_handleDeathEvent;
 			0 = [_x,_unitLevel] spawn A3EAI_generateLoot;
 		} forEach _units;
-		_unitGroup setVariable ["GroupSize",-1];
+		_unitGroup setVariable ["GroupSize",-1,A3EAI_enableHC];
 	};
 } else {
 	//_unitGroup call A3EAI_deleteGroup;
-	_unitGroup setVariable ["GroupSize",-1];
+	_unitGroup setVariable ["GroupSize",-1,A3EAI_enableHC];
 };
 
-if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI helicopter %1 evacuated at %2.",typeOf _helicopter,mapGridPosition _helicopter];};
+if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI helicopter %1 evacuated at %2.",typeOf _vehicle,mapGridPosition _vehicle];};
 
 true

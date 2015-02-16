@@ -1,5 +1,5 @@
 
-private ["_startTime", "_totalAI", "_patrolDist", "_trigger", "_unitLevel", "_grpArray", "_triggerPos", "_maxUnits", "_attempts", "_continue", "_spawnPos", "_spawnPosSelected", "_unitGroup", "_triggerStatements","_addDist"];
+private ["_startTime", "_totalAI", "_patrolDist", "_trigger", "_unitLevel", "_grpArray", "_triggerPos", "_maxUnits", "_attempts", "_continue", "_spawnPos", "_spawnPosSelected", "_unitGroup", "_triggerStatements","_spawnRadius"];
 
 _startTime = diag_tickTime;
 
@@ -25,26 +25,26 @@ if !(_trigger getVariable ["respawn",true]) then {
 _attempts = 0;
 _continue = true;
 _spawnPos = [];
-_addDist = 0;
+_spawnRadius = _patrolDist;
 while {_continue && {(_attempts < 3)}} do {
-	_spawnPosSelected = [_triggerPos,random ((_patrolDist + _addDist) min 200),random(360),0] call SHK_pos;
+	_spawnPosSelected = [_triggerPos,random (_patrolDist),random(360),0] call SHK_pos;
 	if ((count _spawnPosSelected) isEqualTo 2) then {_spawnPosSelected set [2,0];};
 	if (
-		(_spawnPosSelected call A3EAI_posNotInBuilding) && 
+		!(_spawnPosSelected call A3EAI_posInBuilding) && 
 		{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPosSelected select 0),(_spawnPosSelected select 1),(_spawnPosSelected select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPosSelected) < 30)}) exitWith {1}} count (_spawnPosSelected nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200])) isEqualTo 0}
 	) then {
 		_spawnPos = _spawnPosSelected;
 		_continue = false;
 	} else {
 		_attempts = _attempts + 1;
-		_addDist = _addDist + 50;
+		_spawnRadius = _spawnRadius + 25;
 		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Unable to find suitable spawn position. (attempt %1/3).",_attempts];};
 	};
 };
 
 _unitGroup = grpNull;
 if !(_spawnPos isEqualTo []) then {
-	_unitGroup = [_totalAI,_unitGroup,_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
+	_unitGroup = [_totalAI,_unitGroup,"static",_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
 	if (_patrolDist > 1) then {
 		0 = [_unitGroup,_triggerPos,_patrolDist] spawn A3EAI_BIN_taskPatrol;
 	} else {
@@ -53,13 +53,12 @@ if !(_spawnPos isEqualTo []) then {
 
 	if (A3EAI_debugLevel > 0) then {diag_log format["A3EAI Debug: Spawned a group of %1 units in %2 seconds at custom spawn %3.",_totalAI,(diag_tickTime - _startTime),(triggerText _trigger)];};
 } else {
-	_unitGroup = ["protect"] call A3EAI_createGroup;
+	_unitGroup = ["static",true] call A3EAI_createGroup;
 	_unitGroup setVariable ["trigger",_trigger];
 	[0,_trigger,_unitGroup,true] call A3EAI_addRespawnQueue;
 	if (A3EAI_debugLevel > 0) then {diag_log format["A3EAI Debug: Unable to find suitable spawn position at custom spawn %1.",(triggerText _trigger)];};
 };
 
-_unitGroup setVariable ["unitType","static"];
 _grpArray pushBack _unitGroup;
 
 _unitGroup

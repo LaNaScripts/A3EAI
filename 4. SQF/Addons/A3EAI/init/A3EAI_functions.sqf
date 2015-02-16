@@ -10,7 +10,7 @@ if (isNil "SHK_pos_getPos") then {call compile preprocessFile format ["%1\compil
 A3EAI_getWeaponList = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\A3EAI_getWeaponList.sqf",A3EAI_directory];
 BIS_fnc_selectRandom2 = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\fn_selectRandom.sqf",A3EAI_directory];
 A3EAI_checkClassname = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\A3EAI_check_classname.sqf",A3EAI_directory];
-A3EAI_posNotInBuilding = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\A3EAI_insideBuildingCheck.sqf",A3EAI_directory];
+A3EAI_posInBuilding = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\A3EAI_insideBuildingCheck.sqf",A3EAI_directory];
 A3EAI_clearMissileWeapons = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\A3EAI_removeMissiles.sqf",A3EAI_directory];
 A3EAI_createCustomInfantryQueue = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\A3EAI_customInfantryQueue.sqf",A3EAI_directory];
 A3EAI_createCustomInfantrySpawnQueue = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_utilities\A3EAI_customInfantrySpawnQueue.sqf",A3EAI_directory];
@@ -54,6 +54,7 @@ A3EAI_handleDeathEvent = compileFinal preprocessFileLineNumbers format ["%1\comp
 A3EAI_heliLanded = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_events\A3EAI_heli_landed.sqf",A3EAI_directory];
 A3EAI_heliEvacuated = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_events\A3EAI_heli_evacuated.sqf",A3EAI_directory];
 A3EAI_heliDestroyed = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_events\A3EAI_heli_destroyed.sqf",A3EAI_directory];
+A3EAI_heliParaDrop = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_events\A3EAI_heli_paradrop.sqf",A3EAI_directory];
 A3EAI_vehDestroyed = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_events\A3EAI_veh_destroyed.sqf",A3EAI_directory];
 A3EAI_handleAirDeath = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_events\A3EAI_handleDeath_air.sqf",A3EAI_directory];
 A3EAI_handleLandDeath = compileFinal preprocessFileLineNumbers format ["%1\compile\A3EAI_unit_events\A3EAI_handleDeath_land.sqf",A3EAI_directory];
@@ -111,15 +112,16 @@ A3EAI_updGroupCount = compileFinal '
 
 //A3EAI group side assignment function.
 A3EAI_createGroup = compileFinal '
-	private["_unitGroup","_groupRadioType","_param"];
-	_param = if ((count _this) > 0) then {_this select 0} else {""};
-	
-	if (({(side _x) isEqualTo resistance} count allGroups) > 139) then {
-		diag_log "A3EAI Warning: Exceeded 139 groups for Resistance side! Recommend reducing amount of AI spawns to avoid potential issues.";
-	};
+	private["_unitGroup","_protect","_unitType"];
+	_unitType = _this select 0;
+
+	//if (({(side _x) isEqualTo resistance} count allGroups) > 139) then {
+	//	diag_log "A3EAI Warning: Exceeded 139 groups for Resistance side! Recommend reducing amount of AI spawns to avoid potential issues.";
+	//};
 	
 	_unitGroup = createGroup resistance;
-	if (_param isEqualTo "protect") then {_unitGroup call A3EAI_protectGroup};
+	if ((count _this) > 1) then {_unitGroup call A3EAI_protectGroup};
+	_unitGroup setVariable ["unitType",_unitType,A3EAI_enableHC];
 	[_unitGroup,true] call A3EAI_updGroupCount;
 	
 	_unitGroup
@@ -166,15 +168,16 @@ A3EAI_lootSearching = compileFinal '
 
 //Prevents object from being destroyed/deleted from DayZ's anti-hacker check
 A3EAI_protectObject = compileFinal '
-	private ["_objectMonitor","_object"];
+	private ["_objectMonitor","_object","_index"];
 	_object = _this;
 	
 	_object call EPOCH_server_setVToken;
 	_object setVariable["LOCK_OWNER", "-1"];
 	_object setVariable["LOCKED_TILL", 3.4028235e38];
-	A3EAI_monitoredObjects pushBack _object;
 	
-	true
+	_index = A3EAI_monitoredObjects pushBack _object;
+	
+	_index
 ';
 
 A3EAI_getUnitLevel = compileFinal '
@@ -196,7 +199,7 @@ A3EAI_protectGroup = compileFinal '
 	_dummy = _this createUnit ["Logic",[0,0,0],[],0,"FORM"];
 	[_dummy] joinSilent _this;
 	if ((behaviour _dummy) != "AWARE") then {_this setBehaviour "AWARE"};
-	_this setVariable ["dummyUnit",_dummy];
+	_this setVariable ["dummyUnit",_dummy,A3EAI_enableHC];
 	
 	if (A3EAI_debugLevel > 1) then {diag_log format["A3EAI Extended Debug: Spawned 1 dummy AI unit to preserve group %1.",_this];};
 	
@@ -205,34 +208,31 @@ A3EAI_protectGroup = compileFinal '
 
 A3EAI_addTempNVG = compileFinal '
 	_this addWeapon "NVG_EPOCH";
-	//_this addWeapon "NVGoggles";
-	//_this addItem "NVGoggles";
-	//_this assignItem "NVGoggles";
-	_this setVariable ["RemoveNVG",true];
+	_this setVariable ["RemoveNVG",true,A3EAI_enableHC];
 	
 	true
 ';
 
 A3EAI_respawnAIVehicle = compileFinal '
-	//Usage: [_unitGroup,_vehicle] call A3EAI_respawnAIVehicle;
 	private ["_vehicle","_unitType"];
-	_unitType = (_this select 0) getVariable ["unitType",""];
-	_vehicle = _this select 1;
+	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Respawning AI vehicle with params %1",_this]};
+	_vehicle = _this select 0;
+	_vehicleType = (_this select 1) select 0;
+	_isCustom = (_this select 1) select 1;
 	call {
-		if (_unitType in ["aircustom","landcustom"]) exitWith {
+		if (_isCustom) then {
 			private ["_spawnParams"];
-			_spawnParams = (_this select 0) getVariable ["spawnParams",false];
+			_spawnParams = _vehicle getVariable ["spawnParams",false];
 			if (_spawnParams select 4) then {
 				[1,_spawnParams] call A3EAI_addRespawnQueue;
 			};
-			if (_vehicle isKindOf "Air") then {A3EAI_curHeliPatrols = A3EAI_curHeliPatrols - 1} else {A3EAI_curLandPatrols = A3EAI_curLandPatrols - 1};
-		};
-		if (_unitType in ["air","land"]) exitWith {
-			[2,typeOf _vehicle] call A3EAI_addRespawnQueue;
-			if (_vehicle isKindOf "Air") then {A3EAI_curHeliPatrols = A3EAI_curHeliPatrols - 1} else {A3EAI_curLandPatrols = A3EAI_curLandPatrols - 1};
+			if (_vehicleType isKindOf "Air") then {A3EAI_curHeliPatrols = A3EAI_curHeliPatrols - 1} else {A3EAI_curLandPatrols = A3EAI_curLandPatrols - 1};
+		} else {
+			[2,_vehicleType] call A3EAI_addRespawnQueue;
+			if (_vehicleType isKindOf "Air") then {A3EAI_curHeliPatrols = A3EAI_curHeliPatrols - 1} else {A3EAI_curLandPatrols = A3EAI_curLandPatrols - 1};
 		};
 	};
-	_vehicle setVariable ["A3EAI_deathTime",diag_tickTime]; //mark vehicle for cleanup
+	_vehicle setVariable ["A3EAI_deathTime",diag_tickTime,A3EAI_enableHC]; //mark vehicle for cleanup
 	
 	true
 ';

@@ -1,4 +1,4 @@
-private ["_unitGroup","_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_isArmed","_debugMarkers","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj"];
+private ["_unitGroup","_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_isArmed","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj"];
 
 
 
@@ -13,7 +13,7 @@ _vehicle = if (_unitType in ["static","dynamic","random"]) then {objNull} else {
 _useLaunchers = (((count A3EAI_launcherTypes) > 0) && {(_unitLevel in A3EAI_launcherLevels)});
 _isArmed = _vehicle getVariable ["isArmed",false];
 _antistuckPos = (getWPPos [_unitGroup,(currentWaypoint _unitGroup)]);
-if (isNil {_unitGroup getVariable "GroupSize"}) then {_unitGroup setVariable ["GroupSize",(count (units _unitGroup))]};
+if (isNil {_unitGroup getVariable "GroupSize"}) then {_unitGroup setVariable ["GroupSize",(count (units _unitGroup)),A3EAI_enableHC]};
 _vehicleMoved = true;
 _stuckCheckTime = call {
 	if (_unitType isEqualTo "static") then {300};
@@ -25,7 +25,7 @@ _stuckCheckTime = call {
 };
 
 //set up debug variables
-_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
+
 _marker = "";
 _marker2 = "";
 
@@ -111,10 +111,34 @@ if (_unitType in ["air","aircustom"]) then {
 			};
 		};
 	};
+	
+	_gadgetsArray = if (_unitLevel > 1) then {A3EAI_gadgets1} else {A3EAI_gadgets0};
+	for "_i" from 0 to ((count _gadgetsArray) - 1) do {
+		if (((_gadgetsArray select _i) select 1) call A3EAI_chance) then {
+			_gadget = ((_gadgetsArray select _i) select 0);
+			_x addWeapon _gadget;
+		};
+	};
+
+	//If unit was not given NVGs, give the unit temporary NVGs which will be removed at death.
+	if (A3EAI_tempNVGs) then {
+		if (!(_x hasWeapon "NVG_EPOCH") && {(daytime < 6 || daytime > 20)}) then {
+			_x call A3EAI_addTempNVG;
+			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Generated temporary NVGs for AI %1.",_x];};
+		};
+	};
+
+	//Give unit temporary first aid kits to allow self-healing (unit level 1+)
+	if (A3EAI_enableHealing) then {
+		for "_i" from 1 to _unitLevel do {
+			_x addItem "FirstAidKit";
+		};
+	};
+	
 	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Unit %1 loadout: %2. unitLevel %3.",_x,_x getVariable ["loadout",[]],_unitLevel];};
 } forEach (units _unitGroup);
 
-if (_debugMarkers) then {
+if (A3EAI_debugMarkersEnabled) then {
 	_markername = format ["%1-1",_unitGroup];
 	if ((getMarkerColor _markername) != "") then {deleteMarker _markername; uiSleep 0.5};	//Delete the previous marker if it wasn't deleted for some reason.
 	_marker = createMarker [_markername,getPosASL (leader _unitGroup)];
@@ -174,7 +198,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 				};
 			};
 		};
-		if ((_unitType isEqualTo "air") && {_isArmed}) exitWith {
+		if (_unitType isEqualTo "air") exitWith {
 			if ((alive _vehicle) && {!(_vehicle getVariable ["heli_disabled",false])}) then {
 				if (((diag_tickTime - _lastReinforceTime) > 900) && {((count A3EAI_reinforcePlaces) > 0)}) then {
 					[_unitGroup,_vehicle] call A3EAI_heliReinforce;
@@ -288,6 +312,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 					[_unitGroup,0] setWPPos _wpSelect;
 					[_unitGroup,1] setWPPos _wpSelect;
 					[_unitGroup,"IgnoreEnemies"] call A3EAI_forceBehavior;
+					if (_unitGroup getVariable ["HeliReinforceOrdered",false]) then {_unitGroup setVariable ["HeliReinforceOrdered",false];}; //Cancel reinforcement order
 					//_vehicle doMove _wpSelect;
 					_antistuckPos = _wpSelect;
 					if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Antistuck detection triggered for AI air vehicle %1 (Group: %2). Forcing next waypoint.",(typeOf _vehicle),_unitGroup];};
@@ -351,7 +376,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 		};
 	};
 	
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		_marker setMarkerPos (getPosASL ((units _unitGroup) select 0));
 		_marker2 setMarkerPos (getWPPos [_unitGroup,(currentWaypoint _unitGroup)]);
 		{
@@ -370,7 +395,7 @@ _unitGroup setVariable ["rearmEnabled",false]; //allow group manager to run agai
 
 if (isEngineOn _vehicle) then {_vehicle engineOn false};
 
-if (_debugMarkers) then {
+if (A3EAI_debugMarkersEnabled) then {
 	deleteMarker _marker;
 	deleteMarker _marker2;
 };

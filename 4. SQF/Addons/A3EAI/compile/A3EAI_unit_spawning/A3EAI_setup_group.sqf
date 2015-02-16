@@ -3,10 +3,12 @@ private ["_totalAI","_spawnPos","_unitGroup","_trigger","_attempts","_baseDist",
 
 	
 _totalAI = _this select 0;
-_spawnPos = _this select 2;
-_trigger = _this select 3;
-_unitLevel = _this select 4;
-_checkPos = if ((count _this) > 5) then {_this select 5} else {false};
+_unitGroup = _this select 1;
+_unitType = _this select 2;
+_spawnPos = _this select 3;
+_trigger = _this select 4;
+_unitLevel = _this select 5;
+_checkPos = if ((count _this) > 6) then {_this select 6} else {false};
 
 if (_checkPos) then {	//If provided position requires checking...
 	_pos = [];
@@ -32,7 +34,9 @@ if (_checkPos) then {	//If provided position requires checking...
 };
 
 _spawnPos set [2,0];
-_unitGroup = if (isNull (_this select 1)) then {[] call A3EAI_createGroup} else {_this select 1};
+if (isNull _unitGroup) then {
+	_unitGroup = [_unitType] call A3EAI_createGroup;
+};
 
 for "_i" from 1 to _totalAI do {
 	private ["_unit"];
@@ -54,17 +58,24 @@ if (({if (isPlayer _x) exitWith {1}} count (_spawnPos nearEntities [["Epoch_Male
 _dummy = _unitGroup getVariable "dummyUnit";
 if (!isNil "_dummy") then {
 	deleteVehicle _dummy;
-	_unitGroup setVariable ["dummyUnit",nil];
+	_unitGroup setVariable ["dummyUnit",nil,A3EAI_enableHC];
 	if (A3EAI_debugLevel > 1) then {diag_log format["A3EAI Extended Debug: Deleted 1 dummy unit for group %1.",_unitGroup];};
 };
 
 _unitGroup selectLeader ((units _unitGroup) select 0);
-_unitGroup setVariable ["trigger",_trigger];
-_unitGroup setVariable ["GroupSize",_totalAI];
-_unitGroup setVariable ["unitLevel",_unitLevel];
-if (isNull _trigger) then {_unitGroup setVariable ["spawnPos",_spawnPos]}; 	//If group was spawned directly by scripting instead of a trigger object, record spawn position instead of trigger position as anchoring point
-0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
+_unitGroup setVariable ["trigger",_trigger,A3EAI_enableHC];
+_unitGroup setVariable ["GroupSize",_totalAI,A3EAI_enableHC];
+_unitGroup setVariable ["unitLevel",_unitLevel,A3EAI_enableHC];
 _unitGroup setFormDir (random 360);
 _unitGroup allowFleeing 0;
+
+if !(A3EAI_HCIsConnected) then {
+	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
+} else {
+	//_unitGroup setGroupOwner A3EAI_HCObjectOwnerID;  //Uncomment when setGroupOwner command is implemented.
+	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//Comment when setGroupOwner command is implemented.
+	A3EAI_transferGroup = _unitGroup;
+	A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_transferGroup";
+};
 
 _unitGroup

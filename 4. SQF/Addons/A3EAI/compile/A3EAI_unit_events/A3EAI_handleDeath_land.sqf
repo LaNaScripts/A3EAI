@@ -8,10 +8,10 @@ _vehicle = _unitGroup getVariable ["assignedVehicle",objNull];
 if (_groupIsEmpty) then {
 	if (_vehicle isKindOf "Car") then {
 		{_vehicle removeAllEventHandlers _x} count ["HandleDamage","Killed"];
-		[_unitGroup,_vehicle] call A3EAI_respawnAIVehicle;
+		[_vehicle,(_vehicle getVariable "RespawnInfo")] call A3EAI_respawnAIVehicle;
 		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI vehicle patrol destroyed, adding vehicle %1 to cleanup queue.",(typeOf _vehicle)];};
 	};
-	_unitGroup setVariable ["GroupSize",-1];
+	_unitGroup setVariable ["GroupSize",-1,A3EAI_enableHC];
 } else {
 	if (_victim getVariable ["isDriver",false]) then {
 		_groupUnits = (units _unitGroup) - [_victim];

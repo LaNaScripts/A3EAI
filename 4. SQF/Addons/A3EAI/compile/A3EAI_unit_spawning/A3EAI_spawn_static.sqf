@@ -8,7 +8,7 @@
 	Last updated: 8:38 AM 10/23/2013
 */
 
-private ["_minAI","_addAI","_patrolDist","_trigger","_unitLevel","_numGroups","_grpArray","_triggerPos","_startTime","_totalSpawned","_debugMarkers","_triggerStatements","_groupsActive"];
+private ["_minAI","_addAI","_patrolDist","_trigger","_unitLevel","_numGroups","_grpArray","_triggerPos","_startTime","_totalSpawned","_triggerStatements","_groupsActive"];
 
 
 _minAI = _this select 0;									//Mandatory minimum number of AI units to spawn
@@ -23,7 +23,7 @@ _startTime = diag_tickTime;
 
 _grpArray = _trigger getVariable ["GroupArray",[]];	
 _groupsActive = count _grpArray;
-//_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
+//
 
 _trigger setTriggerArea [750,750,0,false]; //Expand trigger area to prevent players from quickly leaving and start respawn process immediately
 _triggerPos = ASLtoATL getPosASL _trigger;
@@ -46,7 +46,7 @@ for "_j" from 1 to (_numGroups - _groupsActive) do {
 	//If non-zero unit amount and valid spawn position, spawn group, otherwise add it to respawn queue.
 	_unitGroup = grpNull;
 	if ((_totalAI > 0) && {(count _spawnPos) > 1}) then {
-		_unitGroup = [_totalAI,_unitGroup,_spawnPos,_trigger,_unitLevel] call A3EAI_spawnGroup;
+		_unitGroup = [_totalAI,_unitGroup,"static",_spawnPos,_trigger,_unitLevel] call A3EAI_spawnGroup;
 		_totalSpawned = _totalSpawned + _totalAI;
 		if (_patrolDist > 1) then {
 			0 = [_unitGroup,_triggerPos,_patrolDist] spawn A3EAI_BIN_taskPatrol;
@@ -55,17 +55,17 @@ for "_j" from 1 to (_numGroups - _groupsActive) do {
 		};
 		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Spawned group %1 (unitLevel: %2) with %3 units.",_unitGroup,_unitLevel,_totalAI];};
 	} else {
-		_unitGroup = ["protect"] call A3EAI_createGroup;
+		_unitGroup = ["static",true] call A3EAI_createGroup;
 		_unitGroup setVariable ["GroupSize",0];
 		_unitGroup setVariable ["trigger",_trigger];
 		0 = [0,_trigger,_unitGroup] call A3EAI_addRespawnQueue;
 		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: No units spawned for group %1. Added group to respawn queue.",_unitGroup];};
 	};
 	
-	_unitGroup setVariable ["unitType","static"];
 	_grpArray pushBack _unitGroup;
 };
 
+_trigger setVariable ["respawnLimit",(missionNamespace getVariable ["A3EAI_respawnLimit"+str(_unitLevel),-1])];
 if (A3EAI_debugLevel > 0) then {
 	diag_log format["A3EAI Debug: Spawned %1 new AI groups (%2 units total) in %3 seconds at %4.",_numGroups,_totalSpawned,(diag_tickTime - _startTime),(triggerText _trigger)];
 	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Trigger %1 group array updated to: %2.",triggerText _trigger,_trigger getVariable "GroupArray"]};

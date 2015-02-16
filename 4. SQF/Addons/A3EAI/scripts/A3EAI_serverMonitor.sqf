@@ -19,7 +19,7 @@ _sideCheck = _currentTime;
 
 //Define settings
 _reportDynOrVehicles = (A3EAI_dynAISpawns || ((A3EAI_maxHeliPatrols > 0) or {(A3EAI_maxLandPatrols > 0)}) || (A3EAI_maxRandomSpawns > 0));
-_debugMarkers = ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled});
+
 
 //Local functions
 _getUptime = {
@@ -155,7 +155,7 @@ while {true} do {
 				_triggerLocation = _x getVariable ["triggerLocation",locationNull];
 				//if (_triggerLocation in A3EAI_areaBlacklists) then {A3EAI_areaBlacklists = A3EAI_areaBlacklists - [_triggerLocation]};
 				deleteLocation _triggerLocation;
-				if (_debugMarkers) then {deleteMarker (str _x)};	
+				if (A3EAI_debugMarkersEnabled) then {deleteMarker (str _x)};	
 				deleteVehicle _x;
 			};
 			if ((_forEachIndex % 3) isEqualTo 0) then {uiSleep 0.05};
@@ -177,7 +177,7 @@ while {true} do {
 		_sideCheck = _currentTime;
 	};
 	
-	if (_debugMarkers) then {
+	if (A3EAI_debugMarkersEnabled) then {
 		{
 			if ((getMarkerColor _x) != "") then {
 				_x setMarkerPos (getMarkerPos _x);

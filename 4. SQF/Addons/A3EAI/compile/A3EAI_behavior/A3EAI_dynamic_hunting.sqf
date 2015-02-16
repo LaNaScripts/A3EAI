@@ -110,7 +110,7 @@ uiSleep 5;
 
 if (A3EAI_radioMsgs) then {
 	_leader = (leader _unitGroup);
-	if (((_unitGroup getVariable ["GroupSize",0]) > 1) && {!(isNull _targetPlayer)}) then {
+	if (((_unitGroup getVariable ["GroupSize",0]) > 1) && {!((owner _targetPlayer) isEqualTo 0)}) then {
 		_nearbyUnits = _targetPlayer nearEntities [["Car","Epoch_Male_F","Epoch_Female_F"],TRANSMIT_RANGE];
 		{
 			if ((isPlayer _x) && {({if (_radioType in (assignedItems _x)) exitWith {1}} count (crew (vehicle _x))) > 0}) then {

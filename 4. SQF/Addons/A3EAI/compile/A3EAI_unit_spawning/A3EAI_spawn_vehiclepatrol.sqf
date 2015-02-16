@@ -12,6 +12,7 @@ _vehSpawnPos = [];
 _spawnMode = "NONE";
 _keepLooking = true;
 _error = false;
+_HCActive = ((owner A3EAI_HCObject) != 0);
 
 call {
 	if (_vehicleType isKindOf "Air") exitWith {
@@ -44,7 +45,8 @@ call {
 
 if (_error) exitWith {diag_log format ["A3EAI Error: %1 attempted to spawn unsupported vehicle type %2.",__FILE__,_vehicleType]};
 
-_unitGroup = [] call A3EAI_createGroup;
+_unitType = if (_isAirVehicle) then {"air"} else {"land"};
+_unitGroup = [_unitType] call A3EAI_createGroup;
 _driver = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
 
 _vehicle = createVehicle [_vehicleType, _vehSpawnPos, [], 0, _spawnMode];
@@ -57,16 +59,19 @@ if !(_vehicle isKindOf "Plane") then {
 	_vehicle setDir (random 360);
 };
 
-//Set variables
-_vehicle setVariable ["unitGroup",_unitGroup];
-
 //Determine vehicle armed state
 _turretCount = count (configFile >> "CfgVehicles" >> _vehicleType >> "turrets");
 _isArmed = ((({!(_x in ["CarHorn","BikeHorn","TruckHorn","TruckHorn2","SportCarHorn","MiniCarHorn"])} count (weapons _vehicle)) > 0) or {(_turretCount > 0)});
+//diag_log format ["DEBUG: %1 is armed: %2",(typeOf _vehicle),_isArmed];
+
+//Set variables
+_vehicle setVariable ["unitGroup",_unitGroup,_HCActive];
+_vehicle setVariable ["RespawnInfo",[_vehicleType,false],_HCActive]; //vehicle type, is custom spawn
+_vehicle setVariable ["isArmed",_isArmed,_HCActive];
 
 //Determine vehicle type and add needed eventhandlers
 if (_isAirVehicle) then {
-	_vehicle setVariable ["durability",[0,0,0]];	//[structural, engine, tail rotor]
+	_vehicle setVariable ["durability",[0,0,0],_HCActive];	//[structural, engine, tail rotor]
 	_vehicle addEventHandler ["Killed",{_this call A3EAI_heliDestroyed;}];					//Begin despawn process when heli is destroyed.
 	_vehicle addEventHandler ["GetOut",{_this call A3EAI_heliLanded;}];	//Converts AI crew to ground AI units.
 	_vehicle addEventHandler ["HandleDamage",{_this call A3EAI_handleDamageHeli}];
@@ -84,7 +89,7 @@ if (!(_driver hasWeapon "NVGoggles")) then {
 	_nvg = _driver call A3EAI_addTempNVG;
 };
 _driver assignAsDriver _vehicle;
-_driver setVariable ["isDriver",true];
+_driver setVariable ["isDriver",true,_HCActive];
 _unitGroup selectLeader _driver;
 
 _cargoSpots = _vehicle emptyPositions "cargo";
@@ -113,12 +118,8 @@ _unitGroup setSpeedMode "NORMAL";
 _unitGroup setCombatMode "YELLOW";
 _unitGroup allowFleeing 0;
 
-_unitType = if (_isAirVehicle) then {"air"} else {"land"};
-_unitGroup setVariable ["unitType",_unitType];
-_unitGroup setVariable ["unitLevel",_unitLevel];
-_unitGroup setVariable ["assignedVehicle",_vehicle];
-_unitGroup setVariable ["isArmed",_isArmed];
-_unitGroup setVariable ["SAD_ready",true];
+_unitGroup setVariable ["unitLevel",_unitLevel,_HCActive];
+_unitGroup setVariable ["assignedVehicle",_vehicle,_HCActive];
 (units _unitGroup) allowGetIn true;
 
 if (_isAirVehicle) then {
@@ -128,8 +129,6 @@ if (_isAirVehicle) then {
 		};
 	};
 };
-
-_rearm = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
 
 if (_isAirVehicle) then {
 	//Set initial waypoint and begin patrol
@@ -143,8 +142,8 @@ if (_isAirVehicle) then {
 	_waypoint setWaypointTimeout [3,6,9];
 	_waypoint setWaypointCompletionRadius 150;
 	_waypoint setWaypointStatements ["true","[(group this)] spawn A3EAI_heliStartPatrol;"];
-
-	[_unitGroup] spawn A3EAI_heliStartPatrol;
+	
+	_unitGroup setVariable ["HeliLastParaDrop",diag_tickTime - A3EAI_paraDropCooldown,_HCActive];
 	_vehicle flyInHeight 125;
 	
 	if ((!isNull _vehicle) && {!isNull _unitGroup}) then {
@@ -157,12 +156,37 @@ if (_isAirVehicle) then {
 	[_unitGroup,0] setWaypointTimeout [5,10,15];
 	[_unitGroup,0] setWaypointCompletionRadius 150;
 	[_unitGroup,0] setWaypointStatements ["true","[(group this)] spawn A3EAI_vehStartPatrol;"];
-	[_unitGroup] spawn A3EAI_vehStartPatrol;
-
+	
 	if ((!isNull _vehicle) && {!isNull _unitGroup}) then {
 		A3EAI_curLandPatrols = A3EAI_curLandPatrols + 1;
 		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Created AI land vehicle crew group %1 is now active and patrolling.",_unitGroup];};
 	};
+};
+
+if (_isAirVehicle) then {
+	[_unitGroup] spawn A3EAI_heliStartPatrol;
+} else {
+	[_unitGroup] spawn A3EAI_vehStartPatrol;
+};
+_rearm = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
+
+if !(A3EAI_HCIsConnected) then {
+	if (_isAirVehicle) then {
+		[_unitGroup] spawn A3EAI_heliStartPatrol;
+	} else {
+		[_unitGroup] spawn A3EAI_vehStartPatrol;
+	};
+	_rearm = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
+} else {
+	//_unitGroup setGroupOwner A3EAI_HCObjectOwnerID; //Uncomment when setGroupOwner command is implemented.
+	if (_isAirVehicle) then {						//Comment this when setGroupOwner command is implemented.
+		[_unitGroup] spawn A3EAI_heliStartPatrol;
+	} else {
+		[_unitGroup] spawn A3EAI_vehStartPatrol;
+	};
+	_rearm = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	 //Comment this when setGroupOwner command is implemented.
+	A3EAI_transferGroup = _unitGroup; 
+	 A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_transferGroup";
 };
 
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created AI vehicle patrol at %1 with vehicle type %2 with %3 crew units.",_vehSpawnPos,_vehicleType,(count (units _unitGroup))]};

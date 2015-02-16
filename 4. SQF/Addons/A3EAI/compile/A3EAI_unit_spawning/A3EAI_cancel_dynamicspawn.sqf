@@ -4,7 +4,7 @@ _trigger = _this;
 A3EAI_dynTriggerArray = A3EAI_dynTriggerArray - [_trigger];
 _playerUID = _trigger getVariable "targetplayerUID";
 if (!isNil "_playerUID") then {A3EAI_failedDynamicSpawns pushBack _playerUID};
-if ((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}) then {deleteMarker str(_trigger)};
+if (A3EAI_debugMarkersEnabled) then {deleteMarker str(_trigger)};
 
 deleteVehicle _trigger;
 

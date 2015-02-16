@@ -15,13 +15,13 @@ A3EAI_directory = toString _directoryAsArray;
 
 if !(isNil "A3EAI_devOptions") then {
 	if ("readoverridefile" in A3EAI_devOptions) then {A3EAI_overrideEnabled = true} else {A3EAI_overrideEnabled = nil};
-	if ("enabledebugmarkers" in A3EAI_devOptions) then {A3EAI_debugMarkersEnabled = true} else {A3EAI_debugMarkersEnabled = nil};
-	if ("enableHC" in A3EAI_devOptions) then {A3EAI_enableHC = true} else {A3EAI_enableHC = nil};
+	if ("enabledebugmarkers" in A3EAI_devOptions) then {A3EAI_debugMarkersEnabled = true} else {A3EAI_debugMarkersEnabled = false};
+	if ("enableHC" in A3EAI_devOptions) then {A3EAI_enableHC = true} else {A3EAI_enableHC = false};
 	A3EAI_devOptions = nil;
 } else {
 	A3EAI_overrideEnabled = nil;
-	A3EAI_debugMarkersEnabled = nil;
-	A3EAI_enableHC = nil;
+	A3EAI_debugMarkersEnabled = false;
+	A3EAI_enableHC = false;
 };
 
 //Report A3EAI version to RPT log
@@ -38,16 +38,6 @@ if ((!isNil "A3EAI_overrideEnabled") && {A3EAI_overrideEnabled}) then {call comp
 
 //Load A3EAI functions
 call compile preprocessFileLineNumbers format ["%1\init\A3EAI_functions.sqf",A3EAI_directory];
-
-//Set side relations only if needed
-_allUnits = +allUnits;
-if (({if ((side _x) isEqualTo east) exitWith {1}} count _allUnits) isEqualTo 0) then {createCenter east};
-if (({if ((side _x) isEqualTo west) exitWith {1}} count _allUnits) isEqualTo 0) then {createCenter west};
-if (({if ((side _x) isEqualTo resistance) exitWith {1}} count _allUnits) isEqualTo 0) then {createCenter resistance};
-if ((resistance getFriend west) > 0) then {resistance setFriend [west, 0]};
-if ((resistance getFriend east) > 0) then {resistance setFriend [east, 0]};
-if ((east getFriend resistance) > 0) then {east setFriend [resistance, 0]};
-if ((west getFriend resistance) > 0) then {west setFriend [resistance, 0]};
 
 //Create reference marker to act as boundary for spawning AI air/land vehicles.
 _worldname = (toLower worldName);
@@ -85,12 +75,22 @@ _markerInfo = call {
 _centerMarker = createMarkerLocal ["A3EAI_centerMarker",_markerInfo select 0];
 _centerMarker setMarkerSizeLocal [_markerInfo select 1,_markerInfo select 1];
 
+//Set side relations only if needed
+_allUnits = +allUnits;
+if (({if ((side _x) isEqualTo east) exitWith {1}} count _allUnits) isEqualTo 0) then {createCenter east};
+if (({if ((side _x) isEqualTo west) exitWith {1}} count _allUnits) isEqualTo 0) then {createCenter west};
+if (({if ((side _x) isEqualTo resistance) exitWith {1}} count _allUnits) isEqualTo 0) then {createCenter resistance};
+if ((resistance getFriend west) > 0) then {resistance setFriend [west, 0]};
+if ((resistance getFriend east) > 0) then {resistance setFriend [east, 0]};
+if ((east getFriend resistance) > 0) then {east setFriend [resistance, 0]};
+if ((west getFriend resistance) > 0) then {west setFriend [resistance, 0]};
+
 if (A3EAI_autoGenerateStatic) then {[] execVM format ["%1\scripts\setup_autoStaticSpawns.sqf",A3EAI_directory];};
 
 //Continue loading required A3EAI script files
 [] execVM format ['%1\scripts\A3EAI_post_init.sqf',A3EAI_directory];
 
 //Report A3EAI startup settings to RPT log
-diag_log format ["[A3EAI] A3EAI settings: Debug Level: %1. DebugMarkers: %2. WorldName: %3. VerifyClassnames: %4. VerifySettings: %5.",A3EAI_debugLevel,((!isNil "A3EAI_debugMarkersEnabled") && {A3EAI_debugMarkersEnabled}),_worldname,A3EAI_verifyClassnames,A3EAI_verifySettings];
+diag_log format ["[A3EAI] A3EAI settings: Debug Level: %1. DebugMarkers: %2. WorldName: %3. VerifyClassnames: %4. VerifySettings: %5.",A3EAI_debugLevel,A3EAI_debugMarkersEnabled,_worldname,A3EAI_verifyClassnames,A3EAI_verifySettings];
 diag_log format ["[A3EAI] AI spawn settings: Static: %1. Dynamic: %2. Random: %3. Air: %4. Land: %5.",A3EAI_autoGenerateStatic,A3EAI_dynAISpawns,(A3EAI_maxRandomSpawns > 0),(A3EAI_maxHeliPatrols>0),(A3EAI_maxLandPatrols>0)];
 diag_log format ["[A3EAI] A3EAI loading completed in %1 seconds.",(diag_tickTime - _startTime)];

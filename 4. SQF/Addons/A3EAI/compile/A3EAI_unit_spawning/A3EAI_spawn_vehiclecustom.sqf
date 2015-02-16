@@ -14,6 +14,7 @@ _vehiclePosition = [];
 _roadSearching = 1; 	//SHK_pos will search for roads, and return random position if none found.
 _waterPosAllowed = 0; 	//do not allow water position for land vehicles.
 _spawnMode = "NONE";
+_HCActive = ((owner A3EAI_HCObject) != 0);
 
 if (_isAirVehicle) then {
 	_roadSearching = 0;				//No need to search for road positions for air vehicles
@@ -37,7 +38,8 @@ while {_keepLooking} do {
 	};
 };
 
-_unitGroup = [] call A3EAI_createGroup;
+_unitType = if (_isAirVehicle) then {"aircustom"} else {"landcustom"};
+_unitGroup = [_unitType] call A3EAI_createGroup;
 _driver = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
 
 _vehicle = createVehicle [_vehicleType, _vehiclePosition, [], 0, _spawnMode];
@@ -49,16 +51,18 @@ if !(_vehicle isKindOf "Plane") then {
 	_vehicle setDir (random 360);
 };
 
-//Set variables
-_vehicle setVariable ["unitGroup",_unitGroup];
-
 //Determine vehicle armed state
 _turretCount = count (configFile >> "CfgVehicles" >> _vehicleType >> "turrets");
 _isArmed = ((({!(_x in ["CarHorn","BikeHorn","TruckHorn","TruckHorn2","SportCarHorn","MiniCarHorn"])} count (weapons _vehicle)) > 0) or {(_turretCount > 0)});
 
+//Set variables
+_vehicle setVariable ["unitGroup",_unitGroup,_HCActive];
+_vehicle setVariable ["RespawnInfo",[_vehicleType,true],_HCActive]; //vehicle type, is custom spawn
+_vehicle setVariable ["isArmed",_isArmed,_HCActive];
+
 //Determine vehicle type and add needed eventhandlers
 if (_isAirVehicle) then {
-	_vehicle setVariable ["durability",[0,0,0]];											//[structural, engine, tail rotor]
+	_vehicle setVariable ["durability",[0,0,0],_HCActive];											//[structural, engine, tail rotor]
 	_vehicle addEventHandler ["Killed",{_this call A3EAI_heliDestroyed;}];					//Begin despawn process when heli is destroyed.
 	_vehicle addEventHandler ["GetOut",{_this call A3EAI_heliLanded;}];						//Converts AI crew to ground AI units.
 	_vehicle addEventHandler ["HandleDamage",{_this call A3EAI_handleDamageHeli}];
@@ -76,7 +80,7 @@ if (!(_driver hasWeapon "NVGoggles")) then {
 };
 
 _driver assignAsDriver _vehicle;
-_driver setVariable ["isDriver",true];
+_driver setVariable ["isDriver",true,_HCActive];
 _unitGroup selectLeader _driver;
 
 if (_isAirVehicle) then {_vehicle flyInHeight 115};
@@ -108,16 +112,12 @@ _unitGroup setSpeedMode "NORMAL";
 _unitGroup setCombatMode "YELLOW";
 _unitGroup allowFleeing 0;
 
-_unitType = if (_isAirVehicle) then {"aircustom"} else {"landcustom"};
-_unitGroup setVariable ["unitType",_unitType];
-_unitGroup setVariable ["unitLevel",_unitLevel];
-_unitGroup setVariable ["assignedVehicle",_vehicle];
-_unitGroup setVariable ["isArmed",_isArmed];
-_unitGroup setVariable ["spawnParams",_this];
+_unitGroup setVariable ["unitLevel",_unitLevel,_HCActive];
+_unitGroup setVariable ["assignedVehicle",_vehicle,_HCActive];
+_unitGroup setVariable ["spawnParams",_this,_HCActive];
 [_unitGroup,0] setWaypointPosition [_spawnPos,0];		//Move group's initial waypoint position away from [0,0,0] (initial spawn position).
 (units _unitGroup) allowGetIn true;
 
-0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;
 0 = [_unitGroup,_spawnPos,_patrolDist,false] spawn A3EAI_BIN_taskPatrol;
 
 if (_isAirVehicle) then {
@@ -136,6 +136,16 @@ if (_isAirVehicle) then {
 		A3EAI_curLandPatrols = A3EAI_curLandPatrols + 1;
 		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Custom AI land vehicle crew group %1 is now active and patrolling.",_unitGroup];};
 	};
+};
+
+
+if !(A3EAI_HCIsConnected) then {
+	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;
+} else {
+	//_unitGroup setGroupOwner A3EAI_HCObjectOwnerID; //Uncomment when setGroupOwner command is implemented.
+	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager; //Comment when setGroupOwner command is implemented.
+	A3EAI_transferGroup = _unitGroup;
+	 A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_transferGroup";
 };
 
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created custom vehicle spawn at %1 with vehicle type %2 with %3 crew units.",_spawnName,_vehicleType,(count (units _unitGroup))]};

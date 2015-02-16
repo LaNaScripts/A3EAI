@@ -66,7 +66,7 @@ while {(typeName (missionNamespace getVariable ("A3EAI_Rifles"+str(_index)))) is
 } forEach A3EAI_tableChecklist;
 
 {
-	if !((_x select 0) isKindOf "Air") then {
+	if (!((_x select 0) isKindOf "Air") or {([configFile >> "CfgVehicles" >> (_x select 0) >> "Eventhandlers","init",""] call BIS_fnc_returnConfigEntry) != ""}) then {
 		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_heliList array: %1.",(_x select 0)];
 		A3EAI_heliList set [_forEachIndex,""];
 	};
@@ -74,7 +74,7 @@ while {(typeName (missionNamespace getVariable ("A3EAI_Rifles"+str(_index)))) is
 if ("" in A3EAI_heliList) then {A3EAI_heliList = A3EAI_heliList - [""];};
 
 {
-	if !((_x select 0) isKindOf "Car") then {
+	if (!((_x select 0) isKindOf "Car") or {([configFile >> "CfgVehicles" >> (_x select 0) >> "Eventhandlers","init",""] call BIS_fnc_returnConfigEntry) != ""}) then {
 		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_vehList array: %1.",(_x select 0)];
 		A3EAI_vehList set [_forEachIndex,""];
 	};

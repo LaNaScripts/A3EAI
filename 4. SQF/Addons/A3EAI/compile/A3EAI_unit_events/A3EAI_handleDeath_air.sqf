@@ -15,7 +15,7 @@ if (alive _vehicle) then {
 				uiSleep 2.5;
 				_this setDamage 1;
 			};
-			if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI %1 pilot unit %2 killed, ejecting surving crew.",(typeOf _vehicle),(typeOf _victim)];};
+			if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI %1 pilot unit %2 killed, ejecting surviving crew.",(typeOf _vehicle),(typeOf _victim)];};
 		};
 	} else {
 		0 = [_victim,(_unitGroup getVariable ["unitLevel",1])] spawn A3EAI_generateLoot;
