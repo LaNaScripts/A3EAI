@@ -60,25 +60,29 @@ call {
 };
 
 if !(isNull _victim) then {
-	_launchWeapon = (secondaryWeapon _victim);
-	if (_launchWeapon in A3EAI_launcherTypes) then {
-		_launchAmmo = getArray (configFile >> "CfgWeapons" >> _launchWeapon >> "magazines") select 0;
-		_victim removeWeapon _launchWeapon;
-		_victim removeMagazines _launchAmmo;
-	};
+	{
+		if (_x in A3EAI_launcherTypes) exitWith {
+			_victim removeWeapon _x;
+		};
+	} forEach ((_victim getVariable ["loadout",[[],[]]]) select 0);
+	
+	{
+		if (_forEachIndex > 0) then {
+			_victim removeMagazines _x;
+		};
+	} forEach ((_victim getVariable ["loadout",[[],[]]]) select 1);
+
 	_victim removeItems "FirstAidKit";
 	if (_victim getVariable ["Remove_NVG",true]) then {_victim removeWeapon "NVG_EPOCH"};
 
 	_victim setVariable ["A3EAI_deathTime",diag_tickTime,A3EAI_enableHC];
 	_victim setVariable ["canCheckUnit",false];
-	_bodyName = _victim getVariable ["bodyName","An unknown bandit"];
-
+	
 	if (_vehicle isEqualTo (_unitGroup getVariable ["assignedVehicle",objNull])) then {
-		_victim setPosASL (getPosASL _victim);
+		_victim setPosATL (getPosATL _victim);
 	};
-	if ((combatMode _unitGroup) isEqualTo "BLUE") then {_unitGroup setCombatMode "RED"};
-	//[_victim] joinSilent grpNull;
 	if (A3EAI_deathMessages && {isPlayer _killer}) then {
+		_bodyName = _victim getVariable ["bodyName","An unknown bandit"];
 		_nul = [_killer,_bodyName] spawn A3EAI_sendKillMessage;
 	};
 };

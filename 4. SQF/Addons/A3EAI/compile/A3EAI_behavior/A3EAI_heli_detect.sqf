@@ -15,7 +15,7 @@ if (_unitGroup getVariable ["HeliDetectReady",true]) then {
 	while {!(_vehicle getVariable ["heli_disabled",false])} do {
 		private ["_detected","_detectOrigin","_detectedCount","_startPos"];
 		//diag_log format ["DEBUG: Group %1 AI %2 is beginning detection sweep...",_unitGroup,(typeOf _vehicle)];
-		_startPos = getPosASL _vehicle;
+		_startPos = getPosATL _vehicle;
 		_detectOrigin = [_startPos,100,getDir _vehicle,1] call SHK_pos;
 		_detectOrigin set [2,0];
 		_detected = _detectOrigin nearEntities [["Epoch_Male_F","Epoch_Female_F"],275];
@@ -39,7 +39,7 @@ if (_unitGroup getVariable ["HeliDetectReady",true]) then {
 					_playerEyePos = eyePos _x;
 					if (!(terrainIntersectASL [_heliAimPos,_playerEyePos]) && {!(lineIntersects [_heliAimPos,_playerEyePos,_vehicle,_x])}) then { //if no intersection of terrain and objects between helicopter and player, then reveal player
 						if (A3EAI_detectChance call A3EAI_chance) then {
-							_unitGroup reveal [_x,1.9]; 
+							_unitGroup reveal [_x,2]; 
 						};
 					};
 					_canParaDrop = false;

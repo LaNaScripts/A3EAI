@@ -61,7 +61,7 @@ while {true} do {
 		_playerCount = (count _allPlayers);
 		_maxSpawnsPossible = (_playerCount min A3EAI_dynMaxSpawns);	//Can't have more spawns than players (doesn't count current number of dynamic spawns)
 		
-		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Preparing to create dynamic spawns with spawn chance %1. %2 dynamic spawns are possible.",A3EAI_dynSpawnChance,_maxSpawnsPossible - _activeDynamicSpawns];};
+		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Preparing to create %1 dynamic spawns.",(_maxSpawnsPossible - _activeDynamicSpawns)];};
 
 		while {_allPlayers = _allPlayers - [objNull]; (((_maxSpawnsPossible - _activeDynamicSpawns) > 0) && {(count _allPlayers) > 0})} do {	//_spawns: Have we created enough spawns? _allPlayers: Are there enough players to create spawns for?
 			_time = diag_tickTime;
@@ -70,19 +70,20 @@ while {true} do {
 			if (alive _player) then {
 				_playername = name _player;
 				_index = _playerUID_DB find _playerUID;
-				if (A3EAI_dynSpawnChance call A3EAI_chance) then {
-					_playerPos = ASLtoATL getPosASL _player;
+				_playerPos = getPosATL _player;
+				_spawnParams = _playerPos call A3EAI_getSpawnParams;
+				_spawnChance = missionNamespace getVariable ["A3EAI_spawnChance"+str(_spawnParams select 2),0.5];
+				if (_spawnChance call A3EAI_chance) then {
 					if (
 						!((vehicle _player) isKindOf "Air") &&												//Player must not be in air vehicle
 						{({if (_playerPos in _x) exitWith {1}} count (nearestLocations [_playerPos,["Strategic"],1500])) isEqualTo 0} && //Player must not be in blacklisted areas
 						{(!(surfaceIsWater _playerPos))} && 											//Player must not be on water position
 						{((_playerPos distance getMarkerPos "respawn_west") > 2000)} &&					//Player must not be in debug area
-						{((_playerPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}					//Player must not be near Epoch buildables
+						{((_playerPos nearObjects ["PlotPole_EPOCH",300]) isEqualTo [])}					//Player must not be near Epoch buildables
 					) then {
 						_lastSpawned_DB set [_index,diag_tickTime];
 						_trigger = createTrigger ["EmptyDetector",_playerPos];
 						_location = [_playerPos,600] call A3EAI_createBlackListArea;
-						_spawnParams = _playerPos call A3EAI_getSpawnParams;
 						_trigger setVariable ["triggerLocation",_location];
 						_trigger setTriggerArea [600, 600, 0, false];
 						_trigger setTriggerActivation ["ANY", "PRESENT", true];

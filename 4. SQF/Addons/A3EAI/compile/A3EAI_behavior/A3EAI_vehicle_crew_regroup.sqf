@@ -3,7 +3,7 @@ private ["_unitGroup","_vehicle","_loadWP","_loadWPCond"];
 _unitGroup = _this select 0;
 _vehicle = _this select 1;
 
-_loadWP = _unitGroup addWaypoint [(ASLtoATL getPosASL _vehicle),0];
+_loadWP = _unitGroup addWaypoint [(getPosATL _vehicle),0];
 _loadWP setWaypointType "LOAD";
 _loadWPCond = "_vehicle = (group this) getVariable ['assignedVehicle',objNull]; ({_x isEqualTo (vehicle _x)} count (assignedCargo _vehicle)) isEqualTo 0";
 _loadWP setWaypointStatements [_loadWPCond,(format ["_unitGroup = (group this); deleteWaypoint [_unitGroup,%1]; _unitGroup setVariable ['regrouped',true]; _unitGroup setCurrentWaypoint [_unitGroup,0];",(_loadWP select 1)])];

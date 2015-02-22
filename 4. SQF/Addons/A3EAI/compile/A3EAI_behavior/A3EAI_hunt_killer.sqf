@@ -52,16 +52,14 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 		{((_startPos distance _targetPlayer) < _chaseDistance)} &&
 		{(!((vehicle _targetPlayer) isKindOf "Air"))}
 	} do {
-		_targetPlayerPos = ASLtoATL getPosASL _targetPlayer;
+		_targetPlayerPos = getPosATL _targetPlayer;
 		if ((_unitGroup knowsAbout _targetPlayer) < 4) then {_unitGroup reveal [_targetPlayer,4]};
 		(units _unitGroup) doMove _targetPlayerPos;
-		(units _unitGroup) doTarget _targetPlayer;
-		//(units _unitGroup) doFire _targetPlayer;
-		{
+		/*{
 			if (alive _x) then {
 				_x moveTo _targetPlayerPos;
 			};
-		} count (units _unitGroup);
+		} count (units _unitGroup);*/
 		if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: AI group %1 in pursuit state. Pursuit time remaining: %2 seconds.",_unitGroup,(_unitGroup getVariable ["pursuitTime",0]) - diag_tickTime];};
 		
 		if ((A3EAI_radioMsgs) && {0.6 call A3EAI_chance}) then {

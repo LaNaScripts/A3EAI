@@ -77,6 +77,7 @@ if !(_permDelete) then {
 	_trigger setVariable ["unitLevelEffective",(_trigger getVariable ["unitLevel",1])];
 	_trigger setTriggerArea [600,600,0,false];
 	_trigger setTriggerStatements (_trigger getVariable "triggerStatements"); //restore original trigger statements
+	if !((_trigger getVariable ["respawnLimitOriginal",-1]) isEqualTo -1) then {_trigger setVariable ["respawnLimit",_trigger getVariable ["respawnLimitOriginal",-1]];};
 	if (A3EAI_debugMarkersEnabled) then {
 			_nul = _trigger spawn {
 			_tMarker = str (_this);

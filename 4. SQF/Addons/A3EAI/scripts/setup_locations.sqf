@@ -25,10 +25,14 @@ for "_i" from 0 to ((count _cfgWorldName) -1) do {
 
 //Set up trader city blacklist areas
 {
-	_location = [_x select 1,600] call A3EAI_createBlackListArea;
-	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created 600m radius blacklist area at %1 teleport source (%2).",_x select 0,_x select 1];};
-	_location = [_x select 3,600] call A3EAI_createBlackListArea;
-	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created 600m radius blacklist area at %1 teleport destination (%2).",_x select 0,_x select 3];};
+	if ((nearestLocations [_x select 1,["Strategic"],30]) isEqualTo []) then {
+		_location = [_x select 1,600] call A3EAI_createBlackListArea;
+		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created 600m radius blacklist area at %1 teleport source (%2).",_x select 0,_x select 1];};
+	};
+	if ((nearestLocations [_x select 3,["Strategic"],30]) isEqualTo []) then {
+		_location = [_x select 3,600] call A3EAI_createBlackListArea;
+		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created 600m radius blacklist area at %1 teleport destination (%2).",_x select 0,_x select 3];};
+	};
 	if ((_forEachIndex % 3) isEqualTo 0) then {uiSleep 0.05};
 } forEach ([configFile >> "CfgEpoch" >> worldName,"telePos",[]] call BIS_fnc_returnConfigEntry);
 

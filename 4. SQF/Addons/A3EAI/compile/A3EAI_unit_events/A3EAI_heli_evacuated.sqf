@@ -1,39 +1,29 @@
-/*
-		A3EAI_heliEvacuated
-		
-		Description: Called when AI air vehicle suffers critical damage. Onboard units are ejected if the vehicle is not above water.
-		
-		Last updated: 12:11 AM 6/17/2014
-*/
 
-private ["_vehicle","_vehPos","_unitGroup"];
+private ["_vehicle","_vehPos","_unitGroup" ,"_queued"];
 _vehicle = _this select 0;
 
 if (_vehicle getVariable ["heli_disabled",false]) exitWith {false};
 _vehicle setVariable ["heli_disabled",true];
 {_vehicle removeAllEventHandlers _x} count ["HandleDamage","GetOut","Killed"];
 _unitGroup = _vehicle getVariable "unitGroup";
-[_vehicle,(_vehicle getVariable "RespawnInfo")] call A3EAI_respawnAIVehicle;
-_vehPos = ASLtoATL getPosASL _vehicle;
+_queued = [_vehicle,(_vehicle getVariable "RespawnInfo")] call A3EAI_respawnAIVehicle;
+_vehPos = getPosATL _vehicle;
 
 if (!surfaceIsWater _vehPos) then {
 	private ["_unitsAlive","_trigger","_unitLevel","_units","_waypointCount"];
 	_unitLevel = _unitGroup getVariable ["unitLevel",1];
-	_units = units _unitGroup;
+	_units = (units _unitGroup);
 	if (((_vehPos select 2) > 60) or {(0.40 call A3EAI_chance)}) then {
 		{
 			if (alive _x) then {
-				if !(canMove _x) then {_x setHit["legs",0]};
 				unassignVehicle _x;
 				_x action ["eject",_vehicle];
 			} else {
 				0 = [_x,_unitLevel] spawn A3EAI_generateLoot;
 			};
 		} forEach _units;
-		_unitGroup leaveVehicle _vehicle;
 		
 		_unitsAlive = {alive _x} count _units;
-		//(A3EAI_numAIUnits + _unitsAlive) call A3EAI_updateUnitCount;
 		if (_unitsAlive > 0) then {
 			for "_i" from ((count (waypoints _unitGroup)) - 1) to 0 step -1 do {
 				deleteWaypoint [_unitGroup,_i];
@@ -60,12 +50,13 @@ if (!surfaceIsWater _vehPos) then {
 			[_trigger,"A3EAI_staticTriggerArray"] call A3EAI_updateSpawnCount;
 			0 = [_trigger] spawn A3EAI_despawn_static;
 
-			_unitGroup setVariable ["unitType","static"];
-			_unitGroup setVariable ["trigger",_trigger];
+			_unitGroup setVariable ["unitType","static",A3EAI_enableHC];
+			_unitGroup setVariable ["trigger",_trigger,A3EAI_enableHC];
 			_unitGroup setVariable ["groupSize",_unitsAlive,A3EAI_enableHC];
 			
 			if (_unitGroup getVariable ["EnemiesIgnored",false]) then {[_unitGroup,"IgnoreEnemies_Undo"] call A3EAI_forceBehavior};
 		};
+		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI %1 group %2 parachuted with %3 surviving units.",(typeOf _vehicle),_unitGroup,_unitsAlive];};
 	} else {
 		_unitGroup setVariable ["unitType","aircrashed"];
 		{
@@ -74,12 +65,11 @@ if (!surfaceIsWater _vehPos) then {
 			0 = [_x,_unitLevel] spawn A3EAI_generateLoot;
 		} forEach _units;
 		_unitGroup setVariable ["GroupSize",-1,A3EAI_enableHC];
+		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI %1 group %2 parachuted with no surviving units.",(typeOf _vehicle),_unitGroup];};
 	};
 } else {
-	//_unitGroup call A3EAI_deleteGroup;
 	_unitGroup setVariable ["GroupSize",-1,A3EAI_enableHC];
+	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI %1 group %2 was destroyed over water position.",(typeOf _vehicle),_unitGroup];};
 };
-
-if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: AI helicopter %1 evacuated at %2.",typeOf _vehicle,mapGridPosition _vehicle];};
 
 true

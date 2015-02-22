@@ -18,8 +18,7 @@ _checkRandomSpawns = _currentTime - (RANDSPAWN_CHECK_FREQ/2);
 _sideCheck = _currentTime;
 
 //Define settings
-_reportDynOrVehicles = (A3EAI_dynAISpawns || ((A3EAI_maxHeliPatrols > 0) or {(A3EAI_maxLandPatrols > 0)}) || (A3EAI_maxRandomSpawns > 0));
-
+_reportDynOrVehicles = ((A3EAI_dynMaxSpawns > 0) || {A3EAI_maxHeliPatrols > 0} or {A3EAI_maxLandPatrols > 0} || {A3EAI_maxRandomSpawns > 0});
 
 //Local functions
 _getUptime = {
@@ -168,6 +167,7 @@ while {true} do {
 		_checkRandomSpawns = _currentTime;
 	};
 	
+	//Check for unwanted side modifications
 	if ((_currentTime - _sideCheck) > SIDECHECK_TIME) then {
 		if ((resistance getFriend west) > 0) then {resistance setFriend [west, 0]};
 		if ((resistance getFriend east) > 0) then {resistance setFriend [east, 0]};
@@ -189,10 +189,12 @@ while {true} do {
 		A3EAI_mapMarkerArray = A3EAI_mapMarkerArray - [""];
 	};
 	
+	A3EAI_activeGroupAmount = ({!isNull _x} count A3EAI_activeGroups);
+	
 	//Report statistics to RPT log
 	if ((A3EAI_monitorRate > 0) && {((_currentTime - _monitorReport) > A3EAI_monitorRate)}) then {
 		_uptime = [] call _getUptime;
-		diag_log format ["A3EAI Monitor :: Server Uptime: %1:%2:%3. Server FPS: %4 Active AI Groups: %5.",_uptime select 0, _uptime select 1, _uptime select 2,diag_fps,({!isNull _x} count A3EAI_activeGroups)];
+		diag_log format ["A3EAI Monitor :: Server Uptime: %1:%2:%3. Server FPS: %4 Active AI Groups: %5.",_uptime select 0, _uptime select 1, _uptime select 2,diag_fps,A3EAI_activeGroupAmount];
 		diag_log format ["A3EAI Monitor :: Static Spawns: %1. Respawn Queue: %2 groups queued.",(count A3EAI_staticTriggerArray),(count A3EAI_respawnQueue)];
 		if (_reportDynOrVehicles) then {diag_log format ["A3EAI Monitor :: Dynamic Spawns: %1. Random Spawns: %2. Air Patrols: %3. Land Patrols: %4.",(count A3EAI_dynTriggerArray),(count A3EAI_randTriggerArray),A3EAI_curHeliPatrols,A3EAI_curLandPatrols];};
 		_monitorReport = _currentTime;

@@ -17,7 +17,7 @@ _positionArray = _this select 4;							//Array of manually-defined spawn points 
 _unitLevel = if ((count _this) > 5) then {_this select 5} else {1};		//(Optional) Select the item probability table to use
 _numGroups = if ((count _this) > 6) then {_this select 6} else {1};		//(Optional) Number of groups of x number of units each to spawn
 
-_triggerPos = ASLtoATL getPosASL _trigger;
+_triggerPos = getPosATL _trigger;
 _locationArray = [];
 //If no markers specified in position array, then generate spawn points using building positions (search for buildings within 250m. generate a maximum of 150 positions).
 if ((count _positionArray) isEqualTo 0) then {
@@ -26,7 +26,7 @@ if ((count _positionArray) isEqualTo 0) then {
 	//_ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
 	{
 		scopeName "bldgloop";
-		_pos = ASLtoATL getPosASL _x;
+		_pos = getPosATL _x;
 		if (!(surfaceIsWater _pos) && {(sizeOf (typeOf _x)) > 15}) then {
 			_locationArray pushBack _pos;
 			if (_locationCount > 149) then {
@@ -59,7 +59,7 @@ _triggerStatements = [
 	"_nul = [thisTrigger] spawn A3EAI_despawn_static;" //Deactivation statement
 ]; 
 _newTrigger setTriggerStatements _triggerStatements;
-0 = [0,_newTrigger,[],_patrolDist,_unitLevel,_locationArray,[_minAI,_addAI]] call A3EAI_initializeTrigger;
+0 = [0,_newTrigger,[],_patrolDist,_unitLevel,_locationArray,[_minAI,_addAI],1] call A3EAI_initializeTrigger;
 //diag_log format ["DEBUG :: Created trigger %1 has statements %2.",triggerText _newTrigger,triggerStatements _newTrigger];
 //diag_log format ["DEBUG :: Created trigger %1 has saved statements %2.",triggerText _newTrigger,(_newTrigger getVariable "triggerStatements")];
 

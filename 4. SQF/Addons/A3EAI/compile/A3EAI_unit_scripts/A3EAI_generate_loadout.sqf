@@ -32,7 +32,7 @@ if ((getNumber (configFile >> "CfgMagazines" >> _magazine >> "count")) < 6) then
 //Select weapon optics
 _isRifle = ((getNumber (configFile >> "CfgWeapons" >> _weapon >> "type")) isEqualTo 1);
 if ((missionNamespace getVariable [("A3EAI_opticsChance"+str(_unitLevel)),3]) call A3EAI_chance) then {
-	_opticsList = [] + getArray (configFile >> "CfgWeapons" >> _weapon >> "WeaponSlotsInfo" >> "CowsSlot" >> "compatibleItems");
+	_opticsList = getArray (configFile >> "CfgWeapons" >> _weapon >> "WeaponSlotsInfo" >> "CowsSlot" >> "compatibleItems");
 	if ((count _opticsList) > 0) then {
 		_opticsType = _opticsList call BIS_fnc_selectRandom2;
 		if (_isRifle) then {_unit addPrimaryWeaponItem _opticsType} else {_unit addHandGunItem _opticsType};
@@ -42,7 +42,7 @@ if ((missionNamespace getVariable [("A3EAI_opticsChance"+str(_unitLevel)),3]) ca
 
 //Select weapon pointer
 if ((missionNamespace getVariable [("A3EAI_pointerChance"+str(_unitLevel)),3]) call A3EAI_chance) then {
-	_pointersList = [] + getArray (configFile >> "CfgWeapons" >> _weapon >> "WeaponSlotsInfo" >> "PointerSlot" >> "compatibleItems");
+	_pointersList = getArray (configFile >> "CfgWeapons" >> _weapon >> "WeaponSlotsInfo" >> "PointerSlot" >> "compatibleItems");
 	if ((count _pointersList) > 0) then {
 		_pointerType = _pointersList call BIS_fnc_selectRandom2;
 		if (_isRifle) then {_unit addPrimaryWeaponItem _pointerType} else {_unit addHandGunItem _pointerType};
@@ -52,7 +52,7 @@ if ((missionNamespace getVariable [("A3EAI_pointerChance"+str(_unitLevel)),3]) c
 
 //Select weapon muzzle
 if ((missionNamespace getVariable [("A3EAI_muzzleChance"+str(_unitLevel)),3]) call A3EAI_chance) then {
-	_muzzlesList = [] + getArray (configFile >> "CfgWeapons" >> _weapon >> "WeaponSlotsInfo" >> "MuzzleSlot" >> "compatibleItems");
+	_muzzlesList = getArray (configFile >> "CfgWeapons" >> _weapon >> "WeaponSlotsInfo" >> "MuzzleSlot" >> "compatibleItems");
 	if ((count _muzzlesList) > 0) then {
 		_muzzleType = _muzzlesList call BIS_fnc_selectRandom2;
 		if (_isRifle) then {_unit addPrimaryWeaponItem _muzzleType} else {_unit addHandGunItem _muzzleType};

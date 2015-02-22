@@ -1,4 +1,4 @@
-private ["_trigger", "_grpArray", "_numGroups", "_infantryQueue", "_continue","_triggerStatements"];
+private ["_trigger", "_grpArray", "_numGroups", "_infantryQueue","_triggerStatements"];
 if !((typeName _this) isEqualTo "ARRAY") exitWith {diag_log format ["Error: Wrong arguments sent to %1.",__FILE__]};
 
 _trigger = _this select 3;
@@ -9,9 +9,7 @@ if ((count _grpArray) < _numGroups) then {
 	if (isNil "A3EAI_staticInfantrySpawnQueue") then {
 		A3EAI_staticInfantrySpawnQueue = [_this];
 		_infantryQueue = [] spawn {
-			//uiSleep 0.5;
-			_continue = true;
-			while {_continue} do {
+			while {!(A3EAI_staticInfantrySpawnQueue isEqualTo [])} do {
 				private ["_args","_trigger"];
 				_args = (A3EAI_staticInfantrySpawnQueue select 0);
 				_trigger = _args select 3;
@@ -26,7 +24,6 @@ if ((count _grpArray) < _numGroups) then {
 					uiSleep 3;
 				};
 				A3EAI_staticInfantrySpawnQueue deleteAt 0;
-				_continue = !(A3EAI_staticInfantrySpawnQueue isEqualTo []);
 			};
 			A3EAI_staticInfantrySpawnQueue = nil;
 		};

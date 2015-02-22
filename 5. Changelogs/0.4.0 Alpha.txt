@@ -1,0 +1,17 @@
+A3EAI 0.4.0 Alpha
+
+Files changed:
+A3EAI.pbo
+A3EAI_config.sqf
+
+[NEW] Added "Wilderness" location type for Dynamic and Random spawns. A "Wilderness" location is any location that is not within 1000m of any other location type.
+[NEW] AI may now use underslung grenade launchers if their rifle has one attached. By default, only AI units level 2 and higher may use grenade launchers. HE grenades will be removed on unit death.
+[CHANGED] Spawn chances are now defined on a per-location type basis (ie: Village, City, Capital City, Remote Area)
+[CHANGED] Dynamic spawns now inherit spawn chance of the nearest location type (removal of A3EAI_dynSpawnChance setting)
+[CHANGED] Random spawns now inherit spawn chance of nearest location type, instead of having a 100% spawn probability on activation.
+[CHANGED] Simplified AI level requirement setting for launcher-type weapons
+[CHANGED] Respawn limits are now defined on a per-location type basis instead of location level.
+[CHANGED] Dynamic spawns can now be turned off by setting A3EAI_dynMaxSpawns to 0. (Removal of A3EAI_dynAISpawns setting).
+[CHANGED] Jammers now create a 300m blacklist against Dynamic and Random spawns (instead of any buildable item).
+[CHANGED] Jammers now prevent placement of a Random spawn within its area. Jammers still prevent activation of Random spawns within its area.
+[CHANGED] Patrol radius for auto-generated static spawns now use the size of the location as defined in CfgWorlds. (More patrol path variation).

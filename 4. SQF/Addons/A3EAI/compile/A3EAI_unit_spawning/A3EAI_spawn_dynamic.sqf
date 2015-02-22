@@ -35,21 +35,21 @@ if (
 	{({if ((isPlayer _x) && {([eyePos _x,[(_spawnPos select 0),(_spawnPos select 1),(_spawnPosASL select 2) + 1.7],_x] call A3EAI_hasLOS) or ((_x distance _spawnPos) < 150)}) exitWith {1}} count (_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200])) > 0} or 
 	{({if (_spawnPos in _x) exitWith {1}} count ((nearestLocations [_spawnPos,["Strategic"],1500]) - [_triggerLocation])) > 0} or
 	{_spawnPosASL call A3EAI_posInBuilding} or
-	{!((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])}
+	{!((_spawnPos nearObjects ["PlotPole_EPOCH",300]) isEqualTo [])}
 ) exitWith {
 	if (A3EAI_debugLevel > 1) then {
 		diag_log format ["A3EAI Extended Debug: Canceling dynamic spawn for target player %1. Possible reasons: Spawn position has water, player nearby, or is blacklisted.",name _targetPlayer];
 		diag_log format ["DEBUG: Position is water: %1",(surfaceIsWater _spawnPos)];
-		diag_log format ["DEBUG: Player nearby: %1",({isPlayer _x} count ((_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200]) - [_targetPlayer])) > 0];
+		diag_log format ["DEBUG: Player nearby: %1",({isPlayer _x} count (_spawnPos nearEntities [["Epoch_Male_F","Epoch_Female_F","Car"],200])) > 0];
 		diag_log format ["DEBUG: Location is blacklisted: %1",({_spawnPos in _x} count ((nearestLocations [_spawnPos,["Strategic"],1000]) - [_triggerLocation])) > 0];
-		diag_log format ["DEBUG: No modular buildables nearby: %1.",((_spawnPos nearObjects ["Constructions_modular_F",125]) isEqualTo [])];
+		diag_log format ["DEBUG: No jammer nearby: %1.",((_spawnPos nearObjects ["PlotPole_EPOCH",300]) isEqualTo [])];
 	};
 	_nul = _trigger call A3EAI_cancelDynamicSpawn;
 	
 	false
 
 };
-_totalAI = (_minAI + round(random _addAI));
+_totalAI = ((_minAI + floor (random (_addAI + 1))) max 1);
 _unitGroup = [_totalAI,grpNull,"dynamic",_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
 
 //Set group variables
@@ -59,7 +59,7 @@ _unitGroup setSpeedMode "FULL";
 //Begin hunting player or patrolling area
 _behavior = if (A3EAI_huntingChance call A3EAI_chance) then {
 	_unitGroup reveal [_targetPlayer,4];
-	0 = [_unitGroup,_patrolDist,_targetPlayer,ASLtoATL getPosASL _trigger] spawn A3EAI_dynamicHunting; //seek mode
+	0 = [_unitGroup,_patrolDist,_targetPlayer,getPosATL _trigger] spawn A3EAI_dynamicHunting; //seek mode
 	"HUNT PLAYER"
 } else {
 	[_unitGroup,_playerPos] call A3EAI_setFirstWPPos;

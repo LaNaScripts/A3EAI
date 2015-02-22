@@ -26,7 +26,7 @@ _groupsActive = count _grpArray;
 //
 
 _trigger setTriggerArea [750,750,0,false]; //Expand trigger area to prevent players from quickly leaving and start respawn process immediately
-_triggerPos = ASLtoATL getPosASL _trigger;
+_triggerPos = getPosATL _trigger;
 
 //If trigger already has defined spawn points, then reuse them instead of recalculating new ones.
 _locationArray = _trigger getVariable ["locationArray",[]];	
@@ -38,9 +38,9 @@ for "_j" from 1 to (_numGroups - _groupsActive) do {
 	private ["_unitGroup","_spawnPos","_totalAI"];
 	_totalAI = 0;
 	_spawnPos = [];
-	if ((_trigger getVariable ["spawnChance",0.90]) call A3EAI_chance) then {
+	if ((_trigger getVariable ["spawnChance",1]) call A3EAI_chance) then {
 		_totalAI = (_minAI + round(random _addAI));
-		_spawnPos = if ((count _locationArray) > 0) then {_locationArray call A3EAI_findSpawnPos} else {[(ASLtoATL getPosASL _trigger),random (_patrolDist),random(360),0] call SHK_pos};
+		_spawnPos = if ((count _locationArray) > 0) then {_locationArray call A3EAI_findSpawnPos} else {[(getPosATL _trigger),random (_patrolDist),random(360),0] call SHK_pos};
 	};
 
 	//If non-zero unit amount and valid spawn position, spawn group, otherwise add it to respawn queue.
@@ -65,7 +65,6 @@ for "_j" from 1 to (_numGroups - _groupsActive) do {
 	_grpArray pushBack _unitGroup;
 };
 
-_trigger setVariable ["respawnLimit",(missionNamespace getVariable ["A3EAI_respawnLimit"+str(_unitLevel),-1])];
 if (A3EAI_debugLevel > 0) then {
 	diag_log format["A3EAI Debug: Spawned %1 new AI groups (%2 units total) in %3 seconds at %4.",_numGroups,_totalSpawned,(diag_tickTime - _startTime),(triggerText _trigger)];
 	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Trigger %1 group array updated to: %2.",triggerText _trigger,_trigger getVariable "GroupArray"]};

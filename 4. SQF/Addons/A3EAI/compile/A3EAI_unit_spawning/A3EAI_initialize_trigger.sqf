@@ -14,9 +14,9 @@ call {
 		_trigger setVariable ["unitLevelEffective",(_this select 4)];
 		_trigger setVariable ["locationArray",(_this select 5)];
 		_trigger setVariable ["maxUnits",(_this select 6)];
-		_trigger setVariable ["spawnChance",missionNamespace getVariable [format ["A3EAI_spawnChance%1",(_this select 4)],1]];
+		_trigger setVariable ["spawnChance",(_this select 7)];
 		_trigger setVariable ["spawnType","static"];
-		if (A3EAI_debugLevel > 1) then {diag_log format["A3EAI Extended Debug: Initialized static spawn at %1 (%2). GroupArray: %3, PatrolDist: %4. unitLevel: %5. %LocationArray %6 positions, MaxUnits %7.",(triggerText _trigger),(getPosATL _trigger),(_this select 2),(_this select 3),(_this select 4),count (_this select 5),(_this select 6)];};
+		if (A3EAI_debugLevel > 1) then {diag_log format["A3EAI Extended Debug: Initialized static spawn at %1 (%2). GroupArray: %3, PatrolDist: %4. unitLevel: %5. %LocationArray %6 positions, MaxUnits %7, SpawnChance %8.",(triggerText _trigger),(getPosATL _trigger),(_this select 2),(_this select 3),(_this select 4),count (_this select 5),(_this select 6),(_this select 7)];};
 	};
 	if (_mode isEqualTo 1) exitWith {
 		//Dynamic spawns

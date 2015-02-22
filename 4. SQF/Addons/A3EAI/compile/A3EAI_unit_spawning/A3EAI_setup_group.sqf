@@ -38,7 +38,7 @@ if (isNull _unitGroup) then {
 	_unitGroup = [_unitType] call A3EAI_createGroup;
 };
 
-for "_i" from 1 to _totalAI do {
+for "_i" from 1 to (_totalAI max 1) do {
 	private ["_unit"];
 	_unit = [_unitGroup,_unitLevel,_spawnPos] call A3EAI_createUnit;
 	_unit setPos _spawnPos;

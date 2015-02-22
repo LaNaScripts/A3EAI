@@ -6,7 +6,7 @@ if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: A3EAI is generati
 
 _spawnsCreated = 0;
 _startTime = diag_tickTime;
-//_ignoredObj = missionNamespace getVariable ["A3EAI_ignoredObjects",[]];
+_cfgWorldName = configFile >> "CfgWorlds" >> worldName >> "Names";
 
 {
 	private ["_placeName","_placePos","_placeType"];
@@ -22,7 +22,7 @@ _startTime = diag_tickTime;
 			_spawnPoints = 0;
 			{
 				scopeName "bldgloop";
-				_pos = ASLtoATL getPosASL _x;
+				_pos = getPosATL _x;
 				if (!(surfaceIsWater _pos) && {(sizeOf (typeOf _x)) > 15}) then {
 					_spawnPositions pushBack _pos;
 					_spawnPoints = _spawnPoints + 1;
@@ -34,39 +34,53 @@ _startTime = diag_tickTime;
 			if ((count _spawnPositions) > 9) then {
 				_aiCount = [1,0];
 				_unitLevel = 0;
-				_patrolRad = 100;
+				//_patrolRadius = 100;
+				_radiusA = getNumber (_cfgWorldName >> (_x select 0) >> "radiusA");
+				_radiusB = getNumber (_cfgWorldName >> (_x select 0) >> "radiusB");
+				_patrolRadius = ((_radiusA min _radiusB) max 125);
+				_spawnChance = 0.00;
+				_respawnLimit = -1;
 				call {
 					if (_placeType isEqualTo "NameCityCapital") exitWith {
 						_aiCount = [A3EAI_minAI_capitalCity,A3EAI_addAI_capitalCity];
 						_unitLevel = A3EAI_unitLevel_capitalCity;
-						_patrolRad = 200;
+						_spawnChance = A3EAI_spawnChance_capitalCity;
+						_respawnLimit = A3EAI_respawnLimit_capitalCity;
+						//_patrolRadius = 200;
 					};
 					if (_placeType isEqualTo "NameCity") exitWith {
 						_aiCount = [A3EAI_minAI_city,A3EAI_addAI_city];
 						_unitLevel = A3EAI_unitLevel_city;
-						_patrolRad = 175;
+						_spawnChance = A3EAI_spawnChance_city;
+						_respawnLimit = A3EAI_respawnLimit_city;
+						//_patrolRadius = 175;
 					};
 					if (_placeType isEqualTo "NameVillage") exitWith {
 						_aiCount = [A3EAI_minAI_village,A3EAI_addAI_village];
 						_unitLevel = A3EAI_unitLevel_village;
-						_patrolRad = 125;
+						_spawnChance = A3EAI_spawnChance_village;
+						_respawnLimit = A3EAI_respawnLimit_village;
+						//_patrolRadius = 125;
 					};
 					if (_placeType isEqualTo "NameLocal") exitWith {
 						_aiCount = [A3EAI_minAI_remoteArea,A3EAI_addAI_remoteArea];
 						_unitLevel = A3EAI_unitLevel_remoteArea;
-						_patrolRad = 150;
+						_spawnChance = A3EAI_spawnChance_remoteArea;
+						_respawnLimit = A3EAI_respawnLimit_remoteArea;
+						//_patrolRadius = 150;
 					};
 				};
-				if (((missionNamespace getVariable ["A3EAI_spawnChance"+str(_unitLevel),0]) > 0) && {!(_aiCount isEqualTo [0,0])}) then {
+				if ((_spawnChance > 0) && {!(_aiCount isEqualTo [0,0])}) then {
 					_trigger = createTrigger ["EmptyDetector", _placePos];
 					_trigger setTriggerArea [600, 600, 0, false];
 					_trigger setTriggerActivation ["ANY", "PRESENT", true];
 					_trigger setTriggerTimeout [5, 5, 5, true];
 					_trigger setTriggerText _placeName;
-					_statements = format ["0 = [%1,%2,%3,thisTrigger,[],%4] call A3EAI_createInfantryQueue;",_aiCount select 0,_aiCount select 1,_patrolRad,_unitLevel];
+					_statements = format ["0 = [%1,%2,%3,thisTrigger,[],%4] call A3EAI_createInfantryQueue;",_aiCount select 0,_aiCount select 1,_patrolRadius,_unitLevel];
 					_trigger setTriggerStatements ["{if (isPlayer _x) exitWith {1}} count thisList != 0;", _statements, "0 = [thisTrigger] spawn A3EAI_despawn_static;"];
-					_trigger setVariable ["respawnLimit",(missionNamespace getVariable ["A3EAI_respawnLimit"+str(_unitLevel),5])];
-					0 = [0,_trigger,[],_patrolRad,_unitLevel,_spawnPositions,_aiCount] call A3EAI_initializeTrigger;
+					_trigger setVariable ["respawnLimit",_respawnLimit,(A3EAI_enableHC && {!(_respawnLimit isEqualTo -1)})];
+					_trigger setVariable ["respawnLimitOriginal",_respawnLimit,(A3EAI_enableHC && {!(_respawnLimit isEqualTo -1)})];
+					0 = [0,_trigger,[],_patrolRadius,_unitLevel,_spawnPositions,_aiCount,_spawnChance] call A3EAI_initializeTrigger;
 					_spawnsCreated = _spawnsCreated + 1;
 				};
 			};

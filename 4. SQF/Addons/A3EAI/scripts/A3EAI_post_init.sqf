@@ -37,6 +37,7 @@ A3EAI_weaponTypeIndices3 = [];
 A3EAI_failedDynamicSpawns = [];
 A3EAI_HCObject = objNull;
 A3EAI_HCIsConnected = false;
+A3EAI_activeGroupAmount = 0;
 
 if (A3EAI_enableHC) then {
 	"A3EAI_HCLogin" addPublicVariableEventHandler {
@@ -169,7 +170,7 @@ A3EAI_classnamesVerified = true;
 _setupLocations = [] execVM format ['%1\scripts\setup_locations.sqf',A3EAI_directory];
 
 //Start dynamic spawn manager
-if (A3EAI_dynAISpawns) then {
+if !(A3EAI_dynMaxSpawns isEqualTo 0) then {
 	_dynManagerV2 = [] execVM format ['%1\scripts\dynamicSpawn_manager.sqf',A3EAI_directory];
 };
 

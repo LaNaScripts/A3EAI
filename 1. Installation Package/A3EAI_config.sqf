@@ -68,25 +68,35 @@ A3EAI_dynamicWeaponBlacklist = [];
 /*	Shared AI Unit Settings. These settings affect all AI spawned unless noted otherwise.
 --------------------------------------------------------------------------------------------------------------------*/		
 
-//(For auto-generated spawns only) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
-A3EAI_minAI_capitalCity = 2; //2
-A3EAI_addAI_capitalCity = 1; //1
-A3EAI_unitLevel_capitalCity = 1; //1
-
-//(For auto-generated spawns only) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
-A3EAI_minAI_city = 1; //1
-A3EAI_addAI_city = 2; //2
-A3EAI_unitLevel_city = 1; //1
-
-//(For auto-generated spawns only) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
+//(Static/Dynamic/Random Spawns) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
 A3EAI_minAI_village = 1; //1
 A3EAI_addAI_village = 1; //1
 A3EAI_unitLevel_village = 0; //0
+A3EAI_spawnChance_village = 0.40; //0.40
 
-//(For auto-generated spawns only) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
+//(Static/Dynamic/Random Spawns) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
+A3EAI_minAI_city = 1; //1
+A3EAI_addAI_city = 2; //2
+A3EAI_unitLevel_city = 1; //1
+A3EAI_spawnChance_city = 0.60; //0.60
+
+//(Static/Dynamic/Random Spawns) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
+A3EAI_minAI_capitalCity = 2; //2
+A3EAI_addAI_capitalCity = 1; //1
+A3EAI_unitLevel_capitalCity = 1; //1
+A3EAI_spawnChance_capitalCity = 0.70; //0.70
+
+//(Static/Dynamic/Random Spawns) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
 A3EAI_minAI_remoteArea = 1; //1
 A3EAI_addAI_remoteArea = 1; //1
 A3EAI_unitLevel_remoteArea = 2; //2
+A3EAI_spawnChance_remoteArea = 0.80; //0.80
+
+//(Dynamic/Random Spawns) minAI: Minimum number of units. addAI: maximum number of additional units. unitLevel: Unit level (0-3)
+A3EAI_minAI_wilderness = 1; //1
+A3EAI_addAI_wilderness = 1; //1
+A3EAI_unitLevel_wilderness = 2; //2
+A3EAI_spawnChance_wilderness = 0.50; //0.50
 
 //(For dynamic and random spawns only) Defines amount of time to wait in seconds until cleaning up temporary blacklist area after dynamic/random spawn is deactivated (Default: 600)
 A3EAI_tempBlacklistTime = 600;
@@ -97,11 +107,14 @@ A3EAI_findKiller = true;
 //If normal probability check for spawning NVGs fails, then give AI temporary NVGs during night hours. Temporary NVGs are unlootable and will be removed at death (Default: false).									
 A3EAI_tempNVGs = false;	
 
+//Minimum AI unit level requirement to use underslung grenade launchers. Set to -1 to disable completely. (Default: 2)
+A3EAI_GLRequirement = 2;	
+
+//Minimum AI unit level requirement to use launcher weapons. Set to -1 to disable completely. (Default: 2)
+A3EAI_launcherLevelReq = 2;	
+
 //List of launcher-type weapons that AI can use.
 A3EAI_launcherTypes = [];	
-
-//List of AI unit levels that can access launcher weapons. (Acceptable value range: 0-3)
-A3EAI_launcherLevels = [];	
 
 //Maximum number of launcher weapons allowed per group (Default: 1)
 A3EAI_launchersPerGroup = 1;
@@ -128,7 +141,7 @@ A3EAI_deathMessages = false;
 A3EAI_autoGenerateStatic = true;
 
 //Probability to increase unit level by 1 upon respawning an AI group.
-//Format: Probability to increase for [towns,cities,remote areas].
+//Format: Probability to increase to [level 1,level 2,level 3].
 A3EAI_promoteChances = [0.20,0.10,0.10];
 
 //Set minimum and maximum wait time in seconds to respawn an AI group after all units have been killed. Applies to both static AI and custom spawned AI (Default: Min 300, Max 600).									
@@ -138,29 +151,17 @@ A3EAI_respawnTimeMax = 600;
 //Time to allow spawned AI units to exist in seconds before being despawned when no players are present in a trigger area. Applies to both static AI and custom spawned AI (Default: 120)										
 A3EAI_despawnWait = 120;										
 
-//Spawn probabilities
-A3EAI_spawnChance0 = 0.40;	//Spawn chance for level 0 units - typically spawn in villages (Default: 0.40)
-A3EAI_spawnChance1 = 0.60;	//Spawn chance for level 1 units - typically spawn in cities and capital cities (Default: 0.60)
-A3EAI_spawnChance2 = 0.80;	//Spawn chance for level 2 units - typically spawn in remote areas (ie: factories, military bases) (Default: 0.80)
-A3EAI_spawnChance3 = 0.90;	//Spawn chance for level 3 units (Default: 0.90)
-
-//Respawn limits. Set to -1 for unlimited respawns. (Default: -1 for each).
-A3EAI_respawnLimit0 = -1; 	//Respawn limit for level 0 units - AI found in villages (Default: -1)
-A3EAI_respawnLimit1 = -1; 	//Respawn limit for level 1 units - AI found in cities and capital cities (Default: -1)
-A3EAI_respawnLimit2 = -1; 	//Respawn limit for level 2 units - AI found in remote areas (ie: factories, military bases) (Default: -1)
-A3EAI_respawnLimit3 = -1;	//Respawn limit for level 3 units (Default: -1)
+//Respawn Limits. Set to -1 for unlimited respawns. (Default: -1 for each).
+A3EAI_respawnLimit_village = -1;
+A3EAI_respawnLimit_city = -1;
+A3EAI_respawnLimit_capitalCity = -1;
+A3EAI_respawnLimit_remoteArea = -1;
 
 
 /*	Dynamic AI Spawning Settings. Probabilities should add up to 1.00	
 --------------------------------------------------------------------------------------------------------------------*/		
 
-//Enable or disable dynamic AI spawns. If enabled, AI spawn locations will be generated for randomly selected players at randomized intervals (Default: true)									
-A3EAI_dynAISpawns = true;
-
-//Chance for spawn for each selected player (Default: 0.50)
-A3EAI_dynSpawnChance = 0.50;
-
-//Upper limit of dynamic spawns on map at once (Default: 15)
+//Upper limit of dynamic spawns on map at once. Set to 0 to disable dynamic spawns (Default: 15)
 A3EAI_dynMaxSpawns = 15;
 
 //Minimum time (in seconds) that must pass between dynamic spawns for each player (Default: 900)
@@ -179,7 +180,7 @@ A3EAI_dynDespawnWait = 120;
 /*	Random AI Spawning Settings (Feature in development)
 --------------------------------------------------------------------------------------------------------------------*/		
 
-//Maximum number of placed random spawns on map (Default: 15)
+//Maximum number of placed random spawns on map. Set to 0 to disable random spawns. (Default: 15)
 A3EAI_maxRandomSpawns = 15;
 
 //Time to wait before despawning all AI units in random spawn area when no players are present. (Default: 120)

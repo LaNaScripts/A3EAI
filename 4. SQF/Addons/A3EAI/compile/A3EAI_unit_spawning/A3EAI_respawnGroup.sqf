@@ -58,7 +58,7 @@ if (_patrolDist > 1) then {
 	if ((count (waypoints _unitGroup)) > 1) then {
 		_unitGroup setCurrentWaypoint ((waypoints _unitGroup) call BIS_fnc_selectRandom2);
 	} else {
-		_nul = [_unitGroup,(ASLtoATL getPosASL _trigger),_patrolDist] spawn A3EAI_BIN_taskPatrol;
+		_nul = [_unitGroup,(getPosATL _trigger),_patrolDist] spawn A3EAI_BIN_taskPatrol;
 	};
 } else {
 	[_unitGroup, 0] setWaypointType "HOLD";

@@ -28,7 +28,7 @@ if (_unitsAlive > 0) then {
 		deleteWaypoint [_unitGroup,_i];
 	};
 
-	_heliPos = ASLtoATL getPosASL _vehicle;
+	_heliPos = getPosATL _vehicle;
 	0 = [_unitGroup,_heliPos,75] spawn A3EAI_BIN_taskPatrol;
 	//(A3EAI_numAIUnits + _unitsAlive) call A3EAI_updateUnitCount;
 

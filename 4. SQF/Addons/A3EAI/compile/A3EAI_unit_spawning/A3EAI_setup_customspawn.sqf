@@ -1,4 +1,4 @@
-private ["_spawnName","_patrolDist","_trigStatements","_trigger","_respawn","_unitLevel","_totalAI","_respawnTime"];
+private ["_spawnName","_spawnPos","_patrolDist","_trigStatements","_trigger","_respawn","_unitLevel","_totalAI","_respawnTime"];
 	
 _spawnName = _this select 0;
 _spawnPos = _this select 1;

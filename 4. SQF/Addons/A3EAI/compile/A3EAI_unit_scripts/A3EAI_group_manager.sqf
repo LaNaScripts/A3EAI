@@ -1,4 +1,4 @@
-private ["_unitGroup","_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_isArmed","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj"];
+private ["_unitGroup","_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_useGL","_isArmed","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj"];
 
 
 
@@ -10,7 +10,8 @@ _unitGroup setVariable ["rearmEnabled",true];
 
 _unitType = (_unitGroup getVariable ["unitType",""]);
 _vehicle = if (_unitType in ["static","dynamic","random"]) then {objNull} else {(vehicle (leader _unitGroup))};
-_useLaunchers = (((count A3EAI_launcherTypes) > 0) && {(_unitLevel in A3EAI_launcherLevels)});
+_useGL = if !(A3EAI_GLRequirement isEqualTo -1) then {_unitLevel >= A3EAI_GLRequirement} else {false};
+_useLaunchers = if !(A3EAI_launcherLevelReq isEqualTo -1) then {((count A3EAI_launcherTypes) > 0) && {(_unitLevel >= A3EAI_launcherLevelReq)}} else {false};
 _isArmed = _vehicle getVariable ["isArmed",false];
 _antistuckPos = (getWPPos [_unitGroup,(currentWaypoint _unitGroup)]);
 if (isNil {_unitGroup getVariable "GroupSize"}) then {_unitGroup setVariable ["GroupSize",(count (units _unitGroup)),A3EAI_enableHC]};
@@ -82,7 +83,6 @@ _lootGenerate = _unitGroup spawn {
 //Air units only: Replace backpack with parachute
 if (_unitType in ["air","aircustom"]) then {
 	{
-		removeBackpack _x;
 		_x addBackpack "B_Parachute";
 	} forEach (units _unitGroup);
 	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Unit backpacks replaced with B_Parachute for %1 group %2.",_unitType,_unitGroup]};
@@ -100,16 +100,34 @@ if (_unitType in ["air","aircustom"]) then {
 	
 	if ((getNumber (configFile >> "CfgMagazines" >> ((_loadout select 1) select 0) >> "count")) < 6) then {_x setVariable ["extraMag",true]};
 	
+	if (_useGL) then {
+		_weaponMuzzles = getArray(configFile >> "cfgWeapons" >> ((_loadout select 0) select 0) >> "muzzles");
+		if ((count _weaponMuzzles) > 1) then {
+			_GLWeapon = _weaponMuzzles select 1;
+			_GLMagazine = getArray (configFile >> "CfgWeapons" >> ((_loadout select 0) select 0) >> _GLWeapon >> "magazines") select 0;
+			_x addMagazine _GLMagazine;
+			(_loadout select 0) pushBack _GLWeapon;
+			(_loadout select 1) pushBack _GLMagazine;
+			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
+		};
+	};
+	
 	if (_useLaunchers) then {
 		_maxLaunchers = (A3EAI_launchersPerGroup min _unitLevel);
 		if (_forEachIndex < _maxLaunchers) then {
 			_launchWeapon = A3EAI_launcherTypes call BIS_fnc_selectRandom2;
 			if ((getNumber (configFile >> "CfgWeapons" >> _launchWeapon >> "type")) isEqualTo 4) then {
 				_launchAmmo = [] + getArray (configFile >> "CfgWeapons" >> _launchWeapon >> "magazines") select 0;
-				_x addMagazine _launchAmmo; (_loadout select 1) set [1,_launchAmmo];
-				_x addWeapon _launchWeapon; (_loadout select 0) set [1,_launchWeapon];
+				_x addMagazine _launchAmmo; (_loadout select 1) pushBack _launchAmmo;
+				_x addWeapon _launchWeapon; (_loadout select 0) pushBack _launchWeapon;
+				if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
 			};
 		};
+	};
+	
+	_rifleGL = true;
+	if (_rifleGL) then {
+		_weaponMuzzles = getArray(configFile >> "cfgWeapons" >> ((_x getVariable "loadout") select 0) select 0 >> "muzzles");
 	};
 	
 	_gadgetsArray = if (_unitLevel > 1) then {A3EAI_gadgets1} else {A3EAI_gadgets0};
@@ -122,7 +140,7 @@ if (_unitType in ["air","aircustom"]) then {
 
 	//If unit was not given NVGs, give the unit temporary NVGs which will be removed at death.
 	if (A3EAI_tempNVGs) then {
-		if (!(_x hasWeapon "NVG_EPOCH") && {(daytime < 6 || daytime > 20)}) then {
+		if (!(_x hasWeapon "NVG_EPOCH") && {sunOrMoon < 1}) then {
 			_x call A3EAI_addTempNVG;
 			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Generated temporary NVGs for AI %1.",_x];};
 		};
@@ -130,7 +148,7 @@ if (_unitType in ["air","aircustom"]) then {
 
 	//Give unit temporary first aid kits to allow self-healing (unit level 1+)
 	if (A3EAI_enableHealing) then {
-		for "_i" from 1 to _unitLevel do {
+		for "_i" from 1 to (_unitLevel min 3) do {
 			_x addItem "FirstAidKit";
 		};
 	};

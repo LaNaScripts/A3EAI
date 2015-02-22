@@ -15,7 +15,7 @@ if (_unitsAlive > 0) then {
 		deleteWaypoint [_unitGroup,_i];
 	};
 	
-	_vehPos = ASLToATL getPosASL _vehicle;
+	_vehPos = getPosATL _vehicle;
 	0 = [_unitGroup,_vehPos,100] spawn A3EAI_BIN_taskPatrol;
 	
 	//Create area trigger

@@ -18,8 +18,8 @@ _trigger = _unitGroup getVariable ["trigger",A3EAI_defaultTrigger];
 
 if (_groupIsEmpty) then {
 	if (_trigger getVariable ["respawn",true]) then {
-		_respawnCount = _trigger getVariable ["respawnLimit",A3EAI_respawnLimit2];
-		if (_respawnCount != 0) then {
+		_respawnCount = _trigger getVariable ["respawnLimit",-1];
+		if !(_respawnCount isEqualTo 0) then {
 			[0,_trigger,_unitGroup] call A3EAI_addRespawnQueue; //If there are still respawns possible... respawn the group
 			if (_respawnCount > -1) then {
 				_trigger setVariable ["respawnLimit",(_respawnCount - 1),A3EAI_enableHC]; //If respawns are limited, decrease respawn counter
