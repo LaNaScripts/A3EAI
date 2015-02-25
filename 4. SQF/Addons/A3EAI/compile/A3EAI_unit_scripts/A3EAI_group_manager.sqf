@@ -104,11 +104,12 @@ if (_unitType in ["air","aircustom"]) then {
 		_weaponMuzzles = getArray(configFile >> "cfgWeapons" >> ((_loadout select 0) select 0) >> "muzzles");
 		if ((count _weaponMuzzles) > 1) then {
 			_GLWeapon = _weaponMuzzles select 1;
-			_GLMagazine = getArray (configFile >> "CfgWeapons" >> ((_loadout select 0) select 0) >> _GLWeapon >> "magazines") select 0;
-			_x addMagazine _GLMagazine;
-			(_loadout select 0) pushBack _GLWeapon;
-			(_loadout select 1) pushBack _GLMagazine;
-			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
+			if ("1Rnd_HE_Grenade_shell" in (getArray (configFile >> "CfgWeapons" >> ((_loadout select 0) select 0) >> _GLWeapon >> "magazines"))) then {
+				_x addMagazine "1Rnd_HE_Grenade_shell";
+				(_loadout select 0) pushBack _GLWeapon;
+				(_loadout select 1) pushBack "1Rnd_HE_Grenade_shell";
+				if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
+			};
 		};
 	};
 	
@@ -116,20 +117,13 @@ if (_unitType in ["air","aircustom"]) then {
 		_maxLaunchers = (A3EAI_launchersPerGroup min _unitLevel);
 		if (_forEachIndex < _maxLaunchers) then {
 			_launchWeapon = A3EAI_launcherTypes call BIS_fnc_selectRandom2;
-			if ((getNumber (configFile >> "CfgWeapons" >> _launchWeapon >> "type")) isEqualTo 4) then {
-				_launchAmmo = [] + getArray (configFile >> "CfgWeapons" >> _launchWeapon >> "magazines") select 0;
-				_x addMagazine _launchAmmo; (_loadout select 1) pushBack _launchAmmo;
-				_x addWeapon _launchWeapon; (_loadout select 0) pushBack _launchWeapon;
-				if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
-			};
+			_launchAmmo = getArray (configFile >> "CfgWeapons" >> _launchWeapon >> "magazines") select 0;
+			_x addMagazine _launchAmmo; (_loadout select 1) pushBack _launchAmmo;
+			_x addWeapon _launchWeapon; (_loadout select 0) pushBack _launchWeapon;
+			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
 		};
 	};
-	
-	_rifleGL = true;
-	if (_rifleGL) then {
-		_weaponMuzzles = getArray(configFile >> "cfgWeapons" >> ((_x getVariable "loadout") select 0) select 0 >> "muzzles");
-	};
-	
+
 	_gadgetsArray = if (_unitLevel > 1) then {A3EAI_gadgets1} else {A3EAI_gadgets0};
 	for "_i" from 0 to ((count _gadgetsArray) - 1) do {
 		if (((_gadgetsArray select _i) select 1) call A3EAI_chance) then {
@@ -149,7 +143,7 @@ if (_unitType in ["air","aircustom"]) then {
 	//Give unit temporary first aid kits to allow self-healing (unit level 1+)
 	if (A3EAI_enableHealing) then {
 		for "_i" from 1 to (_unitLevel min 3) do {
-			_x addItem "FirstAidKit";
+			[_x,"FirstAidKit"] call A3EAI_addItem;
 		};
 	};
 	

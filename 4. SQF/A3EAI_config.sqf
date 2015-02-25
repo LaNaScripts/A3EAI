@@ -11,7 +11,7 @@ diag_log "[A3EAI] Reading A3EAI configuration file.";
 /*	A3EAI Settings
 --------------------------------------------------------------------------------------------------------------------*/	
 
-//Enable or disable event logging to arma2oaserver.rpt. Debug level setting. 0: No debug output, 1: Basic Debug output, 2: Detailed Debug output. (Default: 0)
+//Enable or disable event logging to the server RPT file (named arma3server_[date]_[time].rpt). Debug level setting. 0: No debug output, 1: Basic Debug output, 2: Detailed Debug output. (Default: 0)
 //Debug output may help finding additional information about A3EAI's background behavior. This output is helpful when asking for help regarding bugs or unexpected behaviors.
 A3EAI_debugLevel = 0;
 
@@ -110,11 +110,11 @@ A3EAI_tempNVGs = false;
 //Minimum AI unit level requirement to use underslung grenade launchers. Set to -1 to disable completely. (Default: 2)
 A3EAI_GLRequirement = 2;	
 
-//Minimum AI unit level requirement to use launcher weapons. Set to -1 to disable completely. (Default: 2)
-A3EAI_launcherLevelReq = 2;	
+//Minimum AI unit level requirement to use launcher weapons. Set to -1 to disable completely. (Default: -1)
+A3EAI_launcherLevelReq = -1;	
 
 //List of launcher-type weapons that AI can use.
-A3EAI_launcherTypes = [];	
+A3EAI_launcherTypes = ["launch_NLAW_F","launch_RPG32_F","launch_B_Titan_F","launch_I_Titan_F","launch_O_Titan_F","launch_B_Titan_short_F","launch_I_Titan_short_F","launch_O_Titan_short_F"];	
 
 //Maximum number of launcher weapons allowed per group (Default: 1)
 A3EAI_launchersPerGroup = 1;

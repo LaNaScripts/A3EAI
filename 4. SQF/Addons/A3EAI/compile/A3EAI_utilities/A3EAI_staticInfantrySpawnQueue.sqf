@@ -6,8 +6,8 @@ _grpArray = _trigger getVariable ["GroupArray",[]];
 _numGroups = if ((count _this) > 6) then {_this select 6} else {1};
 
 if ((count _grpArray) < _numGroups) then {
-	if (isNil "A3EAI_staticInfantrySpawnQueue") then {
-		A3EAI_staticInfantrySpawnQueue = [_this];
+	if (A3EAI_staticInfantrySpawnQueue isEqualTo []) then {
+		A3EAI_staticInfantrySpawnQueue pushBack _this;
 		_infantryQueue = [] spawn {
 			while {!(A3EAI_staticInfantrySpawnQueue isEqualTo [])} do {
 				private ["_args","_trigger"];
@@ -25,7 +25,6 @@ if ((count _grpArray) < _numGroups) then {
 				};
 				A3EAI_staticInfantrySpawnQueue deleteAt 0;
 			};
-			A3EAI_staticInfantrySpawnQueue = nil;
 		};
 	} else {
 		A3EAI_staticInfantrySpawnQueue pushBack _this;

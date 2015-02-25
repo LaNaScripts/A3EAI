@@ -1,0 +1,10 @@
+A3EAI 0.4.1 Alpha
+
+Files changed:
+A3EAI.pbo
+A3EAI_config.sqf
+
+[FIXED] Added test fix for a reported issue with custom spawns.
+[CHANGED] Classname verification now checks each if defined launcher classname is actually a valid launcher weapon.
+[CHANGED] Added list of all currently usable launcher weapons to A3EAI_launcherTypes.
+[CHANGED] AI use of launcher weapons is now disabled by default and requires manual enabling.

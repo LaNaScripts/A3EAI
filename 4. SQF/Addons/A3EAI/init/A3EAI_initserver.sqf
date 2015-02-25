@@ -84,8 +84,6 @@ if ((resistance getFriend east) > 0) then {resistance setFriend [east, 0]};
 if ((east getFriend resistance) > 0) then {east setFriend [resistance, 0]};
 if ((west getFriend resistance) > 0) then {west setFriend [resistance, 0]};
 
-if (A3EAI_autoGenerateStatic) then {[] execVM format ["%1\scripts\setup_autoStaticSpawns.sqf",A3EAI_directory];};
-
 //Continue loading required A3EAI script files
 [] execVM format ['%1\scripts\A3EAI_post_init.sqf',A3EAI_directory];
 

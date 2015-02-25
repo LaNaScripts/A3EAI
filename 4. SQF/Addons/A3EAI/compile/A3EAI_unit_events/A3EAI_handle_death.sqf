@@ -74,10 +74,6 @@ if !(isNull _victim) then {
 
 	_victim removeItems "FirstAidKit";
 	if (_victim getVariable ["Remove_NVG",true]) then {_victim removeWeapon "NVG_EPOCH"};
-
-	_victim setVariable ["A3EAI_deathTime",diag_tickTime,A3EAI_enableHC];
-	_victim setVariable ["canCheckUnit",false];
-	
 	if (_vehicle isEqualTo (_unitGroup getVariable ["assignedVehicle",objNull])) then {
 		_victim setPosATL (getPosATL _victim);
 	};
@@ -85,6 +81,8 @@ if !(isNull _victim) then {
 		_bodyName = _victim getVariable ["bodyName","An unknown bandit"];
 		_nul = [_killer,_bodyName] spawn A3EAI_sendKillMessage;
 	};
+	_victim setVariable ["A3EAI_deathTime",diag_tickTime,A3EAI_enableHC];
+	_victim setVariable ["canCheckUnit",false];
 };
 
 _victim

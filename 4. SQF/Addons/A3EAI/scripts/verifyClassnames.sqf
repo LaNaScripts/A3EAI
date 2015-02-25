@@ -113,6 +113,14 @@ if ("" in A3EAI_machinegunList) then {A3EAI_machinegunList = A3EAI_machinegunLis
 } forEach A3EAI_sniperList;
 if ("" in A3EAI_sniperList) then {A3EAI_sniperList = A3EAI_sniperList - [""];};
 
+{
+	if !(([configFile >> "CfgWeapons" >> _x,"type",-1] call BIS_fnc_returnConfigEntry) isEqualTo 4) then {
+		diag_log format ["[A3EAI] Removing invalid classname from A3EAI_launcherTypes array: %1.",_x];
+		A3EAI_launcherTypes set [_forEachIndex,""];
+	};
+} forEach A3EAI_launcherTypes;
+if ("" in A3EAI_launcherTypes) then {A3EAI_launcherTypes = A3EAI_launcherTypes - [""];};
+
 //Anticipate cases where all elements of an array are invalid
 if (A3EAI_pistolList isEqualTo []) then {A3EAI_pistolList = ["hgun_ACPC2_F", "hgun_ACPC2_F", "hgun_Rook40_F", "hgun_Rook40_F", "hgun_Rook40_F", "hgun_P07_F", "hgun_P07_F", "hgun_Pistol_heavy_01_F", "hgun_Pistol_heavy_02_F", "ruger_pistol_epoch", "ruger_pistol_epoch", "1911_pistol_epoch", "1911_pistol_epoch"]};
 if (A3EAI_rifleList isEqualTo []) then {A3EAI_rifleList = ["arifle_Katiba_F", "arifle_Katiba_F", "arifle_Katiba_C_F", "arifle_Katiba_GL_F", "arifle_MXC_F", "arifle_MX_F", "arifle_MX_F", "arifle_MX_GL_F", "arifle_MXM_F", "arifle_SDAR_F", "arifle_TRG21_F", "arifle_TRG20_F", "arifle_TRG21_GL_F", "arifle_Mk20_F", "arifle_Mk20C_F", "arifle_Mk20_GL_F", "arifle_Mk20_plain_F", "arifle_Mk20_plain_F", "arifle_Mk20C_plain_F", "arifle_Mk20_GL_plain_F", "SMG_01_F", "SMG_02_F", "SMG_01_F", "SMG_02_F", "hgun_PDW2000_F", "hgun_PDW2000_F", "arifle_MXM_Black_F", "arifle_MX_GL_Black_F", "arifle_MX_Black_F", "arifle_MXC_Black_F", "Rollins_F", "Rollins_F", "Rollins_F", "Rollins_F", "AKM_EPOCH", "m4a3_EPOCH", "m16_EPOCH", "m16Red_EPOCH"]};

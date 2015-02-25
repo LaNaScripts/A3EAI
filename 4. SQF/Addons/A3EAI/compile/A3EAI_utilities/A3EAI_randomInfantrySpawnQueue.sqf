@@ -5,8 +5,8 @@ _trigger = _this select 1;
 //diag_log format ["DEBUG: Started random spawn queue with args %1",_this];
 
 if ((_trigger getVariable ["GroupArray",[]]) isEqualTo []) then {
-	if (isNil "A3EAI_randomInfantrySpawnQueue") then {
-		A3EAI_randomInfantrySpawnQueue = [_this];
+	if (A3EAI_randomInfantrySpawnQueue isEqualTo []) then {
+		A3EAI_randomInfantrySpawnQueue pushBack _this;
 		_infantryQueue = [] spawn {
 			while {!(A3EAI_randomInfantrySpawnQueue isEqualTo [])} do {
 				private ["_args","_trigger"];
@@ -27,7 +27,6 @@ if ((_trigger getVariable ["GroupArray",[]]) isEqualTo []) then {
 				};
 				A3EAI_randomInfantrySpawnQueue deleteAt 0;
 			};
-			A3EAI_randomInfantrySpawnQueue = nil;
 		};
 	} else {
 		A3EAI_randomInfantrySpawnQueue pushBack _this;

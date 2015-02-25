@@ -8,8 +8,8 @@
 if (A3EAI_debugLevel > 0) then {diag_log "A3EAI Debug: A3EAI Startup is running required script files..."};
 
 //Set internal-use variables
-A3EAI_unitLevels = [0,1,2,3];								//All possible weapon grades (does not include custom weapon grades). A "weapon grade" is a tiered classification of gear. 0: Civilian, 1: Military, 2: MilitarySpecial, 3: Heli Crash. Weapon grade also influences the general skill level of the AI unit.
-A3EAI_unitLevelsAll = [0,1,2,3,4,5,6,7,8,9];				//All possible weapon grades (including custom weapon grades).
+A3EAI_unitLevels = [0,1,2,3];								
+A3EAI_unitLevelsAll = A3EAI_unitLevels;				
 A3EAI_curHeliPatrols = 0;									//Current number of active air patrols
 A3EAI_curLandPatrols = 0;									//Current number of active land patrols
 A3EAI_dynTriggerArray = [];									//List of all generated dynamic triggers.
@@ -38,6 +38,12 @@ A3EAI_failedDynamicSpawns = [];
 A3EAI_HCObject = objNull;
 A3EAI_HCIsConnected = false;
 A3EAI_activeGroupAmount = 0;
+A3EAI_staticInfantrySpawnQueue = [];
+A3EAI_customBlacklistQueue = [];
+A3EAI_customInfantrySpawnQueue = [];
+A3EAI_customInfantrySpawnQueue = [];
+A3EAI_customVehicleSpawnQueue = [];
+A3EAI_randomInfantrySpawnQueue = [];
 
 if (A3EAI_enableHC) then {
 	"A3EAI_HCLogin" addPublicVariableEventHandler {
@@ -169,15 +175,18 @@ A3EAI_classnamesVerified = true;
 //Build map location list.
 _setupLocations = [] execVM format ['%1\scripts\setup_locations.sqf',A3EAI_directory];
 
+//Set up auto-generated static spawns
+if (A3EAI_autoGenerateStatic) then {
+	_staticSpawns = [] execVM format ["%1\scripts\setup_autoStaticSpawns.sqf",A3EAI_directory];
+};
+
 //Start dynamic spawn manager
 if !(A3EAI_dynMaxSpawns isEqualTo 0) then {
 	_dynManagerV2 = [] execVM format ['%1\scripts\dynamicSpawn_manager.sqf',A3EAI_directory];
 };
 
 //Start allowDamage fix (disabled)
-if (false) then {
-	_ADP = [] execVM format ['%1\scripts\allowDamage_fix.sqf',A3EAI_directory];
-};
+//_ADP = [] execVM format ['%1\scripts\allowDamage_fix.sqf',A3EAI_directory];
 
 //Set up vehicle patrols
 if ((A3EAI_maxHeliPatrols > 0) or {(A3EAI_maxLandPatrols > 0)}) then {

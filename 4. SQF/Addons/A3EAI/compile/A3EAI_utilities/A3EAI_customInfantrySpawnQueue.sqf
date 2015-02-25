@@ -5,8 +5,8 @@ _trigger = _this select 3;
 _grpArray = _trigger getVariable ["GroupArray",[]];	
 
 if (_grpArray isEqualTo []) then {
-	if (isNil "A3EAI_customInfantrySpawnQueue") then {
-		A3EAI_customInfantrySpawnQueue = [_this];
+	if (A3EAI_customInfantrySpawnQueue isEqualTo []) then {
+		A3EAI_customInfantrySpawnQueue pushBack _this;
 		_infantryQueue = [] spawn {
 			//uiSleep 0.5;
 			while {!(A3EAI_customInfantrySpawnQueue isEqualTo [])} do {
@@ -25,7 +25,6 @@ if (_grpArray isEqualTo []) then {
 				};
 				A3EAI_customInfantrySpawnQueue deleteAt 0;
 			};
-			A3EAI_customInfantrySpawnQueue = nil;
 		};
 	} else {
 		A3EAI_customInfantrySpawnQueue pushBack _this;

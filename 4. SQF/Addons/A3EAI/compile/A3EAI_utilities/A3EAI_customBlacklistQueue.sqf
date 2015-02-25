@@ -1,6 +1,6 @@
 if !((typeName _this) isEqualTo "ARRAY") exitWith {diag_log format ["Error: Wrong arguments sent to %1.",__FILE__]};
-if (isNil "A3EAI_customBlacklistQueue") then {
-	A3EAI_customBlacklistQueue = [_this];
+if (A3EAI_customBlacklistQueue isEqualTo []) then {
+	A3EAI_customBlacklistQueue pushBack _this;
 	_blacklistQueue = [] spawn {
 		while {!(A3EAI_customBlacklistQueue isEqualTo [])} do {
 			_statement = (A3EAI_customBlacklistQueue select 0);
@@ -11,7 +11,6 @@ if (isNil "A3EAI_customBlacklistQueue") then {
 			if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Creating blacklist area at with radius %1",_statement select 0,_statement select 1];};
 			uiSleep 1;
 		};
-		A3EAI_customBlacklistQueue = nil;
 	};
 } else {
 	A3EAI_customBlacklistQueue pushBack _this;
