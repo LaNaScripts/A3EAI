@@ -1,6 +1,4 @@
-private ["_unitGroup","_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_useGL","_isArmed","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj"];
-
-
+private ["_unitGroup","_passedToHC""_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_useGL","_isArmed","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj"];
 
 _unitGroup = _this select 0;
 _unitLevel = _this select 1;
@@ -24,9 +22,9 @@ _stuckCheckTime = call {
 	if (_unitType isEqualTo "land") then {450};
 	300
 };
+_passedToHC = false;
 
 //set up debug variables
-
 _marker = "";
 _marker2 = "";
 
@@ -34,61 +32,6 @@ _marker2 = "";
 _lastRearmTime = diag_tickTime;
 _antistuckTime = diag_tickTime + 900;
 _lastReinforceTime = diag_tickTime + 600;
-_lootGenTime = diag_tickTime;
-
-//Setup loot variables
-_unitGroup setVariable ["LootPool",[]];
-_lootPool = (_unitGroup getVariable ["LootPool",[]]);
-_pullChance = missionNamespace getVariable [format ["A3EAI_lootPullChance%1",_unitLevel],0.40];
-_pullRate = 60;
-if (_unitType in ["dynamic","randomspawn"]) then {_pullRate = ((_pullRate/2) max 30)};
-
-_lootGenerate = _unitGroup spawn {
-	private ["_lootPool","_groupSize","_startTime"];
-	_startTime = diag_tickTime;
-	_lootPool = _this getVariable ["LootPool",[]];
-	_groupSize = _this getVariable ["GroupSize",0];
-	
-	for "_j" from 1 to _groupSize do {
-		//Add first aid kit to loot list
-		if (A3EAI_chanceFirstAidKit call A3EAI_chance) then {
-			_lootPool pushBack "FAK";
-		};
-
-		//Add food to loot list
-		for "_i" from 1 to A3EAI_foodLootCount do {
-			if (A3EAI_chanceFoodLoot call A3EAI_chance) then {
-				_lootPool pushBack (A3EAI_foodLoot call BIS_fnc_selectRandom2);
-			};
-		};
-
-		//Add items to loot list
-		for "_i" from 1 to A3EAI_miscLootCount1 do {
-			if (A3EAI_chanceMiscLoot1 call A3EAI_chance) then {
-				_lootPool pushBack (A3EAI_MiscLoot1 call BIS_fnc_selectRandom2);
-			};
-		};
-
-		//Add items to loot list
-		for "_i" from 1 to A3EAI_miscLootCount2 do {
-			if (A3EAI_chanceMiscLoot2 call A3EAI_chance) then {
-				_lootPool pushBack (A3EAI_MiscLoot2 call BIS_fnc_selectRandom2);
-			};
-		};
-
-		sleep 0.5;
-	};
-	//diag_log format ["DEBUG :: Added %1 items to group %2 loot pool in %3 seconds.",(count _lootPool),_this,diag_tickTime - _startTime];
-};
-
-//Air units only: Replace backpack with parachute
-if (_unitType in ["air","aircustom"]) then {
-	{
-		_x addBackpack "B_Parachute";
-	} forEach (units _unitGroup);
-	if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Unit backpacks replaced with B_Parachute for %1 group %2.",_unitType,_unitGroup]};
-};
-
 
 //Set up individual group units
 {
@@ -107,7 +50,6 @@ if (_unitType in ["air","aircustom"]) then {
 		if ((count _weaponMuzzles) > 1) then {
 			_GLWeapon = _weaponMuzzles select 1;
 			if ("1Rnd_HE_Grenade_shell" in (getArray (configFile >> "CfgWeapons" >> ((_loadout select 0) select 0) >> _GLWeapon >> "magazines"))) then {
-				_x addMagazine "1Rnd_HE_Grenade_shell";
 				(_loadout select 0) pushBack _GLWeapon;
 				(_loadout select 1) pushBack "1Rnd_HE_Grenade_shell";
 				if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
@@ -120,32 +62,9 @@ if (_unitType in ["air","aircustom"]) then {
 		if (_forEachIndex < _maxLaunchers) then {
 			_launchWeapon = A3EAI_launcherTypes call BIS_fnc_selectRandom2;
 			_launchAmmo = getArray (configFile >> "CfgWeapons" >> _launchWeapon >> "magazines") select 0;
-			_x addMagazine _launchAmmo; (_loadout select 1) pushBack _launchAmmo;
-			_x addWeapon _launchWeapon; (_loadout select 0) pushBack _launchWeapon;
+			(_loadout select 1) pushBack _launchAmmo;
+			(_loadout select 0) pushBack _launchWeapon;
 			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
-		};
-	};
-
-	_gadgetsArray = if (_unitLevel > 1) then {A3EAI_gadgets1} else {A3EAI_gadgets0};
-	for "_i" from 0 to ((count _gadgetsArray) - 1) do {
-		if (((_gadgetsArray select _i) select 1) call A3EAI_chance) then {
-			_gadget = ((_gadgetsArray select _i) select 0);
-			_x addWeapon _gadget;
-		};
-	};
-
-	//If unit was not given NVGs, give the unit temporary NVGs which will be removed at death.
-	if (A3EAI_tempNVGs) then {
-		if (!(_x hasWeapon "NVG_EPOCH") && {sunOrMoon < 1}) then {
-			_x call A3EAI_addTempNVG;
-			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Generated temporary NVGs for AI %1.",_x];};
-		};
-	};
-
-	//Give unit temporary first aid kits to allow self-healing (unit level 1+)
-	if (A3EAI_enableHealing) then {
-		for "_i" from 1 to (_unitLevel min 3) do {
-			[_x,"FirstAidKit"] call A3EAI_addItem;
 		};
 	};
 	
@@ -256,26 +175,6 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 		uiSleep 0.1;
 	} forEach (units _unitGroup);
 
-	//Generate loot
-	if ((diag_tickTime - _lootGenTime) > _pullRate) then {
-		if ((count _lootPool) > 0) then {
-			if (_pullChance call A3EAI_chance) then {
-				_lootUnit = (units _unitGroup) call BIS_fnc_selectRandom2;
-				_lootIndex = floor (random (count _lootPool));
-				_loot = _lootPool select _lootIndex;
-				if (alive _lootUnit) then {
-					if ([_lootUnit,_loot] call A3EAI_addItem) then {
-						_lootPool deleteAt _lootIndex;
-						if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Pulled %1 from %2 loot pool (%3 items remain).",_loot,_unitGroup,(count _lootPool)];};
-					};
-				};
-			};
-		} else {
-			_pullRate =  3.4028235e38;	//Loot pool emptied, stop checking it.
-		};
-		_lootGenTime = diag_tickTime;
-	};
-	
 	//Vehicle ammo/fuel check
 	if (alive _vehicle) then {	//If _vehicle is objNull (if no vehicle was assigned to the group) then nothing in this bracket should be executed
 		if ((_isArmed) && {someAmmo _vehicle}) then {	//Note: someAmmo check is not reliable for vehicles with multiple turrets
@@ -390,6 +289,13 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 		};
 	};
 	
+	/*
+	if (A3EAI_HCIsConnected) then {
+		//HC now online, return ownership to HC.
+		_passedToHC = [_unitGroup] call A3EAI_transferGroupToHC;
+	};
+	*/
+	
 	if (A3EAI_debugMarkersEnabled) then {
 		_marker setMarkerPos (getPosASL ((units _unitGroup) select 0));
 		_marker2 setMarkerPos (getWPPos [_unitGroup,(currentWaypoint _unitGroup)]);
@@ -406,6 +312,7 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 };
 
 _unitGroup setVariable ["isManaged",false]; //allow group manager to run again on group respawn.
+if (_passedToHC) exitWith {};
 
 if (isEngineOn _vehicle) then {_vehicle engineOn false};
 

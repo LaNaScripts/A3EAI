@@ -41,17 +41,18 @@ A3EAI_activeGroupAmount = 0;
 A3EAI_staticInfantrySpawnQueue = [];
 A3EAI_customBlacklistQueue = [];
 A3EAI_customInfantrySpawnQueue = [];
-A3EAI_customInfantrySpawnQueue = [];
+A3EAI_createCustomSpawnQueue = [];
 A3EAI_customVehicleSpawnQueue = [];
 A3EAI_randomInfantrySpawnQueue = [];
 
 if (A3EAI_enableHC) then {
 	"A3EAI_HCLogin" addPublicVariableEventHandler {
-		private ["_HCObject","_versionHC"];
+		private ["_HCObject","_versionHC","_requiredVersion"];
 		_HCObject = (_this select 1) select 0;
 		_versionHC = (_this select 1) select 1;
-		if ((owner A3EAI_HCObject) isEqualTo 0) then {
-			if ((!isNull _HCObject) && {_versionHC isEqualTo "0.2.3"}) then {
+		if (((owner A3EAI_HCObject) isEqualTo 0) && {!isNull _HCObject}) then {
+			_requiredVersion = [configFile >> "CfgPatches" >> "A3EAI","A3EAIVersion",""] call BIS_fnc_returnConfigEntry;
+			if (_versionHC isEqualTo _requiredVersion) then {
 				A3EAI_HCObject = _HCObject;
 				A3EAI_HCObject addEventHandler ["Local",{
 					if (_this select 1) then {
@@ -70,23 +71,14 @@ if (A3EAI_enableHC) then {
 				A3EAI_HCIsConnected = true;
 				A3EAI_HC_serverResponse = true;
 				A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_HC_serverResponse";
-				diag_log format ["Debug: Headless client %1 (owner: %2, pUID: %3) logged in successfully.",A3EAI_HCObject,A3EAI_HCObjectOwnerID,getPlayerUID A3EAI_HCObject];
+				diag_log format ["Debug: Headless client %1 (owner: %2) logged in successfully.",A3EAI_HCObject,A3EAI_HCObjectOwnerID];
 			} else {
-				diag_log format ["Debug: Headless client %1 (owner: %2) is null object or sent wrong password %2.",_HCObject,owner _HCObject,_versionHC];
+				diag_log format ["Debug: Headless client %1 (owner: %2) has wrong A3EAI version %2.",_HCObject,owner _HCObject,_versionHC];
 			};
 		} else {
 			A3EAI_HC_serverResponse = false;
 			(owner _HCObject) publicVariableClient "A3EAI_HC_serverResponse";
-			diag_log format ["Debug: Rejected connection from HC %1. A headless client (owner: %2) is already connected.",(_this select 1),A3EAI_HCObjectOwnerID];
-		};
-	};
-	"A3EAI_HCLogin2" addPublicVariableEventHandler {
-		private ["_HCPlayerObject","_versionHC"];
-		_HCPlayerObject = (_this select 1) select 0;
-		_versionHC = (_this select 1) select 1;
-		if ((!isNull _HCPlayerObject) && {_versionHC isEqualTo "0.2.3"}) then {
-			_HCPlayerObject hideObjectGlobal true;
-			diag_log format ["Debug: Set hideObjectGlobal true on %1",(_this select 1)];
+			diag_log format ["Debug: Rejected connection from HC %1. A headless client is already connected: %2. Requesting client is null object: %3.",(_this select 1),((owner A3EAI_HCObject) isEqualTo 0),isNull _HCObject];
 		};
 	};
 	diag_log "Debug: Listening for headless client connection...";

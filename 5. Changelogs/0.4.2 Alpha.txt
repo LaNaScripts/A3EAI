@@ -1,0 +1,6 @@
+A3EAI 0.4.2 Alpha
+
+Files changed:
+A3EAI.pbo
+
+[FIXED] Fixed issue with custom spawns. (Thanks to SadBoy1981 for reporting the issue).
