@@ -104,16 +104,12 @@ A3EAI_updGroupCount = compileFinal '
 	
 	if (isNull _unitGroup) exitWith {false};
 	
-	if (isDedicated) then {
-		if (_isNewGroup) then {
-			A3EAI_activeGroups pushBack _unitGroup;
-		} else {
-			A3EAI_activeGroups = A3EAI_activeGroups - [_unitGroup];
-		};
+	if (_isNewGroup) then {
+		A3EAI_activeGroups pushBack _unitGroup;
 	} else {
-		A3EAI_updateServerGroups = [_unitGroup,_isNewGroup];
-		publicVariableServer "A3EAI_updateServerGroups";
+		A3EAI_activeGroups = A3EAI_activeGroups - [_unitGroup];
 	};
+
 	true
 ';
 
