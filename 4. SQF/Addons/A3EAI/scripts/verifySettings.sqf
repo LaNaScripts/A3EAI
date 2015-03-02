@@ -61,6 +61,7 @@ _startTime = diag_tickTime;
 	["A3EAI_respawnLimit_city",-1],
 	["A3EAI_respawnLimit_capitalCity",-1],
 	["A3EAI_respawnLimit_remoteArea",-1],
+	["A3EAI_staticBlacklistLocations",[]],
 	//["A3EAI_dynAISpawns",true],
 	["A3EAI_dynMaxSpawns",15],
 	["A3EAI_dynCooldownTime",900],
