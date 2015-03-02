@@ -85,7 +85,7 @@ clearWeaponCargoGlobal _vehicle;
 clearMagazineCargoGlobal _vehicle;
 
 //Setup group and crew
-if (!(_driver hasWeapon "NVGoggles")) then {
+if (!(_driver hasWeapon "NVG_EPOCH")) then {
 	_nvg = _driver call A3EAI_addTempNVG;
 };
 _driver assignAsDriver _vehicle;
@@ -95,7 +95,7 @@ _unitGroup selectLeader _driver;
 _cargoSpots = _vehicle emptyPositions "cargo";
 for "_i" from 0 to ((_cargoSpots min _maxCargoUnits) - 1) do {
 	_cargo = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
-	if (!(_cargo hasWeapon "NVGoggles")) then {
+	if (!(_cargo hasWeapon "NVG_EPOCH")) then {
 		_nvg = _cargo call A3EAI_addTempNVG;
 	};
 	_cargo assignAsCargo _vehicle;
@@ -105,7 +105,7 @@ if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Spawned 
 	
 for "_i" from 0 to ((_turretCount min _maxGunnerUnits) - 1) do {
 	_gunner = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
-	if (!(_gunner hasWeapon "NVGoggles")) then {
+	if (!(_gunner hasWeapon "NVG_EPOCH")) then {
 		_nvg = _gunner call A3EAI_addTempNVG;
 	};
 	_gunner assignAsTurret [_vehicle,[_i]];
@@ -169,25 +169,6 @@ if (_isAirVehicle) then {
 	[_unitGroup] spawn A3EAI_vehStartPatrol;
 };
 _rearm = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
-
-if !(A3EAI_HCIsConnected) then {
-	if (_isAirVehicle) then {
-		[_unitGroup] spawn A3EAI_heliStartPatrol;
-	} else {
-		[_unitGroup] spawn A3EAI_vehStartPatrol;
-	};
-	_rearm = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
-} else {
-	//_unitGroup setGroupOwner A3EAI_HCObjectOwnerID; //Uncomment when setGroupOwner command is implemented.
-	if (_isAirVehicle) then {						//Comment this when setGroupOwner command is implemented.
-		[_unitGroup] spawn A3EAI_heliStartPatrol;
-	} else {
-		[_unitGroup] spawn A3EAI_vehStartPatrol;
-	};
-	_rearm = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	 //Comment this when setGroupOwner command is implemented.
-	A3EAI_transferGroup = _unitGroup; 
-	 A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_transferGroup";
-};
 
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created AI vehicle patrol at %1 with vehicle type %2 with %3 crew units.",_vehSpawnPos,_vehicleType,(count (units _unitGroup))]};
 

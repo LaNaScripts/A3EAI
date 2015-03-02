@@ -104,10 +104,15 @@ A3EAI_updGroupCount = compileFinal '
 	
 	if (isNull _unitGroup) exitWith {false};
 	
-	if (_isNewGroup) then {
-		A3EAI_activeGroups pushBack _unitGroup;
+	if (isDedicated) then {
+		if (_isNewGroup) then {
+			A3EAI_activeGroups pushBack _unitGroup;
+		} else {
+			A3EAI_activeGroups = A3EAI_activeGroups - [_unitGroup];
+		};
 	} else {
-		A3EAI_activeGroups = A3EAI_activeGroups - [_unitGroup];
+		A3EAI_updateServerGroups = [_unitGroup,_isNewGroup];
+		publicVariableServer "A3EAI_updateServerGroups";
 	};
 	true
 ';
@@ -117,10 +122,6 @@ A3EAI_createGroup = compileFinal '
 	private["_unitGroup","_protect","_unitType"];
 	_unitType = _this select 0;
 
-	//if (({(side _x) isEqualTo resistance} count allGroups) > 139) then {
-	//	diag_log "A3EAI Warning: Exceeded 139 groups for Resistance side! Recommend reducing amount of AI spawns to avoid potential issues.";
-	//};
-	
 	_unitGroup = createGroup resistance;
 	if ((count _this) > 1) then {_unitGroup call A3EAI_protectGroup};
 	_unitGroup setVariable ["unitType",_unitType,A3EAI_enableHC];
@@ -249,7 +250,7 @@ A3EAI_updateSpawnCount = compileFinal '
 		if (_trigger in _triggerArray) then {
 			_triggerArray = _triggerArray - [_trigger];
 		} else {
-			if ((triggerStatements _trigger select 1) in ["","_nul = thisList call A3EAI_allowDamageFix;"]) then {
+			if ((triggerStatements _trigger select 1) isEqualTo "") then {
 				_triggerArray pushBack _trigger;
 			};
 		};

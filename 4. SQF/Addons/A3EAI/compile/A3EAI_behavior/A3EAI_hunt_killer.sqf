@@ -13,6 +13,8 @@ if (((_unitGroup getVariable ["pursuitTime",0]) > 0) && {((_unitGroup getVariabl
 	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Pursuit time +20 sec for Group %1 (Target: %2) to %3 seconds (fn_findKiller).",_unitGroup,name _targetPlayer,(_unitGroup getVariable ["pursuitTime",0]) - diag_tickTime]};
 };
 
+if (A3EAI_enableHC) then {_unitGroup setVariable ["HC_Ready",false];};
+
 _startPos = _unitGroup getVariable ["trigger",(getPosASL (leader _unitGroup))];
 _chaseDistance = _unitGroup getVariable ["patrolDist",250];
 _radioType = "EpochRadio0";
@@ -145,3 +147,5 @@ if ((_startPos distance _targetPlayer) < _chaseDistance) then {
 		deleteMarker _marker;
 	};
 };
+
+if (A3EAI_enableHC) then {_unitGroup setVariable ["HC_Ready",true];};

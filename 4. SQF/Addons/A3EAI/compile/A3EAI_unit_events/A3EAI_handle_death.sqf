@@ -82,7 +82,6 @@ if !(isNull _victim) then {
 		_nul = [_killer,_bodyName] spawn A3EAI_sendKillMessage;
 	};
 	_victim setVariable ["A3EAI_deathTime",diag_tickTime,A3EAI_enableHC];
-	_victim setVariable ["canCheckUnit",false];
 };
 
 _victim

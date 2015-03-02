@@ -1,0 +1,10 @@
+A3EAI 0.4.3 Alpha
+
+Files changed:
+A3EAI.pbo
+A3EAI_config.sqf
+
+[ADDED] AI uniform classnames can now be defined on a per-level basis.
+[ADDED] AI headgear classnames can now be defined on a per-level basis.
+
+Important: The upcoming Epoch 0.3.0 update will most likely break A3EAI's dynamic classname functions. If this happens, A3EAI will use the classnames defined in A3EAI_config.sqf instead and should continue running normally. A follow-up update will be made to adapt these functions to Epoch 0.3.0's new loot table structure.

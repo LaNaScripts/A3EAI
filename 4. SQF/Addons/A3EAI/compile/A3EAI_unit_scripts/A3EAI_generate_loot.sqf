@@ -9,7 +9,7 @@ _loot = [];
 _toolLoot = [];
 
 //Generate a pistol if one wasn't assigned with loadout script.
-if (_unit getVariable ["CanGivePistol",true]) then {
+if !((primaryWeapon _unit) isEqualTo "") then {
 	_pistol = A3EAI_pistolList call BIS_fnc_selectRandom2;
 	_magazine = getArray (configFile >> "CfgWeapons" >> _pistol >> "magazines") select 0;
 	_unit addMagazine _magazine;	

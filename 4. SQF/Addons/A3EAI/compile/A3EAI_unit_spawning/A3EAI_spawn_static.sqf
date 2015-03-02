@@ -1,15 +1,4 @@
-/*
-	spawnBandits
-	
-	Usage: [_minAI, _addAI, _patrolDist, _trigger, _numGroups (optional)] spawn spawnBandits;
-	
-	Description: Called through (mapname)_config.sqf when a static trigger is activated by a player.
-	
-	Last updated: 8:38 AM 10/23/2013
-*/
-
 private ["_minAI","_addAI","_patrolDist","_trigger","_unitLevel","_numGroups","_grpArray","_triggerPos","_startTime","_totalSpawned","_triggerStatements","_groupsActive"];
-
 
 _minAI = _this select 0;									//Mandatory minimum number of AI units to spawn
 _addAI = _this select 1;									//Maximum number of additional AI units to spawn
@@ -23,7 +12,6 @@ _startTime = diag_tickTime;
 
 _grpArray = _trigger getVariable ["GroupArray",[]];	
 _groupsActive = count _grpArray;
-//
 
 _trigger setTriggerArea [750,750,0,false]; //Expand trigger area to prevent players from quickly leaving and start respawn process immediately
 _triggerPos = getPosATL _trigger;

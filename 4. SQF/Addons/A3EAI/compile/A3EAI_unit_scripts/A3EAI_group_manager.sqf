@@ -1,6 +1,4 @@
-private ["_unitGroup","_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_useGL","_isArmed","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj"];
-
-
+private ["_unitGroup","_unitLevel","_vehicle","_lastRearmTime","_useLaunchers","_useGL","_isArmed","_marker","_marker2","_antistuckTime","_antistuckPos","_lastReinforceTime","_vehicleMoved","_lootPool","_pullChance","_pullRate","_antistuckObj","_groupSentToHC"];
 
 _unitGroup = _this select 0;
 _unitLevel = _this select 1;
@@ -24,6 +22,7 @@ _stuckCheckTime = call {
 	if (_unitType isEqualTo "land") then {450};
 	300
 };
+_groupSentToHC = false;
 
 //set up debug variables
 
@@ -390,6 +389,13 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 		};
 	};
 	
+	if (A3EAI_HCIsConnected && {_unitGroup getVariable ["HC_Ready",false]}) exitWith {
+		//_unitGroup setGroupOwner A3EAI_HCObjectOwnerID;
+		A3EAI_groupServerToHC = _unitGroup;
+		A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_groupServerToHC";
+		if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Transferred ownership of group %1 to HC %2.",_unitGroup,A3EAI_HCObjectOwnerID];};
+	};
+	
 	if (A3EAI_debugMarkersEnabled) then {
 		_marker setMarkerPos (getPosASL ((units _unitGroup) select 0));
 		_marker2 setMarkerPos (getWPPos [_unitGroup,(currentWaypoint _unitGroup)]);
@@ -406,6 +412,8 @@ while {(!isNull _unitGroup) && {(_unitGroup getVariable ["GroupSize",-1]) > 0}} 
 };
 
 _unitGroup setVariable ["isManaged",false]; //allow group manager to run again on group respawn.
+
+if (_groupSentToHC) exitWith {};
 
 if (isEngineOn _vehicle) then {_vehicle engineOn false};
 

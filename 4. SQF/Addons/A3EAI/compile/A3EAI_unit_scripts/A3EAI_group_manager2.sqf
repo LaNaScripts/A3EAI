@@ -58,12 +58,11 @@ _lastReinforceTime = diag_tickTime + 600;
 	};
 	
 	if (_useLaunchers) then {
-		_maxLaunchers = (A3EAI_launchersPerGroup min _unitLevel);
-		if (_forEachIndex < _maxLaunchers) then {
-			_launchWeapon = A3EAI_launcherTypes call BIS_fnc_selectRandom2;
-			_launchAmmo = getArray (configFile >> "CfgWeapons" >> _launchWeapon >> "magazines") select 0;
+		_secondaryWeapon = secondaryWeapon _x;
+		if !(_secondaryWeapon isEqualTo "") then {
+			_launchAmmo = getArray (configFile >> "CfgWeapons" >> _secondaryWeapon >> "magazines") select 0;
 			(_loadout select 1) pushBack _launchAmmo;
-			(_loadout select 0) pushBack _launchWeapon;
+			(_loadout select 0) pushBack _secondaryWeapon;
 			if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Modified unit %1 loadout to %2.",_x,_loadout];};
 		};
 	};

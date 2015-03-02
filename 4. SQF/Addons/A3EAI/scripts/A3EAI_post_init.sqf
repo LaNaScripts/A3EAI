@@ -46,42 +46,7 @@ A3EAI_customVehicleSpawnQueue = [];
 A3EAI_randomInfantrySpawnQueue = [];
 
 if (A3EAI_enableHC) then {
-	"A3EAI_HCLogin" addPublicVariableEventHandler {
-		private ["_HCObject","_versionHC","_requiredVersion"];
-		_HCObject = (_this select 1) select 0;
-		_versionHC = (_this select 1) select 1;
-		if (((owner A3EAI_HCObject) isEqualTo 0) && {!isNull _HCObject}) then {
-			_requiredVersion = [configFile >> "CfgPatches" >> "A3EAI","A3EAIVersion",""] call BIS_fnc_returnConfigEntry;
-			if (_versionHC isEqualTo _requiredVersion) then {
-				A3EAI_HCObject = _HCObject;
-				A3EAI_HCObject addEventHandler ["Local",{
-					if (_this select 1) then {
-						private["_unit"];
-						A3EAI_HCIsConnected = false;
-						A3EAI_HCObjectOwnerID = 0;
-						A3EAI_HCObject = objNull;
-						_unit = _this select 0;
-						_unit removeAllEventHandlers "Local";
-						diag_log format ["Debug: Deleting disconnected headless client unit %1.",typeOf _unit];
-						deleteVehicle _unit;
-						deleteGroup (group _unit);
-					};
-				}];
-				A3EAI_HCObjectOwnerID = (owner A3EAI_HCObject);
-				A3EAI_HCIsConnected = true;
-				A3EAI_HC_serverResponse = true;
-				A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_HC_serverResponse";
-				diag_log format ["Debug: Headless client %1 (owner: %2) logged in successfully.",A3EAI_HCObject,A3EAI_HCObjectOwnerID];
-			} else {
-				diag_log format ["Debug: Headless client %1 (owner: %2) has wrong A3EAI version %2.",_HCObject,owner _HCObject,_versionHC];
-			};
-		} else {
-			A3EAI_HC_serverResponse = false;
-			(owner _HCObject) publicVariableClient "A3EAI_HC_serverResponse";
-			diag_log format ["Debug: Rejected connection from HC %1. A headless client is already connected: %2. Requesting client is null object: %3.",(_this select 1),((owner A3EAI_HCObject) isEqualTo 0),isNull _HCObject];
-		};
-	};
-	diag_log "Debug: Listening for headless client connection...";
+	[] call compile preprocessFileLineNumbers format ["%1\scripts\A3EAI_initHCServer.sqf",A3EAI_directory];
 };
 
 //Create default trigger object if AI is spawned without trigger object specified (ie: for custom vehicle AI groups)
@@ -103,9 +68,9 @@ _nul = [] spawn {
 [] call compile preprocessFileLineNumbers format ["%1\scripts\buildWeightedTables.sqf",A3EAI_directory];
 
 if (A3EAI_verifyClassnames) then {
-	A3EAI_tableChecklist = ["A3EAI_pistolList","A3EAI_rifleList","A3EAI_machinegunList","A3EAI_sniperList","A3EAI_headgearTypes",
+	A3EAI_tableChecklist = ["A3EAI_pistolList","A3EAI_rifleList","A3EAI_machinegunList","A3EAI_sniperList","A3EAI_headgearTypes0","A3EAI_headgearTypes1","A3EAI_headgearTypes2","A3EAI_headgearTypes3",
 				"A3EAI_backpackTypes0","A3EAI_backpackTypes1","A3EAI_backpackTypes2","A3EAI_backpackTypes3","A3EAI_foodLoot","A3EAI_MiscLoot1","A3EAI_MiscLoot2",
-				"A3EAI_uniformTypes","A3EAI_launcherTypes","A3EAI_vestTypes0","A3EAI_vestTypes1","A3EAI_vestTypes2","A3EAI_vestTypes3"];
+				"A3EAI_uniformTypes0","A3EAI_uniformTypes1","A3EAI_uniformTypes2","A3EAI_uniformTypes3","A3EAI_launcherTypes","A3EAI_vestTypes0","A3EAI_vestTypes1","A3EAI_vestTypes2","A3EAI_vestTypes3"];
 };
 
 //Build skin classname tables

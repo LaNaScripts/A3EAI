@@ -62,10 +62,9 @@ if (_spawnChance call A3EAI_chance) then {
 		_totalAI = ((_minAI + floor (random (_addAI + 1))) max 1);
 		_unitGroup = [_totalAI,grpNull,"random",_spawnPos,_trigger,_unitLevel,true] call A3EAI_spawnGroup;
 
-		//Set group variables
 		_unitGroup setBehaviour "AWARE";
 		_unitGroup setSpeedMode "FULL";
-
+		
 		[_unitGroup,_playerPos] call A3EAI_setFirstWPPos;
 		0 = [_unitGroup,_triggerPos,_patrolDist] spawn A3EAI_BIN_taskPatrol;
 

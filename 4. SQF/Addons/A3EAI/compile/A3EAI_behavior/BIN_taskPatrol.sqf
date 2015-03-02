@@ -42,18 +42,18 @@ Edited version for A3EAI (https://github.com/dayzai/A3EAI)
 */
 
 //waitUntil {!isNil "bis_fnc_init"};
-_grp = _this select 0;
+_unitGroup = _this select 0;
 _pos = _this select 1;
 _max_dist = _this select 2;
-_unitType = _grp getVariable ["unitType",""];
+_unitType = _unitGroup getVariable ["unitType",""];
 _allowWater = (_unitType isEqualTo "aircustom");
 //_allowWaterNumeric = if (_allowWater) then {1} else {0};
 _searchLoot = _unitType in ["static","dynamic"];
 _isVehicle = (_unitType isEqualTo "landcustom");
 
-//_grp setBehaviour "AWARE";
-if (_max_dist < 75) then {_grp setSpeedMode "LIMITED"};
-//_grp setCombatMode "RED";
+//_unitGroup setBehaviour "AWARE";
+if (_max_dist < 75) then {_unitGroup setSpeedMode "LIMITED"};
+//_unitGroup setCombatMode "RED";
 
 _wpStatements = if ((_max_dist >= 100) && {_searchLoot}) then {"if ((random 3) > 2) then { group this setCurrentWaypoint [(group this), (floor (random (count (waypoints (group this)))))];} else {_nul = [(group this),75] spawn A3EAI_lootSearching;};"} else {"if ((random 3) > 2) then { group this setCurrentWaypoint [(group this), (floor (random (count (waypoints (group this)))))];};"};
 _wpTimeouts = if (_max_dist >= 100) then {[0, 3, 5]} else {[3, 6, 9]};
@@ -186,7 +186,7 @@ for "_i" from 1 to (_wp_count - 1) do
 	_cur_pos = (_wp_array select _i);
 	
 	if ((!(surfaceIsWater _cur_pos)) or {_allowWater}) then {
-		_wp = _grp addWaypoint [_cur_pos, 0];
+		_wp = _unitGroup addWaypoint [_cur_pos, 0];
 		_wp setWaypointType "MOVE";
 		_wp setWaypointCompletionRadius _completionRadius;
 		_wp setWaypointTimeout [_wpTimeouts select 0, _wpTimeouts select 1, _wpTimeouts select 2];
@@ -199,15 +199,17 @@ _endWP = [_pos, 0, 50, 6, 0, 50 * (pi / 180), 0, [],[_pos]] call BIS_fnc_findSaf
 
 if (_searchLoot) then {
 	// End back near start point and then pick a new random point
-	_wp1 = _grp addWaypoint [_endWP, 0];
+	_wp1 = _unitGroup addWaypoint [_endWP, 0];
 	_wp1 setWaypointType "MOVE";
 	_wp1 setWaypointCompletionRadius (_max_dist max 50);
-	[_grp,(count waypoints _grp)] setWaypointStatements ["true", "group this setCurrentWaypoint [(group this), (round (random 2) + 1)];"];
+	[_unitGroup,(count waypoints _unitGroup)] setWaypointStatements ["true", "group this setCurrentWaypoint [(group this), (round (random 2) + 1)];"];
 };
 
 // Cycle in case we reach the end
-_wp2 = _grp addWaypoint [_endWP, 0];
+_wp2 = _unitGroup addWaypoint [_endWP, 0];
 _wp2 setWaypointType "CYCLE";
 _wp2 setWaypointCompletionRadius (_max_dist max 50);
+
+if (A3EAI_enableHC) then {_unitGroup setVariable ["HC_Ready",true];};
 
 true

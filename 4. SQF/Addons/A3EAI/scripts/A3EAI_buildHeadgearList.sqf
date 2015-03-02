@@ -6,7 +6,10 @@ _headgearList = [configFile >> "CfgLootTable" >> "Headgear","items",[]] call BIS
 } forEach _headgearList;
 
 if !(_headgearList isEqualTo []) then {
-	A3EAI_headgearTypes = _headgearList;
+	A3EAI_headgearTypes0 = _headgearList;
+	A3EAI_headgearTypes1 = _headgearList;
+	A3EAI_headgearTypes2 = _headgearList;
+	A3EAI_headgearTypes3 = _headgearList;
 	if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Generated %1 headgear classnames in %2 seconds.",(count _headgearList),diag_tickTime - _startTime]};
 } else {
 	diag_log "A3EAI Error: Could not dynamically generate headgear classname list. Classnames from A3EAI_config.sqf used instead.";

@@ -1,1 +1,10 @@
-
+A3EAI_firstAidKitItem = compileFinal '"FirstAidKit"';
+A3EAI_NVGItem = compileFinal '"NVG_EPOCH"';
+A3EAI_radioItem = compileFinal '"EpochRadio0"';
+A3EAI_playerUnits = compileFinal '["Epoch_Male_F","Epoch_Female_F"]';
+A3EAI_jammerItem = compileFinal '"PlotPole_EPOCH"';
+A3EAI_parachuteVehicle = compileFinal '"Steerable_Parachute_F"';
+A3EAI_vehicleNonWeapons = compileFinal '["CarHorn","BikeHorn","TruckHorn","TruckHorn2","SportCarHorn","MiniCarHorn"]';
+A3EAI_kryptoItem = compileFinal '"Land_MPS_EPOCH"';
+A3EAI_kryptoVariableName = compileFinal '"Crypto"';
+A3EAI_baseAIUnit = compileFinal '"i_survivor_F"';

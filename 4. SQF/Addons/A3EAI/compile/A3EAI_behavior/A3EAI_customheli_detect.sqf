@@ -8,7 +8,7 @@ _unitGroup = _this select 1;
 uiSleep 60;
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Starting helicopter awareness script for AI vehicle %1 (Group: %2).",typeOf _helicopter,_unitGroup];};
 
-while {!(_helicopter getVariable ["heli_disabled",false]) && {alive _helicopter}} do {
+while {!(_helicopter getVariable ["heli_disabled",false]) && {alive _helicopter} && {!(_unitGroup getVariable ["HC_Ready",false])}} do {
 	_detectOrigin = [getPosASL _helicopter,200,getDir _helicopter,1] call SHK_pos;
 	_detectOrigin set [2,0];
 	_detected = _detectOrigin nearEntities [["Epoch_Male_F","Epoch_Female_F"],225];

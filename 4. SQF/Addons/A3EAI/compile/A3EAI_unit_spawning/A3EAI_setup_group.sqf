@@ -69,13 +69,6 @@ _unitGroup setVariable ["unitLevel",_unitLevel,A3EAI_enableHC];
 _unitGroup setFormDir (random 360);
 _unitGroup allowFleeing 0;
 
-if !(A3EAI_HCIsConnected) then {
-	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
-} else {
-	//_unitGroup setGroupOwner A3EAI_HCObjectOwnerID;  //Uncomment when setGroupOwner command is implemented.
-	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//Comment when setGroupOwner command is implemented.
-	A3EAI_transferGroup = _unitGroup;
-	A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_transferGroup";
-};
+0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;	//start group-level manager
 
 _unitGroup

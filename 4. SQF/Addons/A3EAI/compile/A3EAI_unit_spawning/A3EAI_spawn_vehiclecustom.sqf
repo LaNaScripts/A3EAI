@@ -75,7 +75,7 @@ _vehicle setVehicleLock "LOCKED";
 clearWeaponCargoGlobal _vehicle;
 clearMagazineCargoGlobal _vehicle;
 
-if (!(_driver hasWeapon "NVGoggles")) then {
+if (!(_driver hasWeapon "NVG_EPOCH")) then {
 	_nvg = _driver call A3EAI_addTempNVG;
 };
 
@@ -88,7 +88,7 @@ if (_isAirVehicle) then {_vehicle flyInHeight 115};
 _cargoSpots = _vehicle emptyPositions "cargo";
 for "_i" from 0 to ((_cargoSpots min _maxCargoUnits) - 1) do {
 	_cargo = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
-	if (!(_cargo hasWeapon "NVGoggles")) then {
+	if (!(_cargo hasWeapon "NVG_EPOCH")) then {
 		_nvg = _cargo call A3EAI_addTempNVG;
 	};
 	_cargo assignAsCargo _vehicle;
@@ -99,7 +99,7 @@ if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Spawned 
 for "_i" from 0 to ((_turretCount min _maxGunnerUnits) - 1) do {
 	_gunner = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
 	[_gunner] joinSilent _unitGroup;
-	if (!(_gunner hasWeapon "NVGoggles")) then {
+	if (!(_gunner hasWeapon "NVG_EPOCH")) then {
 		_nvg = _gunner call A3EAI_addTempNVG;
 	}; 
 	_gunner assignAsTurret [_vehicle,[_i]];
@@ -118,10 +118,7 @@ _unitGroup setVariable ["spawnParams",_this,_HCActive];
 [_unitGroup,0] setWaypointPosition [_spawnPos,0];		//Move group's initial waypoint position away from [0,0,0] (initial spawn position).
 (units _unitGroup) allowGetIn true;
 
-0 = [_unitGroup,_spawnPos,_patrolDist,false] spawn A3EAI_BIN_taskPatrol;
-
 if (_isAirVehicle) then {
-	_awareness = [_vehicle,_unitGroup] spawn A3EAI_customHeliDetect;
 	if (_isArmed) then {
 		if (A3EAI_removeMissileWeapons) then {
 			_result = _vehicle call A3EAI_clearMissileWeapons; //Remove missile weaponry for air vehicles
@@ -138,15 +135,9 @@ if (_isAirVehicle) then {
 	};
 };
 
-
-if !(A3EAI_HCIsConnected) then {
-	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;
-} else {
-	//_unitGroup setGroupOwner A3EAI_HCObjectOwnerID; //Uncomment when setGroupOwner command is implemented.
-	0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager; //Comment when setGroupOwner command is implemented.
-	A3EAI_transferGroup = _unitGroup;
-	 A3EAI_HCObjectOwnerID publicVariableClient "A3EAI_transferGroup";
-};
+0 = [_unitGroup,_spawnPos,_patrolDist,false] spawn A3EAI_BIN_taskPatrol;
+0 = [_vehicle,_unitGroup] spawn A3EAI_customHeliDetect;
+0 = [_unitGroup,_unitLevel] spawn A3EAI_addGroupManager;
 
 if (A3EAI_debugLevel > 0) then {diag_log format ["A3EAI Debug: Created custom vehicle spawn at %1 with vehicle type %2 with %3 crew units.",_spawnName,_vehicleType,(count (units _unitGroup))]};
 
