@@ -1,0 +1,6 @@
+A3EAI 0.4.3.2 Alpha
+
+Files changed:
+A3EAI.pbo
+
+[FIXED] AI spawning at [0,0,0] issue with AI vehicle patrols.

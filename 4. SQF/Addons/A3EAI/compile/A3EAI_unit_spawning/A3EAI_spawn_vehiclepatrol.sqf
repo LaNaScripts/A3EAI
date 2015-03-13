@@ -92,6 +92,16 @@ _driver assignAsDriver _vehicle;
 _driver setVariable ["isDriver",true,_HCActive];
 _unitGroup selectLeader _driver;
 
+for "_i" from 0 to ((_turretCount min _maxGunnerUnits) - 1) do {
+	_gunner = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
+	if (!(_gunner hasWeapon "NVG_EPOCH")) then {
+		_nvg = _gunner call A3EAI_addTempNVG;
+	};
+	_gunner assignAsTurret [_vehicle,[_i]];
+	_gunner moveInTurret [_vehicle,[_i]];
+};
+if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Spawned %1 gunner units for %2 vehicle %3.",(_turretCount min _maxGunnerUnits),_unitGroup,_vehicleType]};
+
 _cargoSpots = _vehicle emptyPositions "cargo";
 for "_i" from 0 to ((_cargoSpots min _maxCargoUnits) - 1) do {
 	_cargo = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
@@ -102,16 +112,6 @@ for "_i" from 0 to ((_cargoSpots min _maxCargoUnits) - 1) do {
 	_cargo moveInCargo [_vehicle,_i];
 };
 if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Spawned %1 cargo units for %2 vehicle %3.",(_cargoSpots min _maxCargoUnits),_unitGroup,_vehicleType]};
-	
-for "_i" from 0 to ((_turretCount min _maxGunnerUnits) - 1) do {
-	_gunner = [_unitGroup,_unitLevel,[0,0,0]] call A3EAI_createUnit;
-	if (!(_gunner hasWeapon "NVG_EPOCH")) then {
-		_nvg = _gunner call A3EAI_addTempNVG;
-	};
-	_gunner assignAsTurret [_vehicle,[_i]];
-	_gunner moveInTurret [_vehicle,[_i]];
-};
-if (A3EAI_debugLevel > 1) then {diag_log format ["A3EAI Extended Debug: Spawned %1 gunner units for %2 vehicle %3.",(_turretCount min _maxGunnerUnits),_unitGroup,_vehicleType]};
 
 _unitGroup setBehaviour "AWARE";
 _unitGroup setSpeedMode "NORMAL";
