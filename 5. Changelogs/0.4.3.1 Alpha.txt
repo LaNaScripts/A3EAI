@@ -1,0 +1,6 @@
+A3EAI 0.4.3.1 Alpha
+
+Files changed:
+A3EAI.pbo
+
+[FIXED] A3EAI will now wait until Epoch server has defined EPOCH_server_setVToken before proceeding to spawn AI vehicle patrols.

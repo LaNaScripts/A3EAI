@@ -1,5 +1,5 @@
 
-waitUntil {uiSleep 0.1; (!isNil "A3EAI_locations_ready" && {!isNil "A3EAI_classnamesVerified"})};
+waitUntil {uiSleep 0.3; (!isNil "A3EAI_locations_ready" && {!isNil "A3EAI_classnamesVerified"} && {!isNil "EPOCH_server_setVToken"})};
 
 if (A3EAI_maxHeliPatrols > 0) then {
 	_nul = [] spawn {
@@ -9,7 +9,6 @@ if (A3EAI_maxHeliPatrols > 0) then {
 			
 			if ([_heliType,"vehicle"] call A3EAI_checkClassname) then {
 				for "_j" from 1 to _amount do {
-					//A3EAI_heliTypesUsable set [count A3EAI_heliTypesUsable,_heliType];
 					A3EAI_heliTypesUsable pushBack _heliType;
 				};
 			} else {
@@ -40,7 +39,6 @@ if (A3EAI_maxLandPatrols > 0) then {
 			
 			if ([_vehType,"vehicle"] call A3EAI_checkClassname) then {
 				for "_j" from 1 to _amount do {
-					//A3EAI_vehTypesUsable set [count A3EAI_vehTypesUsable,_vehType];
 					A3EAI_vehTypesUsable pushBack _vehType;
 				};
 			} else {
